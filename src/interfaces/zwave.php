@@ -21,9 +21,9 @@
  * @brief contain zwave interface 
  */
  
-include "general.inc";
-include "database.inc";
-include "zwave-config.php";
+include "../general.inc";
+include "../database.inc";
+include "../config.inc";
 
 // Open Aeotec Zstick (Gen. 5) device 
 exec('stty -F /dev/ttyACM0 9600 raw');
@@ -36,7 +36,7 @@ $fp=fopen("/dev/ttyACM0","c+");
  */
  
 plaatprotect_db_connect($dbhost, $dbuser, $dbpass, $dbname);
- 
+
 function plaatprotect_event_insert($nodeId, $event, $value) {
  
    $timestamp = date('Y-m-d H:i:s');
@@ -51,8 +51,8 @@ function plaatprotect_event_insert($nodeId, $event, $value) {
 
 function plaatprotect_control_hue($hue_bulb_nr, $value) {
 	
-	global $hue_ip;
-	global $hue_key;
+ 	$hue_ip = plaatprotect_db_get_config_item('hue_ip_address',HUE_1);
+ 	$hue_key = plaatprotect_db_get_config_item('hue_key',HUE_1);
 
 	LogText("Hue command - start ");
 	
@@ -485,6 +485,33 @@ function decodeSentData($data) {
   LogText($tmp);
 }
 
+/* Set Alarm Coutermeasure */
+function setAlarm($nodeid, $value) {
+
+   /* Log alarm in databae */  
+   plaatprotect_event_insert(hexdec($nodeid), 0, $value);										
+
+   $tmp = 'on';
+   if ($value==0) {
+	$tmp = 'off';
+   }
+
+   $sql  = 'select location from zwave where nodeid='.$nodeid;	
+   $result = plaatprotect_db_query($sql);
+   $row = plaatprotect_db_fetch_object($result);
+
+   plaatprotect_notification("Alarm" , "Location ".$row->location." [Zone ".$nodeid."] alarm ".$tmp);
+  
+   plaatprotect_event_insert(hexdec($nodeId), $commandClass, $value);										
+
+   if ($value==0) {
+       plaatprotect_control_hue(7, "false");
+   } else {
+       plaatprotect_control_hue(7, "true");
+   }
+}
+
+
 function decodeApplicationCommandHandler($data) {
 
   $nodeId = bin2hex(substr($data,5,1));
@@ -501,13 +528,8 @@ function decodeApplicationCommandHandler($data) {
 
                    case 0x01: echo 'Set ';
                               $value= ord(substr($data,9,1));
-										echo 'value='.$value;
-										plaatprotect_event_insert(hexdec($nodeId), $commandClass, $value);										
-										if ($value==0) {
-											plaatprotect_control_hue(7, "false");
-										} else {
-											plaatprotect_control_hue(7, "true");
-										}
+    			      echo 'value='.$value;
+			      setAlarm($nodeId,$value);
                               break;
 										
                    case 0x02: echo 'Get ';
@@ -791,7 +813,7 @@ Receive();
 
 /* Get for all zWave node information */
 
-$sql  = 'select nodeid from config';	
+$sql  = 'select nodeid from zwave';	
 $result = plaatprotect_db_query($sql);
 	
 while ($row = plaatprotect_db_fetch_object($result)) {

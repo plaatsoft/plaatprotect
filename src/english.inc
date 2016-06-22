@@ -161,14 +161,13 @@ $lang['hue_present'] = 'Philips HUE present';
 $lang['notification_present'] = 'Notifcation present';
 $lang['notification_nma_key'] = 'Notify My Android key';
 
+$lang['CATEGORY0'] = 'General'; 
 $lang['CATEGORY51'] = 'Security'; 
 $lang['CATEGORY52'] = 'Look and Feel'; 
 $lang['CATEGORY61'] = 'Webcam 1'; 
 $lang['CATEGORY62'] = 'Webcam 2'; 
 $lang['CATEGORY71'] = 'Philips HUE'; 
-$lang['CATEGORY81'] = 'Notification Android'; 
-
-
+$lang['CATEGORY81'] = 'Notification'; 
 
 /*
 ** ------------------

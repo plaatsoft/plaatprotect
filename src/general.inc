@@ -125,7 +125,7 @@ function plaatprotect_notification($topic, $content, $severity=0) {
   if ($notification_present=="true" ) {
   	$notification_nma_key = plaatprotect_db_get_config_item('notification_nma_key', NOTIFICATION);
 
-  	require 'nmaApi.class.php';
+  	require_once 'nmaApi.class.php';
 
   	$nma = new nmaApi(array('apikey' => $notification_nma_key));
   	if($nma->verify()) {
