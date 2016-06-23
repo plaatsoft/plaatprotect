@@ -94,8 +94,6 @@ function plaatprotect_home_login_event() {
 	
 		$session = plaatprotect_db_get_session($ip, true);
 		$pid = PAGE_HOME;
-
-		plaatprotect_notification("Login" , "User login with ".$ip, 0);
 	}
 }
 

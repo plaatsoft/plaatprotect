@@ -178,6 +178,14 @@ $lang['CATEGORY81'] = 'Notification';
 $lang['TITLE_WEBCAM'] ='Webcams';
 $lang['TITLE_ARCHIVE' ] = 'Archive';
 
+/*
+** ------------------
+** LOGGING
+** ------------------
+*/
+
+$lang['TITLE_LOGGING'] ='Logging';
+
 
 /*
 ** ------------------
