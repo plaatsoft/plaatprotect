@@ -47,7 +47,6 @@ define('PAGE_HUE',                  16);
 define('PAGE_ABOUT',                17);
 define('PAGE_DONATE',               18);
 define('PAGE_RELEASE_NOTES',        19);
-define('PAGE_LOGGING',              20);
 
 define('PAGE_SETTING_LOGIN',        30);
 define('PAGE_SETTING_CATEGORY',     31);

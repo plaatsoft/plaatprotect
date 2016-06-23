@@ -39,15 +39,19 @@ function plaatprotect_logging_page() {
 	$page .= '<h1>'.t('TITLE_LOGGING').'</h1>';
 	$page .= '<br>';
 	
-	$sql  = 'select timestamp, nodeid, event, value from event order by timestamp desc limit 0,20 ';
+	$sql  = 'select a.timestamp, a.nodeid, a.event, a.value, b.location from event a, zwave b where a.nodeid=b.nodeid order by timestamp desc limit 0,16 ';
 	$result = plaatprotect_db_query($sql);
 
-	$page .= '<table border=1 >';
+	$page .= '<table>';
 
 	$page .= '<tr>';
 
-	$page .= '<th>';
+	$page .= '<th width="20%" >';
 	$page .= 'Timestamp';
+	$page .= '</th>';
+
+	$page .= '<th>';
+	$page .= 'Location';
 	$page .= '</th>';
 
 	$page .= '<th>';
@@ -73,11 +77,17 @@ function plaatprotect_logging_page() {
 		$page .= '</td>';
 
 		$page .= '<td>';
-		$page .= 'Node '.$row->nodeid;
+		$page .= $row->location;
 		$page .= '</td>';
 
 		$page .= '<td>';
-		$page .= $row->event;
+		$page .= '[Node '.$row->nodeid.']';
+		$page .= '</td>';
+
+		$page .= '<td>';
+		if ($row->event==0) {
+			$page .= 'Burglar Alarm';
+		}
 		$page .= '</td>';
 
 		$page .= '<td>';
