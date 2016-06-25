@@ -488,12 +488,12 @@ function decodeSentData($data) {
 /* Set Alarm Coutermeasure */
 function setAlarm($nodeId, $commandClass, $value) {
 
-   /* Log alarm in databae */  
-   plaatprotect_event_insert(hexdec($nodeId), 0, $value);										
+   /* Log alarm in databae */  								
+	plaatprotect_event_insert(hexdec($nodeId), $commandClass, $value);	
 
    $tmp = 'on';
    if ($value==0) {
-	$tmp = 'off';
+	    $tmp = 'off';
    }
 
    $sql  = 'select location from zwave where nodeid='.$nodeId;	
@@ -501,9 +501,7 @@ function setAlarm($nodeId, $commandClass, $value) {
    $row = plaatprotect_db_fetch_object($result);
 
    plaatprotect_notification("Alarm" , "Location ".$row->location." [Zone ".$nodeId."] alarm ".$tmp);
-  
-   plaatprotect_event_insert(hexdec($nodeId), $commandClass, $value);										
-
+ 
    if ($value==0) {
        plaatprotect_control_hue(7, "false");
    } else {
