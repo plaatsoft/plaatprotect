@@ -757,7 +757,7 @@ function Receive() {
     if($c == false){
       $timer++;
       usleep(10000);
-      if ($timer>500) {
+      if ($timer>1000) {
         LogText("Timeout");
         break;
       } else {
