@@ -486,21 +486,21 @@ function decodeSentData($data) {
 }
 
 /* Set Alarm Coutermeasure */
-function setAlarm($nodeid, $value) {
+function setAlarm($nodeId, $commandClass, $value) {
 
    /* Log alarm in databae */  
-   plaatprotect_event_insert(hexdec($nodeid), 0, $value);										
+   plaatprotect_event_insert(hexdec($nodeId), 0, $value);										
 
    $tmp = 'on';
    if ($value==0) {
 	$tmp = 'off';
    }
 
-   $sql  = 'select location from zwave where nodeid='.$nodeid;	
+   $sql  = 'select location from zwave where nodeid='.$nodeId;	
    $result = plaatprotect_db_query($sql);
    $row = plaatprotect_db_fetch_object($result);
 
-   plaatprotect_notification("Alarm" , "Location ".$row->location." [Zone ".$nodeid."] alarm ".$tmp);
+   plaatprotect_notification("Alarm" , "Location ".$row->location." [Zone ".$nodeId."] alarm ".$tmp);
   
    plaatprotect_event_insert(hexdec($nodeId), $commandClass, $value);										
 
@@ -528,8 +528,8 @@ function decodeApplicationCommandHandler($data) {
 
                    case 0x01: echo 'Set ';
                               $value= ord(substr($data,9,1));
-    			      echo 'value='.$value;
-			      setAlarm($nodeId,$value);
+                              echo 'value='.$value;
+                              setAlarm($nodeId,$commandClass, $value);
                               break;
 										
                    case 0x02: echo 'Get ';
@@ -556,9 +556,9 @@ function decodeApplicationCommandHandler($data) {
              case 0x05: echo 'Report ';
                    $type = ord(substr($data,9,1));
 	                switch ($type) {
-				   case 0x00: echo 'General ';
-					    break;
-				   case 0x01: echo 'Smoke ';
+                     case 0x00: echo 'General ';
+                                break;
+                     case 0x01: echo 'Smoke ';
 					    break;
 				 case 0x02: echo 'Carbon Monoxide ';
 					    break;
