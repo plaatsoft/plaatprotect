@@ -72,9 +72,42 @@ plaatprotect_db_connect($dbhost, $dbuser, $dbpass, $dbname);
 function plaatprotect_event_insert($nodeId, $event, $value) {
  
    $timestamp = date('Y-m-d H:i:s');
- 
+	
    $sql  = 'INSERT INTO event (timestamp, nodeid, event, value) ';
 	$sql .= 'VALUES ("'.$timestamp.'",'.$nodeId.','.$event.','.$value.')';
+	
+	plaatprotect_db_query($sql);
+}
+
+function plaatprotect_sensor_insert($nodeId, $type, $value) {
+ 
+   $timestamp = date('Y-m-d H:i:s');
+	
+	$temperature = 0;
+	$luminance = 0;
+	$humidity = 0;
+	$ultraviolet = 0;
+	$battery = 0;
+	
+	switch ($type) {
+		case 0x00: $battery = $value;
+					  break;
+					  
+		case 0x01: $temperature = $value;
+					  break;
+		
+		case 0x03: $luminance = $value;
+					  break;
+			  
+		case 0x05: $humidity = $value;
+					  break;
+					 
+		case 0x1b: $ultraviolet = $value;
+					  break;
+	}
+	
+   $sql  = 'INSERT INTO sensor (nodeid, timestamp, temperature, luminance, humidity, ultraviolet, battery ) ';
+	$sql .= 'VALUES ('.$nodeId.',"'.$timestamp.'",'.$temperature.','.$luminance.','.$humidity.','.$ultraviolet.','.$battery.')';
 	
 	plaatprotect_db_query($sql);
 }
@@ -553,6 +586,44 @@ function decodeAlarm($data) {
 	}
 }
 
+function decodeSensor($data) {
+
+	$nodeId = bin2hex(substr($data,5,1));
+	$command = ord(substr($data,8,1));
+	$type = ord(substr($data,9,1));
+	
+	switch ($command) {
+		case 0x04: echo 'Get ';
+					  break;
+					  
+	   case 0x05: echo 'Report ';
+					  break;
+	}
+	
+	$value = 0;
+	switch ($type) {
+		case 0x01: echo 'Temperature ';
+					  $value = (ord(substr($data,11,1)*100) + ord(substr($data,12,1)))/10;
+					  plaatprotect_sensor_insert($nodeId, $type, $value);
+					  break;
+		
+		case 0x03: echo 'Luminance ';
+					  $value = (ord(substr($data,11,1)*100) + ord(substr($data,12,1)))/10;
+					  plaatprotect_sensor_insert($nodeId, $type, $value);
+					  break;
+			  
+		case 0x05: echo 'Humidity ';
+					  $value = ord(substr($data,12,1));
+					  plaatprotect_sensor_insert($nodeId, $type, $value);
+					  break;
+					 
+		case 0x1b: echo 'Ultraviolet ';
+					  $value = ord(substr($data,12,1));
+					  plaatprotect_sensor_insert($nodeId, $type, $value);
+					  break;
+	}
+}
+
 function decodeApplicationCommandHandler($data) {
 
   $nodeId = bin2hex(substr($data,5,1));
@@ -571,8 +642,7 @@ function decodeApplicationCommandHandler($data) {
 
                    case 0x01: echo 'Set ';
                               $value= ord(substr($data,9,1));
-                              echo 'value='.$value;
-                              
+                              echo 'value='.$value;                              
                               break;
 										
                    case 0x02: echo 'Get ';
@@ -586,6 +656,7 @@ function decodeApplicationCommandHandler($data) {
                break;
 
     case 0x31: Echo 'Sensor Multilevel ';
+					decodeSensor($data);
                break;
 
     case 0x70: Echo 'Configuration ';
@@ -596,13 +667,14 @@ function decodeApplicationCommandHandler($data) {
 					break;
 
     case 0x80: Echo 'Battery ';
- 	       $command= ord(substr($data,8,1));
-	       switch ($command) {
+					$command= ord(substr($data,8,1));
+					switch ($command) {
                    case 0x02: echo 'Get ';
                               break;
                    case 0x03: echo 'Report ';
- 	                      $value= ord(substr($data,9,1));
- 	                      echo 'BatteryValue='.$value.'%';
+										$value= ord(substr($data,9,1));
+										echo 'BatteryValue='.$value.'%';
+										plaatprotect_sensor_insert($nodeId, 0x00, $value);
                               break;
                }
                break;
