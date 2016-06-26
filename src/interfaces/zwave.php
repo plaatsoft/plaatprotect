@@ -107,7 +107,9 @@ function plaatprotect_sensor_insert($nodeId, $type, $value) {
 	}
 	
    $sql  = 'INSERT INTO sensor (nodeid, timestamp, temperature, luminance, humidity, ultraviolet, battery ) ';
-	$sql .= 'VALUES ('.$nodeId.',"'.$timestamp.'",'.$temperature.','.$luminance.','.$humidity.','.$ultraviolet.','.$battery.')';
+	$sql .= 'VALUES ('.hexdec($nodeId).',"'.$timestamp.'","'.$temperature.'","'.$luminance.'","'.$humidity.'","'.$ultraviolet.'",'.$battery.')';
+	
+	echo $sql."\r\n";
 	
 	plaatprotect_db_query($sql);
 }
@@ -603,22 +605,26 @@ function decodeSensor($data) {
 	$value = 0;
 	switch ($type) {
 		case 0x01: echo 'Temperature ';
-					  $value = (ord(substr($data,11,1)*100) + ord(substr($data,12,1)))/10;
+					  $value = (((ord(substr($data,11,1)))*100)+ord(substr($data,12,1)))/10;
+					  echo 'Value='.$value;
 					  plaatprotect_sensor_insert($nodeId, $type, $value);
 					  break;
 		
 		case 0x03: echo 'Luminance ';
-					  $value = (ord(substr($data,11,1)*100) + ord(substr($data,12,1)))/10;
+					  $value = (((ord(substr($data,11,1)))*100)+ord(substr($data,12,1)))/10;
+					  echo 'Value='.$value;
 					  plaatprotect_sensor_insert($nodeId, $type, $value);
 					  break;
 			  
 		case 0x05: echo 'Humidity ';
-					  $value = ord(substr($data,12,1));
+					  $value = ord(substr($data,11,1));
+					  echo 'Value='.$value;
 					  plaatprotect_sensor_insert($nodeId, $type, $value);
 					  break;
 					 
 		case 0x1b: echo 'Ultraviolet ';
-					  $value = ord(substr($data,12,1));
+					  $value = ord(substr($data,11,1));
+					  echo 'Value='.$value;
 					  plaatprotect_sensor_insert($nodeId, $type, $value);
 					  break;
 	}
