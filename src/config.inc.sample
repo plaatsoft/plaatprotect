@@ -2,7 +2,7 @@
 
 /* 
 **  ===========
-**  PlaatEnergy
+**  PlaatProtect
 **  ===========
 **
 **  Created by wplaat
@@ -18,8 +18,8 @@
 
 // Database credentials
 $dbhost = "127.0.0.1";
-$dbname = "plaatenergy";
-$dbuser = "plaatenergy";
-$dbpass = "plaatenergy";
+$dbname = "plaatprotect";
+$dbuser = "plaatprotect";
+$dbpass = "plaatprotect";
 
 ?>

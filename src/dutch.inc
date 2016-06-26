@@ -152,6 +152,8 @@ $lang['LABEL_DESCRIPTION'] = 'Omschrijving';
 $lang['database_version'] = 'Huidige database versie';
 $lang['request_counter'] = 'Pagina request counter';
 
+$lang['zwave_present'] = 'Zwave presemt';
+
 $lang['home_password'] = 'Bescherm toegang met een wachtwoord.';
 $lang['settings_password'] = 'Bescherm configuratie met een wachtwoord.';
 
@@ -169,6 +171,8 @@ $lang['hue_present'] = 'Philips HUE aanwezig';
 $lang['notification_present'] = 'Notification aanwezig';
 $lang['notification_nma_key'] = 'Notify My Andriod Key';
 
+$lang['CATEGORY0']  = 'Algemeen'; 
+$lang['CATEGORY11'] = 'Z-Wave'; 
 $lang['CATEGORY51'] = 'Beveiliging'; 
 $lang['CATEGORY61'] = 'Webcam 1'; 
 $lang['CATEGORY62'] = 'Webcam 2'; 

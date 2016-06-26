@@ -31,6 +31,38 @@ $fp=fopen("/dev/ttyACM0","c+");
 
 /**
  ********************************
+ * Counter measures
+ ********************************
+ */
+ 
+/* Set Alarm Coutermeasure */
+function setAlarm($nodeId, $event, $value) {
+
+   /* Log alarm in databae */  								
+	plaatprotect_event_insert(hexdec($nodeId), $event, $value);	
+
+   $tmp = 'on';
+   if ($value==0x00) {
+	    $tmp = 'off';
+   }
+
+	plaatprotect_node_alive($nodeId);
+	
+   $sql  = 'select location from zwave where nodeid='.$nodeId;	
+   $result = plaatprotect_db_query($sql);
+   $row = plaatprotect_db_fetch_object($result);
+	
+   plaatprotect_notification("Alarm" , "Location ".$row->location." [Zone ".$nodeId."] alarm ".$tmp);
+ 
+   if ($value==0) {
+       plaatprotect_control_hue(7, "false");
+   } else {
+       plaatprotect_control_hue(7, "true");
+   }
+}
+
+/**
+ ********************************
  * Database
  ********************************
  */
@@ -44,28 +76,32 @@ function plaatprotect_event_insert($nodeId, $event, $value) {
    $sql  = 'INSERT INTO event (timestamp, nodeid, event, value) ';
 	$sql .= 'VALUES ("'.$timestamp.'",'.$nodeId.','.$event.','.$value.')';
 	
-	echo "\r\n".$sql."\r\n";
-
 	plaatprotect_db_query($sql);
+}
+
+function plaatprotect_node_alive($nodeId) {
+
+	$sql  = 'update zwave set last_update=SYSDATE() where nodeid='.hexdec($nodeId);	
+   $result = plaatprotect_db_query($sql);
+   $row = plaatprotect_db_fetch_object($result);
 }
 
 function plaatprotect_control_hue($hue_bulb_nr, $value) {
 	
- 	$hue_ip = plaatprotect_db_get_config_item('hue_ip_address',HUE_1);
- 	$hue_key = plaatprotect_db_get_config_item('hue_key',HUE_1);
-
-	LogText("Hue command - start ");
+ 	$hue_ip = plaatprotect_db_get_config_item('hue_ip_address',HUE);
+ 	$hue_key = plaatprotect_db_get_config_item('hue_key',HUE);
 	
-    $hue_url = "http://".$hue_ip."/api/".$hue_key."/lights/".$hue_bulb_nr."/state";
+   $hue_url = "http://".$hue_ip."/api/".$hue_key."/lights/".$hue_bulb_nr."/state";
 
-    echo file_get_contents($hue_url, false, stream_context_create(["http" => [
+	echo "\n\r";
+   echo ("Hue command: ");
+
+   echo file_get_contents($hue_url, false, stream_context_create(["http" => [
       "method" => "PUT", "header" => "Content-type: application/json",
       "content" => "{\"on\":". $value."}"
     ]]));
-	 echo "\n\r";
-	 
-	 LogText("Hue command - end ");
- 
+
+	echo "\n\r";
 }
   
   
@@ -437,82 +473,91 @@ function SendDataActiveHorn($node,$value,$callbackId) {
  ********************************
  */
  
-function decodeSendGetVersion($data) {
+function decodeAlarm($data) {
 
-  $zWaveLibraryType = $data[16];
-  $zWaveVersion = substr($data,4,15);
- 
-  LogText("SendGetVersion WaveVersion=[".$zWaveVersion."] LibraryType=[0x".bin2hex($zWaveLibraryType)."]");
-}
-
-function decodeMemoryId($data) {
-
-  $homeId = GetHexString(substr($data,4,4));
-  $nodeId = GetHexString(substr($data,8,1));
- 
-  LogText("SendGetMemoryId HomeId=[".$homeId."] NodeId=[".$nodeId."]");
-}
-
-function decodeSentData($data) {
-
-  $len = strlen($data);
-  $callbackId = "";
-
-  $tmp = "SentData ";
-
-  if ($len>7) {
-     $callbackId = getHexString(substr($data,4,1));
-     $tmp .= "CallbackId=[".$callbackId."] ";
-
-  } else {
-    $response = ord(substr($data,4,1));
-    switch ($response) {
- 
-    case 0x00: $tmp .= "Transmission complete and Ack received.";
-	       break;
-    case 0x01: $tmp .= "Transmission complete and no Ack received.";
-	       break;
-    case 0x02: $tmp .= "Transmission failed.";
-	       break;
-    case 0x03: $tmp .= "Transmission failed, network busy.";
-	       break;
-    case 0x04: $tmp .= "Transmission complete, no return route.";
-	       break;
-    default:   $tmp .= "Unknown value [".getHexString($response)."]";
-	       break;
-    }
-  }
-  LogText($tmp);
-}
-
-/* Set Alarm Coutermeasure */
-function setAlarm($nodeId, $commandClass, $value) {
-
-   /* Log alarm in databae */  								
-	plaatprotect_event_insert(hexdec($nodeId), $commandClass, $value);	
-
-   $tmp = 'on';
-   if ($value==0) {
-	    $tmp = 'off';
+	$nodeId = bin2hex(substr($data,5,1));
+	$command= ord(substr($data,8,1));
+	
+	switch ($command) {
+		case 0x04: echo 'Get ';
+					  break;
+					  
+	   case 0x05: echo 'Report ';
+					  break;
+      
+		case 0x07: echo "SupportGet ";
+				     break;
+      
+		case 0x08: echo "SupportReport ";
+				     break;
+	}
+                 
+	$type = ord(substr($data,9,1));
+	switch ($type) {
+		case 0x00: echo 'General ';
+					  break;
+					  
+		case 0x01: echo 'Smoke ';
+					  break;
+					  
+      case 0x02: echo 'Carbon Monoxide ';
+					  break;
+					  
+      case 0x03: echo 'Carbon Dioxide ';
+					  break;
+					  
+      case 0x04: echo 'Heat ';
+					  break;
+					  
+      case 0x05: echo 'Flood ';
+					  break;
+					  
+      case 0x06: echo 'Access control ';
+					  break;
+					  
+      case 0x07: echo 'Burglar ';
+					  break;
+					  
+      case 0x08: echo 'Power Management ';
+					  break;
+					  
+      case 0x09: echo 'System ';
+					  break;
+					  
+      case 0x0a: echo 'Emergency ';
+					  break;
+					  
+      case 0x0b: echo 'Clock ';
+					  break;
+					  
+      case 0x0c: echo 'Appliance ';
+					  break;
+					  
+      case 0x0d: echo 'Health ';
+					  break;
    }
-
-   $sql  = 'select location from zwave where nodeid='.$nodeId;	
-   $result = plaatprotect_db_query($sql);
-   $row = plaatprotect_db_fetch_object($result);
-
-   plaatprotect_notification("Alarm" , "Location ".$row->location." [Zone ".$nodeId."] alarm ".$tmp);
- 
-   if ($value==0) {
-       plaatprotect_control_hue(7, "false");
-   } else {
-       plaatprotect_control_hue(7, "true");
-   }
+ 	
+	$event = ord(substr($data,14,1));
+	switch ($event) {
+		case 0x00: echo 'AlarmOff';
+					  setAlarm($nodeId, $event, 0x00);
+					  break;
+					  
+		case 0x03: echo 'AlarmVibrationDetected';
+					  setAlarm($nodeId, $event, 0xff);
+					  break;
+					  
+		case 0x08: echo 'AlarmMotionDetected';
+					  setAlarm($nodeId, $event, 0xff);
+					  break;
+	}
 }
-
 
 function decodeApplicationCommandHandler($data) {
 
   $nodeId = bin2hex(substr($data,5,1));
+  plaatprotect_node_alive($nodeId);
+  
   $len = substr($data,6,1);
   $commandClass = ord(substr($data,7,1));
  
@@ -527,15 +572,15 @@ function decodeApplicationCommandHandler($data) {
                    case 0x01: echo 'Set ';
                               $value= ord(substr($data,9,1));
                               echo 'value='.$value;
-                              setAlarm($nodeId,$commandClass, $value);
+                              
                               break;
 										
                    case 0x02: echo 'Get ';
                               break;
 										
                    case 0x03: echo 'Report ';
- 	                      $value= ord(substr($data,9,1));
- 	                      echo 'value='.$value;
+                              $value= ord(substr($data,9,1));
+                              echo 'value='.$value;
                               break;
                }
                break;
@@ -547,55 +592,8 @@ function decodeApplicationCommandHandler($data) {
                break;
 
     case 0x71: Echo 'Alarm ';
- 	       $command= ord(substr($data,8,1));
-	       switch ($command) {
-             case 0x04: echo 'Get ';
-                   break;
-             case 0x05: echo 'Report ';
-                   $type = ord(substr($data,9,1));
-	                switch ($type) {
-                     case 0x00: echo 'General ';
-                                break;
-                     case 0x01: echo 'Smoke ';
-					    break;
-				 case 0x02: echo 'Carbon Monoxide ';
-					    break;
-				 case 0x03: echo 'Carbon Dioxide ';
-					    break;
-				 case 0x04: echo 'Heat ';
-					    break;
-				 case 0x05: echo 'Flood ';
-					    break;
-				 case 0x06: echo 'Access control ';
-					    break;
-				 case 0x07: echo 'Burglar ';
-					    break;
-				 case 0x08: echo 'Power Management ';
-					    break;
-				 case 0x09: echo 'System ';
-					    break;
-				 case 0x0a: echo 'Emergency ';
-					    break;
-				 case 0x0b: echo 'Clock ';
-					    break;
-				 case 0x0c: echo 'Appliance ';
-					    break;
-				 case 0x0d: echo 'Health ';
-					    break;
-				 case 0x0e: echo 'Count ';
-					    break;
-				 default:   echo 'Unknown ';
-					    break;
-			      }
- 	                      $value = ord(substr($data,10,1));
- 	                      echo 'AlarmValue='.$value.'';
-	                     break;
-                      case 0x07:  echo "SupportGet ";
-				  break;
-                      case 0x08:  echo "SupportReport ";
-				  break;
-		}
-		break;
+				   decodeAlarm($data);
+					break;
 
     case 0x80: Echo 'Battery ';
  	       $command= ord(substr($data,8,1));
@@ -704,6 +702,56 @@ function decodeIdentifyNode($data) {
   LogText($tmp);
 }
 
+function decodeSendGetVersion($data) {
+
+  $zWaveLibraryType = $data[16];
+  $zWaveVersion = substr($data,4,15);
+ 
+  LogText("SendGetVersion WaveVersion=[".$zWaveVersion."] LibraryType=[0x".bin2hex($zWaveLibraryType)."]");
+}
+
+function decodeMemoryId($data) {
+
+  $homeId = GetHexString(substr($data,4,4));
+  $nodeId = GetHexString(substr($data,8,1));
+ 
+  LogText("SendGetMemoryId HomeId=[".$homeId."] NodeId=[".$nodeId."]");
+  
+  plaatprotect_node_alive($nodeId);
+}
+
+function decodeSentData($data) {
+
+  $len = strlen($data);
+  $callbackId = "";
+
+  $tmp = "SentData ";
+
+  if ($len>7) {
+     $callbackId = getHexString(substr($data,4,1));
+     $tmp .= "CallbackId=[".$callbackId."] ";
+
+  } else {
+    $response = ord(substr($data,4,1));
+    switch ($response) {
+ 
+    case 0x00: $tmp .= "Transmission complete and Ack received.";
+	       break;
+    case 0x01: $tmp .= "Transmission complete and no Ack received.";
+	       break;
+    case 0x02: $tmp .= "Transmission failed.";
+	       break;
+    case 0x03: $tmp .= "Transmission failed, network busy.";
+	       break;
+    case 0x04: $tmp .= "Transmission complete, no return route.";
+	       break;
+    default:   $tmp .= "Unknown value [".getHexString($response)."]";
+	       break;
+    }
+  }
+  LogText($tmp);
+}
+
 function DecodeMessage($data) {
 
   /*
@@ -801,7 +849,7 @@ function Receive() {
  * State Machine
  ********************************
  */
- 
+
 /* Init ZWave layer */
 SendGetVersion();
 Receive();

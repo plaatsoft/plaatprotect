@@ -26,6 +26,15 @@
 ** NOTES
 ** ---------------------
 */
+
+$note[2] = '<div class="subparagraph">Version 0.2 (26-06-2016)</div>
+<div class="large_text">
+<ul>
+<li>General: Added vibration alarm detection.</li>
+<li>General: Added zwave node status on home page.</li>
+</ul>
+</div>';
+
 $note[1] = '<div class="subparagraph">Version 0.1 (21-06-2016)</div>
 <div class="large_text">
 <ul>
@@ -39,7 +48,6 @@ $note[1] = '<div class="subparagraph">Version 0.1 (21-06-2016)</div>
 </ul>
 </div>';
 
-		
 /*
 ** ---------------------
 ** PAGES

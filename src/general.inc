@@ -60,17 +60,9 @@ define('PAGE_SETTING_EDIT',         33);
 */
 
 define('EVENT_NONE',                10);
-define('EVENT_PROCESS_TODAY',       11);
-define('EVENT_PROCESS_ALL_DAYS',    12);
 define('EVENT_PREV',                13);
 define('EVENT_NEXT',                14);
-define('EVENT_EXECUTE',             15);
 define('EVENT_SAVE',                16);
-define('EVENT_EURO',                17);
-define('EVENT_KWH',                 18);
-define('EVENT_M3',                  19);
-define('EVENT_WATT',                20);
-define('EVENT_MAX',                 21);
 define('EVENT_BACKUP',              22);
 define('EVENT_EXPORT',              23);
 define('EVENT_SCATTER',             24);
@@ -93,12 +85,13 @@ define('EVENT_END',                 35);
 ** -----------
 */
 
-define('SECURITY',                 51);
-define('LOOK_AND_FEEL',            52);
-define('WEBCAM_1',                 61);
-define('WEBCAM_2',                 62);
-define('HUE_1',                    71);
-define('NOTIFICATION',             81);
+define('ZWAVE',                     11);
+define('SECURITY',                  51);
+define('LOOK_AND_FEEL',             52);
+define('WEBCAM_1',                  61);
+define('WEBCAM_2',                  62);
+define('HUE',                       71);
+define('NOTIFICATION',              81);
 
 /*
 ** -----------
@@ -422,7 +415,7 @@ function plaatprotect_create_path($path) {
  *
  * @section Introduction
  *   plaatprotect is a burglar alarm center for raspberry Pi. Its collect Zwave sensor data
- *   (weather station) and and active a counter maesure. With a web GUI the system can be controlled.
+ *   and and active a configured counter measure. With a web GUI the system can be controlled.
  *
  * @section Links
  *   Website: http://www.plaatsoft.nl

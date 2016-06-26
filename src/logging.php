@@ -35,7 +35,7 @@ function plaatprotect_logging_page() {
 
 	global $pid;
 
-        $page ="<style>input[type='checkbox']{width:24px;height:24px}</style>";
+   $page ="<style>input[type='checkbox']{width:24px;height:24px}</style>";
 	$page .= '<h1>'.t('TITLE_LOGGING').'</h1>';
 	$page .= '<br>';
 	
@@ -85,13 +85,15 @@ function plaatprotect_logging_page() {
 		$page .= '</td>';
 
 		$page .= '<td>';
-		if ($row->event==0) {
-			$page .= 'Burglar Alarm';
+		if ($row->event==0x08) {
+			$page .= 'Motion';
+		} else if ($row->event==0x03) {
+			$page .= 'Vibration';
 		}
 		$page .= '</td>';
 
 		$page .= '<td>';
-		if ($row->value==0) {
+		if ($row->value==0x00) {
 			$page .= 'off';
 		} else { 
 			$page .= 'on';

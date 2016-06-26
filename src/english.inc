@@ -142,6 +142,8 @@ $lang['LABEL_DESCRIPTION'] = 'Description';
 $lang['database_version'] = 'Current database version';
 $lang['request_counter'] = 'Page request counter';
 
+$lang['zwave_present'] = 'Zwave present';
+
 $lang['system_name'] = 'System name';
 
 $lang['home_password'] = 'Protect application with a password.';
@@ -161,7 +163,8 @@ $lang['hue_present'] = 'Philips HUE present';
 $lang['notification_present'] = 'Notifcation present';
 $lang['notification_nma_key'] = 'Notify My Android key';
 
-$lang['CATEGORY0'] = 'General'; 
+$lang['CATEGORY0']  = 'General'; 
+$lang['CATEGORY11'] = 'Z-Wave'; 
 $lang['CATEGORY51'] = 'Security'; 
 $lang['CATEGORY52'] = 'Look and Feel'; 
 $lang['CATEGORY61'] = 'Webcam 1'; 

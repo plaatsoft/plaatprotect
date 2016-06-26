@@ -31,8 +31,8 @@
 $name = plaatprotect_db_get_config_item('system_name', LOOK_AND_FEEL);
 $version = plaatprotect_db_get_config_item('database_version');
 $webcam_present = plaatprotect_db_get_config_item('webcam_present', WEBCAM_1);
-$hue_present = plaatprotect_db_get_config_item('hue_present', HUE_1);
-
+$hue_present = plaatprotect_db_get_config_item('hue_present', HUE);
+$zwave_present = plaatprotect_db_get_config_item('zwave_present', ZWAVE);
 $password = plaatprotect_post("password", "");
 
 /*
@@ -42,38 +42,39 @@ $password = plaatprotect_post("password", "");
 */
 
 /**
- * Check if weather station is online.
- * @return HTML block with actual status of weather station.
+ * Check if energy converter is online.
+ * @return HTML block with actual status of solar converter.
  */
-function check_weather_station() {
-
-   global $weather_station_present;
-    
-   $page = "";
-	
-   if ($weather_station_present=="true") {
+function check_zwave_network() {
   
-		$timestamp = date("Y-m-d H:i:s", strtotime("-3 minutes"));
-		$sql = 'select humidity from weather where timestamp >= "'.$timestamp.'"';	
+   global $zwave_present;
+
+	$page = "";	
+	
+	if ($zwave_present=="true") {
+	
+	   $sql = 'select zid, nodeid, last_update from zwave';			
 		$result = plaatprotect_db_query($sql);
-		$count = plaatprotect_db_num_rows($result);
 		
-		if ($count>0){
-		 
-			$page  = '<div class="checker good">';
-			$page .= t('WEATHER_METER_CONNECTION_UP');
-			$page .= '</div>';
+		while ($row = plaatprotect_db_fetch_object($result)) {
+		  
+			$value = time()-strtotime($row->last_update);
+			if ($value<(60*60*2)) {
 			
-		} else {
-		
-			$page = '<div class="checker bad" title="'.t('NO_MEASUREMENT_ERROR').'">';
-			$page .= t('WEATHER_METER_CONNECTION_DOWN');
-			$page .= '</div>';
+				$page .= '<div class="checker good">';
+				$page .= 'Node '.$row->nodeid;
+				$page .= '</div> ';
+				
+			} else {
+			
+				$page .= '<div class="checker bad" >';
+				$page .= 'Node '.$row->nodeid;
+				$page .= '</div> ';
+			}
 		}
-	}
+   }	
 	return $page;
 }
-
 
 /*
 ** ---------------------
@@ -224,7 +225,11 @@ function plaatprotect_home_page() {
 				
 		$page .= '</table>';
 		$page .= '</div>';
-
+		
+		$page .= '<br/><br/>';
+		$page .= check_zwave_network();
+		$page .= '<br/><br/>';
+			
 		$page .= '<script type="text/javascript">var ip="'.$_SERVER['SERVER_ADDR'].'";var name="'.$name.'";var version="'.$version.'";</script>';
 		$page .= '<script type="text/javascript" src="js/version.js"></script>';
 	}
