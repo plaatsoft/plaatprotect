@@ -21,9 +21,10 @@
  * @brief contain zwave interface 
  */
  
-include "../general.inc";
-include "../database.inc";
-include "../config.inc";
+include "/var/www/html/plaatprotect/general.inc";
+include "/var/www/html/plaatprotect/database.inc";
+include "/var/www/html/plaatprotect/config.inc";
+
 
 // Open Aeotec Zstick (Gen. 5) device 
 exec('stty -F /dev/ttyACM0 9600 raw');
