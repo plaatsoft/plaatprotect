@@ -56,19 +56,34 @@ function check_zwave_network() {
 	   $sql = 'select zid, nodeid, last_update from zwave';			
 		$result = plaatprotect_db_query($sql);
 		
+			
 		while ($row = plaatprotect_db_fetch_object($result)) {
 		  
+		   $sql2 = 'select temperature from sensor where nodeid='.$row->nodeid.' and temperature>0 order by sid desc limit 0,1';
+		   $result2 = plaatprotect_db_query($sql2);
+			$row2 = plaatprotect_db_fetch_object($result2);
+			
+			$sql3 = 'select humidity from sensor where nodeid='.$row->nodeid.' and humidity>0 order by sid desc limit 0,1';
+		   $result3 = plaatprotect_db_query($sql3);
+			$row3 = plaatprotect_db_fetch_object($result3);
+		
 			$value = time()-strtotime($row->last_update);
 			if ($value<(60*60*2)) {
 			
 				$page .= '<div class="checker good">';
-				$page .= 'Node '.$row->nodeid;
+				$page .= '['.$row->nodeid.']';
+				if (isset($row2->temperature)) {
+					$page .= ' '.$row2->temperature.'&deg;C';
+				}
+				if (isset($row3->humidity)) {
+					$page .= ' '.$row3->humidity.'%';
+				}
 				$page .= '</div> ';
 				
 			} else {
 			
 				$page .= '<div class="checker bad" >';
-				$page .= 'Node '.$row->nodeid;
+				$page .= '['.$row->nodeid.']';
 				$page .= '</div> ';
 			}
 		}
