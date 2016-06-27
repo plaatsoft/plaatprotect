@@ -31,7 +31,7 @@ function plaatprotect_action_picture() {
 	
 	$device1 = plaatprotect_db_get_config_item('webcam_present', WEBCAM_1);
 	
-	$path = 'webcam/picture/'.date('Y-m-d');		
+	$path = 'webcam/'.date('Y-m-d');		
 	plaatprotect_create_path($path);
 	
 	if ($device1=="true" ) {
@@ -63,7 +63,7 @@ function plaatprotect_picture_delete_event() {
 	
 	$nr = 1;
 		
-	$files = scandir(BASE_DIR.'/webcam/picture/'.$directory);
+	$files = scandir(BASE_DIR.'/webcam/'.$directory);
 	sort($files);
 
 	foreach ($files as $file) {
@@ -72,7 +72,7 @@ function plaatprotect_picture_delete_event() {
 	
 			if ($id == $nr++) {
 		
-				unlink (BASE_DIR.'/webcam/picture/'.$directory.'/'.$file);			
+				unlink (BASE_DIR.'/webcam/'.$directory.'/'.$file);			
 				break;
 			}
 		}
@@ -101,7 +101,7 @@ function plaatprotect_image_viewer_page() {
 	$page .= '<br/>';
 	
 	$nr = 1;
-	$files = scandir(BASE_DIR.'/webcam/picture/'.$directory);
+	$files = scandir(BASE_DIR.'/webcam/'.$directory);
 	sort($files);
 
 	foreach ($files as $file) {
@@ -111,7 +111,7 @@ function plaatprotect_image_viewer_page() {
 			if ($id == $nr++) {
 		
 				$page .= '<style>.image{-moz-animation: none; -o-animation: none; -webkit-animation: none; animation: none}></style>';
-				$page .= '<img class="image" id="webcam" src="/webcam/picture/'.$directory.'/'.$file.'" alt="" width="480" height="360" >';			
+				$page .= '<img class="image" id="webcam" src="webcam/'.$directory.'/'.$file.'" alt="" width="480" height="360" >';			
 				break;
 			}
 		}
@@ -136,7 +136,7 @@ function plaatprotect_image_viewer_page() {
 	
 	if ($eid==EVENT_PLAY) {	         
 		$tmp = '';
-		$files = scandir(BASE_DIR.'/webcam/picture/'.$directory);
+		$files = scandir(BASE_DIR.'/webcam/'.$directory);
 		$max = 0;
 		foreach ($files as $file) {
 			if (($file!='.') && ($file!='..')) {
@@ -144,7 +144,7 @@ function plaatprotect_image_viewer_page() {
 					$max++;
 					$tmp .= ',';
 				}
-				$tmp .= '"/webcam/picture/'.$directory.'/'.$file.'"';
+				$tmp .= '"webcam/'.$directory.'/'.$file.'"';
 			}
 		};
 				
@@ -168,13 +168,13 @@ function plaatprotect_archive_page() {
 	$page .= '<br/>';
 
 	$tmp = '';
-	$directories = scandir(BASE_DIR.'/webcam/picture');
+	$directories = scandir(BASE_DIR.'/webcam');
 	rsort($directories);
 	
 	$i=0;
 	foreach ($directories as $directory) {
 			
-		if (($directory!='.') && ($directory!='..')) {		
+		if (($directory!='.') && ($directory!='..') && ($directory!='index.php') && ($directory!='image1.jpg') && ($directory!='image2.jpg') && ($directory!='image3.jpg') && ($directory!='image4.jpg')) {
 			if (($i%5)==0) {
 				$tmp .= '<tr>';
 			}			
@@ -229,7 +229,6 @@ function plaatprotect_webcam_page() {
 	}
 	
 	$page .= '<div class="nav">';
-	//$page .= '<a href="webcam/picture">'.t('LINK_ARCHIVE').'</a>';
 	$page .= plaatprotect_link('pid='.PAGE_ARCHIVE, t('LINK_ARCHIVE'));
 	$page .= plaatprotect_link('pid='.PAGE_HOME, t('LINK_HOME'));
 	$page .= plaatprotect_link('pid='.$pid.'&eid='.EVENT_PICTURE, t('LINK_PICTURE'));
@@ -260,11 +259,11 @@ function plaatprotect_webcam() {
 
 		case EVENT_END:
 	         $id=0;
-	         $files = scandir(BASE_DIR.'/webcam/picture/'.$directory);
+	         $files = scandir(BASE_DIR.'/webcam/'.$directory);
 	         foreach ($files as $file) {
-			if (($file!='.') && ($file!='..')) {
-				$id++;
-			}
+					if (($file!='.') && ($file!='..') && ($file!='index.php') && ($file!='image1.jpg') && ($file!='image2.jpg') && ($file!='image3.jpg') && ($file!='image4.jpg')) {
+						$id++;
+					}
 	         };
 		 break;
 	

@@ -27,11 +27,12 @@
 ** ---------------------
 */
 
-$note[2] = '<div class="subparagraph">Version 0.2 (26-06-2016)</div>
+$note[2] = '<div class="subparagraph">Version 0.2 (27-06-2016)</div>
 <div class="large_text">
 <ul>
 <li>General: Added vibration alarm detection.</li>
 <li>General: Added zwave node status on home page.</li>
+<li>General: Improve webcam error recovery.</li>
 </ul>
 </div>';
 

@@ -162,6 +162,7 @@ $lang['webcam_description'] = 'Webcam omschrijving';
 $lang['webcam_resolution'] = 'Webcam resolutie';
 $lang['webcam_present'] = 'Webcam aanwezig';
 $lang['webcam_device'] = 'Webcam device mapping';
+$lang['webcam_fps'] = 'Webcam Frames Per Seconde';
 
 $lang['hue_description'] = 'Philips HUE description';
 $lang['hue_ip_address'] = 'Philips HUE IP address of bridge';
