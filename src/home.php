@@ -30,10 +30,11 @@
 
 $name = plaatprotect_db_get_config_item('system_name', LOOK_AND_FEEL);
 $version = plaatprotect_db_get_config_item('database_version');
+$password = plaatprotect_post("password", "");
+
 $webcam_present = plaatprotect_db_get_config_item('webcam_present', WEBCAM_1);
 $hue_present = plaatprotect_db_get_config_item('hue_present', HUE);
 $zwave_present = plaatprotect_db_get_config_item('zwave_present', ZWAVE);
-$password = plaatprotect_post("password", "");
 
 /*
 ** ---------------------
@@ -160,6 +161,7 @@ function plaatprotect_home_page() {
 
 	// input	
 	global $webcam_present;
+	global $zwave_present;
 	global $hue_present;
 	global $name;
 	global $session;
@@ -194,7 +196,7 @@ function plaatprotect_home_page() {
 		
 		$page .= '<tr>';
 		$page .= '<td>';
-		if ($webcam_present=="true") {
+		if ($zwave_present=="true") {
 			$page .= plaatprotect_link('pid='.PAGE_LOGGING, t('LINK_LOGGING'));
 		}
 		$page .= '</td>';		

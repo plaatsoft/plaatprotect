@@ -121,11 +121,31 @@ function plaatprotect_notification($topic, $content, $severity=0) {
   	require_once 'nmaApi.class.php';
 
   	$nma = new nmaApi(array('apikey' => $notification_nma_key));
-  	if($nma->verify()) {
+		if($nma->verify()) {
          	$nma->notify('plaatprotect', $topic, $content, $severity );
-	}
+		}
    }
 }
+
+/*
+** -----------
+** LOCK
+** -----------
+*/
+
+function plaatprotect_islocked() { 
+    if( file_exists( LOCK_FILE ) ) { 
+
+        $lockingPID = trim( file_get_contents( LOCK_FILE ) ); 
+        $pids = explode( "\n", trim( `ps -e | awk '{print $1}'` ) ); 
+        if( in_array( $lockingPID, $pids ) )  return true; 
+        unlink( LOCK_FILE ); 
+    } 
+    
+    file_put_contents( LOCK_FILE, getmypid() . "\n" ); 
+    return false; 
+} 
+
 
 /*
 ** -----------

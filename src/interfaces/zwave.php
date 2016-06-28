@@ -25,6 +25,8 @@ include "/var/www/html/plaatprotect/general.inc";
 include "/var/www/html/plaatprotect/database.inc";
 include "/var/www/html/plaatprotect/config.inc";
 
+define( 'LOCK_FILE', "/tmp/".basename( $argv[0], ".php" ).".lock" ); 
+if( plaatprotect_islocked() ) die( "Already running.\n" ); 
 
 // Open Aeotec Zstick (Gen. 5) device 
 exec('stty -F /dev/ttyACM0 9600 raw');
@@ -986,5 +988,8 @@ while (true) {
 
 #SendGetProtocolStatus();
 #Receive();
+
+unlink( LOCK_FILE ); 
+exit(0); 
 
 ?>

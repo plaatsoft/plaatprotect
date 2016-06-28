@@ -28,8 +28,8 @@ include '/var/www/html/plaatprotect/config.inc';
 include '/var/www/html/plaatprotect/database.inc';
 include '/var/www/html/plaatprotect/general.inc';
 
-define( 'LOCK_FILE', "/var/run/".basename( $argv[0], ".php" ).".lock" ); 
-if( isLocked() ) die( "Already running.\n" ); 
+define( 'LOCK_FILE', "/tmp/".basename( $argv[0], ".php" ).".lock" ); 
+if( plaatprotect_islocked() ) die( "Already running.\n" ); 
 
 plaatprotect_db_connect($dbhost, $dbuser, $dbpass, $dbname);
 
@@ -41,19 +41,6 @@ $im2 = '';
 if (!isset($index)) {
 	$index=1;
 }
-
-function isLocked() { 
-    if( file_exists( LOCK_FILE ) ) { 
-
-        $lockingPID = trim( file_get_contents( LOCK_FILE ) ); 
-        $pids = explode( "\n", trim( `ps -e | awk '{print $1}'` ) ); 
-        if( in_array( $lockingPID, $pids ) )  return true; 
-        unlink( LOCK_FILE ); 
-    } 
-    
-    file_put_contents( LOCK_FILE, getmypid() . "\n" ); 
-    return false; 
-} 
 
 function getColor($img, $x, $y) {
     $rgb = imagecolorat($img, $x, $y);
@@ -154,6 +141,7 @@ while (true) {
 	 
   $command = 'fswebcam -q --device '.$device.' --timestamp "%Y-%m-%d %H:%M:%S" -r '.$resolution. ' --title '.$name.' -S 1 '.BASE_DIR.'/webcam/image'.$index.'.jpg';
   exec($command);
+  echo $command."\r\n";
 	
   $detection_count = plaatprotect_motion($resolution);
 
@@ -166,7 +154,7 @@ while (true) {
     $sleep = round((1000000 / $webcam_fps) - $time);
   }
 	
-  //echo 'Process time='.round(($time))." usec [motion_count=".$detection_count." | now sleep ".$sleep." usec]\r\n";
+  echo 'Process time='.round(($time))." usec [motion_count=".$detection_count." | now sleep ".$sleep." usec]\r\n";
 		
   if ($sleep>0) {
     usleep($sleep);
