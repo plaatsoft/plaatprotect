@@ -201,8 +201,8 @@ function plaatprotect_home_page() {
 		}
 		$page .= '</td>';		
 		$page .= '<td>';
-		if ($webcam_present=="true") {
-			$page .= plaatprotect_link('pid='.PAGE_WEBCAM, t('LINK_WEBCAM'));
+		if ($zwave_present=="true") {
+			$page .= plaatprotect_link('pid='.PAGE_ZWAVE, t('LINK_ZWAVE'));
 		} 
 		$page .= '</td>';		
 		$page .= '<td>';
@@ -212,6 +212,17 @@ function plaatprotect_home_page() {
 		$page .= '</td>';		
 		$page .= '</tr>';
 		
+		if ($webcam_present=="true") {
+			$page .= '<tr>';
+			$page .= '<td>';
+			$page .= '</td>';		
+			$page .= '<td>';
+			$page .= plaatprotect_link('pid='.PAGE_WEBCAM, t('LINK_WEBCAM'));
+			$page .= '</td>';		
+			$page .= '<td>';
+			$page .= '</td>';		
+			$page .= '</tr>';
+		}
 				
 		$page .= '<tr>';
 		$page .= '<td>';

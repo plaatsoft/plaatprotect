@@ -69,7 +69,7 @@ $lang['LINK_PREV_FAST']     = i('backward');
 $lang['LINK_END']           = i('fast-forward'); 
 $lang['LINK_BEGIN']         = i('fast-backward'); 
 
-$lang['LINK_LOGGING']       = i('cog') . 'Logging';  
+$lang['LINK_LOGGING']       = i('cog') . 'Alarm Logging';  
 $lang['LINK_SETTINGS']      = i('cog') . 'Settings';  
 $lang['LINK_RELEASE_NOTES'] = i('align-left') . 'Release Notes';
 $lang['LINK_ABOUT']         = i('users') . 'About';
@@ -79,6 +79,7 @@ $lang['LINK_WEBCAM']        = i('camera') . 'Webcams';
 $lang['LINK_HUE']           = i('lightbulb-o') . 'HUE';
 $lang['LINK_PICTURE']       = i('camera') . 'Picture'; 
 $lang['LINK_ARCHIVE']       = i('folder-open') . 'Archive'; 
+$lang['LINK_ZWAVE']         = i('folder-open') . 'ZWave'; 
 
  
 /*
@@ -188,7 +189,7 @@ $lang['TITLE_ARCHIVE' ] = 'Archive';
 ** ------------------
 */
 
-$lang['TITLE_LOGGING'] ='Logging';
+$lang['TITLE_LOGGING'] ='Alarm Logging';
 
 
 /*
@@ -198,6 +199,15 @@ $lang['TITLE_LOGGING'] ='Logging';
 */
 
 $lang['TITLE_HUE'] ='Philips HUE System';
+
+/*
+** ------------------
+** ZWAVE
+** ------------------
+*/
+
+$lang['TITLE_ZWAVE'] ='ZWAVE System';
+
 
 /*
 ** ------------------

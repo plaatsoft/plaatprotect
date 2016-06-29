@@ -23,50 +23,28 @@
 
 /*
 ** ---------------------
-** HUE 
-** ---------------------
-*/
-
-function plaatprotect_get_inventory_hue() {
-		
- 	$hue_ip = plaatprotect_db_get_config_item('hue_ip_address',HUE);
- 	$hue_key = plaatprotect_db_get_config_item('hue_key',HUE);
-	
-   $hue_url = "http://".$hue_ip."/api/".$hue_key."/lights/";
-	
-   $json = file_get_contents($hue_url);
-	
-	//echo $json;
-	
-	$data = json_decode($json);
-
-   return $data;
-}
-
-/*
-** ---------------------
 ** DATABASE
 ** ---------------------
 */
 
-function plaatprotect_hue_alarm_enabled($id) {
+function plaatprotect_get_alarm_zwave_state($id) {
 
-	$sql = 'select hid from hue where hid='.$id;
+	$sql = 'select alarm_enabled from zwave where nodeid='.$id;
 	$result = plaatprotect_db_query($sql);
 	$row = plaatprotect_db_fetch_object($result);
 	
-	return (isset($row->hid));	
+	return (isset($row->alarm_enabled) && ($row->alarm_enabled==1));	
 }
 
-function plaatprotect_hue_alarm_update($id) {
+function plaatprotect_set_alarm_zwave_state($id) {
 
-	if (plaatprotect_hue_alarm_enabled($id)) {
+	if (plaatprotect_get_alarm_zwave_state($id)) {
 	
-		$sql = 'delete from hue where hid='.$id;
+		$sql = 'update zwave set alarm_enabled=0 where nodeid='.$id;
 		
 	} else {
 	
-		$sql = 'insert into hue (hid) value ('.$id.')';
+		$sql = 'update zwave set alarm_enabled=1 where nodeid='.$id;
 	}
 	plaatprotect_db_query($sql);
 }
@@ -78,17 +56,15 @@ function plaatprotect_hue_alarm_update($id) {
 */
 
 /**
- * plaatprotect hue page
+ * plaatprotect zwave overview page
  * @return HTML block which page contain.
  */
-function plaatprotect_hue_page() {
+function plaatprotect_zwave_page() {
 
 	global $pid;
 
    $page ="<style>input[type='checkbox']{width:24px;height:24px}</style>";
-	$page .= '<h1>'.t('TITLE_HUE').'</h1>';
-
-	$data  = plaatprotect_get_inventory_hue();
+	$page .= '<h1>'.t('TITLE_ZWAVE').'</h1>';
 	
 	$page .= '<br>';
 		
@@ -97,15 +73,11 @@ function plaatprotect_hue_page() {
 	$page .= '<tr>';
 	
 	$page .= '<th width="15%">';
-	$page .= 'Id';
+	$page .= 'NodeId';
 	$page .= '</th>';
 	
 	$page .= '<th width="15%">';
-	$page .= 'Name';
-	$page .= '</th>';
-	
-	$page .= '<th width="15%">';
-	$page .= 'Type';
+	$page .= 'Description';
 	$page .= '</th>';
 	
 	$page .= '<th width="15%">';
@@ -113,9 +85,9 @@ function plaatprotect_hue_page() {
 	$page .= '</th>';
 	
 	$page .= '<th width="15%">';
-	$page .= 'SW Version';
+	$page .= 'Location';
 	$page .= '</th>';
-	
+		
 	$page .= '<th width="15%">';
 	$page .= 'State';
 	$page .= '</th>';
@@ -126,40 +98,39 @@ function plaatprotect_hue_page() {
 			
 	$page .= '</tr>';
 		
-	foreach($data as $id => $bulb ) {	
+	$sql = 'select nodeid, vendor, description, location, alarm_enabled from zwave';
+	$result = plaatprotect_db_query($sql);
+	while ($row = plaatprotect_db_fetch_object($result)) {
+
 		$page .= '<tr>';
 		
 		$page .= '<td>';
-		$page .= $id;
+		$page .= $row->nodeid;
 		$page .= '</td>';
 		
 		$page .= '<td>';
-		$page .= $bulb->name;
+		$page .= $row->description;
 		$page .= '</td>';
 		
 		$page .= '<td>';
-		$page .= $bulb->modelid;
+		$page .= $row->vendor;
 		$page .= '</td>';
 		
 		$page .= '<td>';
-		$page .= $bulb->manufacturername;
+		$page .= $row->location;
+		$page .= '</td>';
+				
+		$page .= '<td>';
+		$page .= "ONLINE";
 		$page .= '</td>';
 		
 		$page .= '<td>';
-		$page .= $bulb->swversion;
-		$page .= '</td>';
-		
-		$page .= '<td><div id="bulb'.$id.'">';
-		if (!$bulb->state->reachable) {
-			$page .= "OFFLINE";
+		if ($row->description=='Sirene') {
+			$page .= '<input type="checkbox" '. (plaatprotect_get_alarm_zwave_state($row->nodeid) ? "checked" : "");			
+			$page .= ' onchange="link(\'pid='.$pid.'&eid='.EVENT_UPDATE.'&id='.$row->nodeid.'\');">';
 		} else {
-			$page .= ($bulb->state->on) ? "ON" : "OFF";
+			$page .= '<input type="checkbox" disabled readonly>';			
 		}
-		$page .= '</div></td>';
-		
-		$page .= '<td>';
-		$page .= '<input type="checkbox" '. (plaatprotect_hue_alarm_enabled($id) ? "checked" : "");
-		$page .= ' onchange="link(\'pid='.$pid.'&eid='.EVENT_UPDATE.'&id='.$id.'\');">';
 		$page .= '</td>';
 		
 		$page .= '</tr>';
@@ -183,10 +154,10 @@ function plaatprotect_hue_page() {
 */
 
 /**
- * plaatprotect about handler
+ * plaatprotect 
  * @return HTML block which page contain.
  */
-function plaatprotect_hue() {
+function plaatprotect_zwave() {
 
   /* input */
   global $pid;
@@ -197,15 +168,15 @@ function plaatprotect_hue() {
   switch ($eid) {
   
 		case EVENT_UPDATE: 
-			plaatprotect_hue_alarm_update($id);
+			plaatprotect_set_alarm_zwave_state($id);
 			break;
 	}
 
   /* Page handler */
   switch ($pid) {
 
-     case PAGE_HUE:
-        return plaatprotect_hue_page();
+     case PAGE_ZWAVE:
+        return plaatprotect_zwave_page();
         break;
   }
 }

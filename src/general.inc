@@ -44,9 +44,10 @@ define('PAGE_WEBCAM',               13);
 define('PAGE_ARCHIVE',              14);
 define('PAGE_IMAGE_VIEWER',         15);
 define('PAGE_HUE',                  16);
-define('PAGE_ABOUT',                17);
-define('PAGE_DONATE',               18);
-define('PAGE_RELEASE_NOTES',        19);
+define('PAGE_ZWAVE',                17);
+define('PAGE_ABOUT',                18);
+define('PAGE_DONATE',               19);
+define('PAGE_RELEASE_NOTES',        20);
 
 define('PAGE_SETTING_LOGIN',        30);
 define('PAGE_SETTING_CATEGORY',     31);
@@ -59,26 +60,25 @@ define('PAGE_SETTING_EDIT',         33);
 ** -----------
 */
 
-define('EVENT_NONE',                10);
-define('EVENT_PREV',                13);
-define('EVENT_NEXT',                14);
-define('EVENT_SAVE',                16);
-define('EVENT_BACKUP',              22);
-define('EVENT_EXPORT',              23);
-define('EVENT_SCATTER',             24);
-define('EVENT_LOGIN',               25);
-define('EVENT_SCHEME',              26);
-define('EVENT_LANGUAGE',            27);
-define('EVENT_DELETE',              28);
-define('EVENT_PICTURE',             29);
-define('EVENT_VIEW',                30);
-define('EVENT_PLAY',                31);
-define('EVENT_NEXT_FAST',           32);
-define('EVENT_PREV_FAST',           33);
-define('EVENT_STOP',                34);
-define('EVENT_BEGIN',               35);
-define('EVENT_END',                 36);
-define('EVENT_HUE',                 37);
+define('EVENT_NONE',                110);
+define('EVENT_PREV',                111);
+define('EVENT_NEXT',                112);
+define('EVENT_SAVE',                113);
+define('EVENT_BACKUP',              114);
+define('EVENT_EXPORT',              115);
+define('EVENT_LOGIN',               116);
+define('EVENT_SCHEME',              117);
+define('EVENT_LANGUAGE',            118);
+define('EVENT_DELETE',              119);
+define('EVENT_PICTURE',             120);
+define('EVENT_VIEW',                121);
+define('EVENT_PLAY',                122);
+define('EVENT_NEXT_FAST',           123);
+define('EVENT_PREV_FAST',           124);
+define('EVENT_STOP',                125);
+define('EVENT_BEGIN',               126);
+define('EVENT_END',                 127);
+define('EVENT_UPDATE',              128);
 
 /*
 ** -----------

@@ -213,6 +213,11 @@ switch ($pid) {
 		include "hue.php";
 		$page = plaatprotect_hue();
 		break;
+		
+	case PAGE_ZWAVE: 
+		include "zwave_view.php";
+		$page = plaatprotect_zwave();
+		break;
 
 	case PAGE_DONATE: 
 		include "donate.php";

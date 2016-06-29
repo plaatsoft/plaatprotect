@@ -40,9 +40,10 @@ CREATE TABLE IF NOT EXISTS `event` (
 CREATE TABLE IF NOT EXISTS `zwave` (
   `zid` int(11) NOT NULL,
   `nodeid` int(11) NOT NULL,
-  `type` int(11) NOT NULL,
+  `vendor` varchar(32) NOT NULL,
   `description` varchar(128) NOT NULL,
   `location` varchar(128) NOT NULL,
+  `alarm_enabled` int(11) NOT NULL,
   `last_update` datetime NOT NULL
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=latin1;
 

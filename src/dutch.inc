@@ -68,7 +68,6 @@ $lang['LINK_SETTINGS']       = i('cog') . 'Configuratie';
 $lang['LINK_MAX']            = i('bolt') . 'Piek';
 $lang['LINK_BACKUP']         = i('archive') . 'Export naar SQL';
 $lang['LINK_EXPORT']         = i('download') . 'Export naar CSV';
-$lang['LINK_SCATTER']        = 'Scatter';
 $lang['LINK_LOGIN']          = 'Login';
 $lang['LINK_BACK']           = i('home') . 'Terug'; 
 $lang['LINK_SYSTEM'] 	     = i('fort-awesome') .'Systeem Overzicht';
@@ -89,6 +88,7 @@ $lang['LINK_NEXT_FAST']      = i('forward');
 $lang['LINK_PREV_FAST']      = i('backward');
 $lang['LINK_END']            = i('fast-forward');
 $lang['LINK_BEGIN']          = i('fast-backward');
+$lang['LINK_ZWAVE']         = i('folder-open') . 'ZWave'; 
 
 /*
 ** ------------------
@@ -204,6 +204,14 @@ $lang['TITLE_ARCHIVE' ] = 'Archief';
 */
 
 $lang['TITLE_HUE'] ='Philips HUE System';
+
+/*
+** ------------------
+** ZWAVE
+** ------------------
+*/
+
+$lang['TITLE_ZWAVE'] ='ZWAVE System';
 
 /*
 ** ------------------
