@@ -76,8 +76,9 @@ define('EVENT_PLAY',                31);
 define('EVENT_NEXT_FAST',           32);
 define('EVENT_PREV_FAST',           33);
 define('EVENT_STOP',                34);
-define('EVENT_BEGIN',               36);
-define('EVENT_END',                 35);
+define('EVENT_BEGIN',               35);
+define('EVENT_END',                 36);
+define('EVENT_HUE',                 37);
 
 /*
 ** -----------

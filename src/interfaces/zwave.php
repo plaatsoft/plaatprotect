@@ -44,24 +44,25 @@ function setAlarm($nodeId, $event, $value) {
    /* Log alarm in databae */  								
 	plaatprotect_event_insert(hexdec($nodeId), $event, $value);	
 
-   $tmp = 'on';
-   if ($value==0x00) {
-	    $tmp = 'off';
-   }
-
-	plaatprotect_node_alive($nodeId);
+  	plaatprotect_node_alive($nodeId);
 	
    $sql  = 'select location from zwave where nodeid='.$nodeId;	
    $result = plaatprotect_db_query($sql);
    $row = plaatprotect_db_fetch_object($result);
 	
-   plaatprotect_notification("Alarm" , "Location ".$row->location." [Zone ".$nodeId."] alarm ".$tmp);
- 
-   if ($value==0) {
-       plaatprotect_control_hue(7, "false");
-   } else {
-       plaatprotect_control_hue(7, "true");
-   }
+	// Notication to mobile
+   plaatprotect_notification("Alarm" , "Location ".$row->location." [Zone ".$nodeId."] alarm ". ($value==0x00) ? 'off' : 'on' );
+  
+   // Active Hue Bulbs
+	$sql = 'select hid from hue';
+	$result = plaatprotect_db_query($sql);
+	while ($row = plaatprotect_db_fetch_object($result)) {	
+		if ($value==0) {
+			plaatprotect_control_hue($row->hid, "false");
+		} else {
+			plaatprotect_control_hue($row->hid, "true");
+		}
+	}
 }
 
 /**
@@ -131,7 +132,6 @@ function plaatprotect_control_hue($hue_bulb_nr, $value) {
 	
    $hue_url = "http://".$hue_ip."/api/".$hue_key."/lights/".$hue_bulb_nr."/state";
 
-	echo "\n\r";
    echo ("Hue command: ");
 
    echo file_get_contents($hue_url, false, stream_context_create(["http" => [
@@ -952,7 +952,13 @@ while ($row = plaatprotect_db_fetch_object($result)) {
   Receive();
 }
 
-plaatprotect_control_hue(7, "false");
+// Disable Hue Bulbs
+$sql = 'select hid from hue';
+$result = plaatprotect_db_query($sql);
+while ($row = plaatprotect_db_fetch_object($result)) {	
+	plaatprotect_control_hue($row->hid, "false");
+}
+	
 
 /* Read Zwave incoming events endless */
 while (true) {

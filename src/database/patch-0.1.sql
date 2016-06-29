@@ -67,12 +67,16 @@ CREATE TABLE IF NOT EXISTS `sensor` (
   `battery` int(11) NOT NULL
 ) ENGINE=MyISAM AUTO_INCREMENT=1 DEFAULT CHARSET=latin1;
 
+CREATE TABLE IF NOT EXISTS `hue` (
+  `hid` int(11) NOT NULL
+) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 
 ALTER TABLE `config` ADD PRIMARY KEY (`id`);
 ALTER TABLE `event` ADD PRIMARY KEY (`eid`);
 ALTER TABLE `zwave` ADD PRIMARY KEY (`zid`);
 ALTER TABLE `session` ADD PRIMARY KEY (`sid`);
 ALTER TABLE `sensor` ADD PRIMARY KEY (`sid`);
+ALTER TABLE `hue` ADD PRIMARY KEY (`hid`);
 
 INSERT INTO `config` (`id`, `category`, `token`, `value`, `options`, `date`, `readonly`, `rebuild`, `encrypt`) VALUES
 (1, 0, 'database_version', '0.1', '', '2016-06-04', 1, 0, 0),
