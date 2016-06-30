@@ -63,6 +63,13 @@ function setAlarm($nodeId, $event, $value) {
 			plaatprotect_control_hue($row->hid, "true");
 		}
 	}
+	
+	$sql  = 'select nodeid from zwave where alarm_enabled=1';	
+   $result = plaatprotect_db_query($sql);
+   while ($row = plaatprotect_db_fetch_object($result)) {
+	
+		SendDataActiveHorn($row->nodeid,$value,$row->nodeid);
+	}	
 }
 
 /**
@@ -232,7 +239,7 @@ function LogRxCommand($data, $crc) {
 
 function int2hex($value) {
 
-   return sprintf("%02d",$value);
+   return sprintf("%02x",$value);
 }
 
 /**
@@ -479,27 +486,14 @@ function SendDataActiveHorn($node,$value,$callbackId) {
    * Byte 5 : ConfigSet (0x03)
    * Byte 6 : Command Class BASIC 0x20 
    * Byte 7 : Parameter (0x01)
-   * Byte 8 : Value (On=0x01 Off=0x00) 
-   * Byte 9 : CallBackId (0xfe) 
+   * Byte 8 : Value (On=0xff Off=0x00) 
+   * Byte 9 : CallBackId 
    * Byte 10: Last byte is checksum
    */
    
-   echo "SendDataActiveHorn NodeId=".$node." ";
-	
-	switch ($value) {
-		case 0:  echo "Off";
-		         break;
-					
-		case 1:  echo "On";
-		         break;
-					
-		default: echo "NotSupportValue, abort";
-		         return;
-               break;
-   }		
-   echo "\r\n";
+   echo "SendDataActiveHorn NodeId=".int2hex($node)." value=".int2hex($value)." callbackId=".int2hex($callbackId)."\r\n";
 
-   $command = hex2bin("01090013".int2hex($node)."032001".int2hex($value).$callbackId);
+   $command = hex2bin("01090013".int2hex($node)."032001".int2hex($value).int2hex($callbackId));
    $command .= GenerateChecksum($command);
    fwrite($fp, $command, strlen($command));
    LogTxCommand($command);
@@ -958,6 +952,15 @@ $result = plaatprotect_db_query($sql);
 while ($row = plaatprotect_db_fetch_object($result)) {	
 	plaatprotect_control_hue($row->hid, "false");
 }
+	
+// Disable Sirene
+$sql  = 'select nodeid from zwave where alarm_enabled=1';	
+$result = plaatprotect_db_query($sql);
+while ($row = plaatprotect_db_fetch_object($result)) {	
+	SendDataActiveHorn($row->nodeid,0,$row->nodeid);
+	Receive();
+	Receive();
+}	
 	
 
 /* Read Zwave incoming events endless */
