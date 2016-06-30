@@ -1,6 +1,6 @@
 <?php
 
-/* 
+/*
 **  ============
 **  PlaatProtect
 **  ============
@@ -8,7 +8,7 @@
 **  Created by wplaat
 **
 **  For more information visit the following website.
-**  Website : www.plaatsoft.nl 
+**  Website : www.plaatsoft.nl
 **
 **  Or send an email to the following address.
 **  Email   : info@plaatsoft.nl
@@ -23,7 +23,7 @@
 
 /*
 ** ---------------------
-** HUE 
+** HUE
 ** ---------------------
 */
 
@@ -89,80 +89,46 @@ function plaatprotect_hue_page() {
 	$page .= '<h1>'.t('TITLE_HUE').'</h1>';
 
 	$data  = plaatprotect_get_inventory_hue();
-	
-	$page .= '<br>';
-		
+
 	$page .= '<table>';
-	
+	$page .= '<thead>';
 	$page .= '<tr>';
-	
-	$page .= '<th width="15%">';
-	$page .= 'Id';
-	$page .= '</th>';
-	
-	$page .= '<th width="15%">';
-	$page .= 'Name';
-	$page .= '</th>';
-	
-	$page .= '<th width="15%">';
-	$page .= 'Type';
-	$page .= '</th>';
-	
-	$page .= '<th width="15%">';
-	$page .= 'Vendor';
-	$page .= '</th>';
-	
-	$page .= '<th width="15%">';
-	$page .= 'SW Version';
-	$page .= '</th>';
-	
-	$page .= '<th width="15%">';
-	$page .= 'State';
-	$page .= '</th>';
-	
-	$page .= '<th width="15%">';
-	$page .= 'Alarm';
-	$page .= '</th>';
-			
+	$page .= '<th width="12%">ID</th>';
+	$page .= '<th width="12%">Name</th>';
+	$page .= '<th width="12%">Type</th>';
+	$page .= '<th width="12%">Model</th>';
+	$page .= '<th width="12%">Vendor</th>';
+	$page .= '<th width="12%">Version</th>';
+   $page .= '<th width="12%">State</th>';
+	$page .= '<th width="12%">Alarm</th>';
 	$page .= '</tr>';
-		
-	foreach($data as $id => $bulb ) {	
-		$page .= '<tr>';
-		
-		$page .= '<td>';
-		$page .= $id;
-		$page .= '</td>';
-		
-		$page .= '<td>';
-		$page .= $bulb->name;
-		$page .= '</td>';
-		
-		$page .= '<td>';
-		$page .= $bulb->modelid;
-		$page .= '</td>';
-		
-		$page .= '<td>';
-		$page .= $bulb->manufacturername;
-		$page .= '</td>';
-		
-		$page .= '<td>';
-		$page .= $bulb->swversion;
-		$page .= '</td>';
-		
-		$page .= '<td><div id="bulb'.$id.'">';
-		if (!$bulb->state->reachable) {
-			$page .= "OFFLINE";
-		} else {
-			$page .= ($bulb->state->on) ? "ON" : "OFF";
-		}
-		$page .= '</div></td>';
+	$page .= '</thead>';
+	$page .= '<tbody>';
+
+	foreach($data as $id => $bulb ) {
+	  $page .= '<tr>';
+  	  $page .= '<td>' . $id . '</td>';
+	  $page .= '<td>' . $bulb->name . '</td>';
+	  $page .= '<td>' . $bulb->type . '</td>';
+	  $page .= '<td>' . $bulb->modelid . '</td>';
+	  $page .= '<td>' . $bulb->manufacturername . '</td>';
+	  $page .= '<td>' . $bulb->swversion . '</td>';
+	  $page .= ($bulb->state->reachable ? ($bulb->state->on ? '<td class="on">ON</td>' : '<td class="off">OFF</td>') : '<td class="not">OFFLINE</td>') . '</td>';
+
 		
 		$page .= '<td>';
 		$page .= '<input type="checkbox" '. (plaatprotect_hue_alarm_enabled($id) ? "checked" : "");
 		$page .= ' onchange="link(\'pid='.$pid.'&eid='.EVENT_UPDATE.'&id='.$id.'\');">';
 		$page .= '</td>';
+
+
+	  $page .= '</tr>';
+
+		/*;
+
+
 		
-		$page .= '</tr>';
+		*/
 	}
 	
 	$page .= '</table>';

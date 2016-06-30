@@ -33,7 +33,7 @@ if( plaatprotect_islocked() ) die( "Already running.\n" );
 
 plaatprotect_db_connect($dbhost, $dbuser, $dbpass, $dbname);
 
-$detect_level=35;
+$detect_level=15;
 $detect_areas=25;
 $im2 = '';
 
@@ -55,20 +55,20 @@ function plaatprotect_make_picture($name, $width, $height) {
    $path = BASE_DIR.'/webcam/'.date('Y-m-d');		
    plaatprotect_create_path($path);
 	
-	#$source = BASE_DIR.'/webcam/image1.jpg';
-   $source = BASE_DIR.'/webcam/image1.png';
+	$source = BASE_DIR.'/webcam/image1.jpg';
+   #$source = BASE_DIR.'/webcam/image1.png';
 
    $now = DateTime::createFromFormat('U.u', microtime(true));
    $now->setTimezone(new DateTimeZone('Europe/Amsterdam'));	
    $destination = $path.'/image1-'.$now->format("His.u").'.jpg';
 	
-   #$im = imagecreatefromjpeg($source);
-	$im = imagecreatefrompng($source);
+   $im = imagecreatefromjpeg($source);
+	#$im = imagecreatefrompng($source);
 	
 	$textcolor = imagecolorallocate($im, 255, 255, 255);
-	imagestring($im, 5, 5, $height-20, $name, $textcolor);
-	imagestring($im, 5, ($width-75), $height-20, date("H:m:s"), $textcolor);
-	
+	imagestring($im1, 5, 5, $height-20, $name, $textcolor);
+	imagestring($im1, 5, ($width-180), $height-20, date("Y-m-d H:m:s"), $textcolor);
+		
    imagejpeg($im, $destination);	
 }
 
@@ -91,12 +91,12 @@ function plaatprotect_motion($resolution, $name) {
 	
    $offset=$segment/2;
 
-   #$input = BASE_DIR.'/webcam/image'.$index.'.jpg';
-	$input = BASE_DIR.'/webcam/image'.$index.'.png';
+   $input = BASE_DIR.'/webcam/image'.$index.'.jpg';
+	#$input = BASE_DIR.'/webcam/image'.$index.'.png';
    $output = BASE_DIR.'/webcam/image'.($index+2).'.jpg';
 
-   #$im1 = imagecreatefromjpeg($input);
-	$im1 = imagecreatefrompng($input);
+   $im1 = imagecreatefromjpeg($input);
+	#$im1 = imagecreatefrompng($input);
    if(!$im1) {
       return;
    }
@@ -124,7 +124,7 @@ function plaatprotect_motion($resolution, $name) {
 	
 	$textcolor = imagecolorallocate($im1, 255, 255, 255);
 	imagestring($im1, 5, 5, $height-20, $name, $textcolor);
-	imagestring($im1, 5, ($width-75), $height-20, date("H:m:s"), $textcolor);
+	imagestring($im1, 5, ($width-180), $height-20, date("Y-m-d H:m:s"), $textcolor);
 
    $im2=$im1;
    imagejpeg($im1, $output);	
@@ -152,9 +152,10 @@ while (true) {
   $device = plaatprotect_db_get_config_item('webcam_device', $instance);
   $webcam_fps = plaatprotect_db_get_config_item('webcam_fps', $instance);
 	 
-  #$command = 'fswebcam -q --device '.$device.' --timesAtamp "%Y-%m-%d %H:%M:%S" -r '.$resolution. ' --title '.$name.' -S 1 '.BASE_DIR.'/webcam/image'.$index.'.jpg';
+  #$command = 'fswebcam -q --device '.$device.' --timestamp "%Y-%m-%d %H:%M:%S" -r '.$resolution. ' --title '.$name.' -S 1 '.BASE_DIR.'/webcam/image'.$index.'.jpg';  
+  $command = 'fswebcam -q --device '.$device.' --no-banner -r '.$resolution. ' -S 1 '.BASE_DIR.'/webcam/image'.$index.'.jpg';   
+  #$command = 'ffmpeg -i '.$device.' -s '.$resolution. ' -c png -frames 1 -v 0 -y '.BASE_DIR.'/webcam/image'.$index.'.png'; 
   
-  $command = 'ffmpeg -i '.$device.' -s '.$resolution. ' -c png -frames 1 -v 0 -y '.BASE_DIR.'/webcam/image'.$index.'.png'; 
   exec($command);
   echo $command."\r\n";
 	

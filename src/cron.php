@@ -35,15 +35,14 @@ include "database.inc";
 
 plaatprotect_db_connect($dbhost, $dbuser, $dbpass, $dbname);
 
-$zwave_present = plaatprotect_db_get_config_item('zwave_present', ZWAVE);
-if ($zwave_present=="true") {
-   exec('php '.BASE_DIR.'/interfaces/zwave.php > /dev/null 2>&1 &');
-   echo 'php '.BASE_DIR.'/interfaces/zwave.php > /dev/null 2>&1 &';
-}
+#$zwave_present = plaatprotect_db_get_config_item('zwave_present', ZWAVE);
+#if ($zwave_present=="true") {
+#   exec('php '.BASE_DIR.'/interfaces/zwave.php > /dev/null 2>&1 &');
+#}
 
 $webcam_present_1 = plaatprotect_db_get_config_item('webcam_present', WEBCAM_1);
 if ($webcam_present_1=="true") {
-   exec('sudo php '.BASE_DIR.'/interfaces/webcam.php 1 > /dev/null 2>&1 &');
+   exec('php '.BASE_DIR.'/interfaces/webcam.php 1 > /dev/null 2>&1 &');
 }
 
 plaatprotect_db_close();

@@ -72,7 +72,7 @@ function check_zwave_network() {
 			if ($value<(60*60*2)) {
 			
 				$page .= '<div class="checker good">';
-				$page .= '['.$row->nodeid.']';
+				$page .= 'Node '.$row->nodeid.' : ';
 				if (isset($row2->temperature)) {
 					$page .= ' '.$row2->temperature.'&deg;C';
 				}
@@ -84,7 +84,7 @@ function check_zwave_network() {
 			} else {
 			
 				$page .= '<div class="checker bad" >';
-				$page .= '['.$row->nodeid.']';
+				$page .= 'Node '.$row->nodeid;
 				$page .= '</div> ';
 			}
 		}
@@ -201,6 +201,11 @@ function plaatprotect_home_page() {
 		}
 		$page .= '</td>';		
 		$page .= '<td>';
+			if ($webcam_present=="true") {
+				$page .= plaatprotect_link('pid='.PAGE_WEBCAM, t('LINK_WEBCAM'));
+			}
+		$page .= '</td>';	
+		$page .= '<td>';
 		if ($zwave_present=="true") {
 			$page .= plaatprotect_link('pid='.PAGE_ZWAVE, t('LINK_ZWAVE'));
 		} 
@@ -212,21 +217,7 @@ function plaatprotect_home_page() {
 		$page .= '</td>';		
 		$page .= '</tr>';
 		
-		if ($webcam_present=="true") {
-			$page .= '<tr>';
-			$page .= '<td>';
-			$page .= '</td>';		
-			$page .= '<td>';
-			$page .= plaatprotect_link('pid='.PAGE_WEBCAM, t('LINK_WEBCAM'));
-			$page .= '</td>';		
-			$page .= '<td>';
-			$page .= '</td>';		
-			$page .= '</tr>';
-		}
-				
-		$page .= '<tr>';
-		$page .= '<td>';
-		$page .= '</td>';		
+		$page .= '<tr>';	
 		$page .= '<td>';
 		$settings_password = plaatprotect_db_get_config_item('settings_password',SECURITY);		
 		if (strlen($settings_password)>0) {
@@ -235,12 +226,7 @@ function plaatprotect_home_page() {
 			$page .= plaatprotect_link('pid='.PAGE_SETTING_CATEGORY, t('LINK_SETTINGS')); 
 		}
 		$page .= '</td>';		
-		$page .= '<td>';
-		$page .= '</td>';		
-		$page .= '</tr>';
-
-		$page .= '<tr>';
-		$page .= '<td>';
+		$page .= '<td>';		
 		$page .= plaatprotect_link('pid='.PAGE_DONATE, t('LINK_DONATE'));
 		$page .= '</td>';
 		$page .= '<td>';
