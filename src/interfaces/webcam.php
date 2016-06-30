@@ -34,7 +34,7 @@ if( plaatprotect_islocked() ) die( "Already running.\n" );
 plaatprotect_db_connect($dbhost, $dbuser, $dbpass, $dbname);
 
 $detect_level=15;
-$detect_areas=25;
+$detect_areas=15;
 $im2 = '';
 
 @$index = $argv[1];
@@ -66,8 +66,8 @@ function plaatprotect_make_picture($name, $width, $height) {
 	#$im = imagecreatefrompng($source);
 	
 	$textcolor = imagecolorallocate($im, 255, 255, 255);
-	imagestring($im1, 5, 5, $height-20, $name, $textcolor);
-	imagestring($im1, 5, ($width-180), $height-20, date("Y-m-d H:m:s"), $textcolor);
+	imagestring($im, 5, 5, $height-20, $name, $textcolor);
+	imagestring($im, 5, ($width-180), $height-20, date("Y-m-d H:m:s"), $textcolor);
 		
    imagejpeg($im, $destination);	
 }
