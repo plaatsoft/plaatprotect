@@ -48,6 +48,8 @@ define('PAGE_ZWAVE',                17);
 define('PAGE_ABOUT',                18);
 define('PAGE_DONATE',               19);
 define('PAGE_RELEASE_NOTES',        20);
+define('PAGE_CHART',                21);
+
 
 define('PAGE_SETTING_LOGIN',        30);
 define('PAGE_SETTING_CATEGORY',     31);

@@ -123,12 +123,6 @@ function plaatprotect_hue_page() {
 
 
 	  $page .= '</tr>';
-
-		/*;
-
-
-		
-		*/
 	}
 	
 	$page .= '</table>';

@@ -214,6 +214,11 @@ switch ($pid) {
 		$page = plaatprotect_hue();
 		break;
 		
+	case PAGE_CHART: 
+		include "chart.php";
+		$page = plaatprotect_chart();
+		break;
+		
 	case PAGE_ZWAVE: 
 		include "zwave_view.php";
 		$page = plaatprotect_zwave();

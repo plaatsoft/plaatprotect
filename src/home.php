@@ -236,6 +236,18 @@ function plaatprotect_home_page() {
 		$page .= plaatprotect_link('pid='.PAGE_RELEASE_NOTES, t('LINK_RELEASE_NOTES'));		
 		$page .= '</td>';
 		$page .= '</tr>';
+		
+		$page .= '<tr>';	
+		$page .= '<td>';
+		$page .= '</td>';		
+		$page .= '<td>';		
+		$page .= plaatprotect_link('pid='.PAGE_CHART, 'Chart');
+		$page .= '</td>';
+		$page .= '<td>';
+		$page .= '</td>';
+		$page .= '<td>';
+		$page .= '</td>';
+		$page .= '</tr>';
 				
 		$page .= '</table>';
 		$page .= '</div>';
