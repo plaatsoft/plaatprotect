@@ -205,7 +205,7 @@ switch ($pid) {
 	case PAGE_IMAGE_VIEWER: 
 	case PAGE_ARCHIVE: 
 	case PAGE_WEBCAM: 
-		include "webcam.php";
+		include "webcam_view.php";
 		$page = plaatprotect_webcam();
 		break;
 		

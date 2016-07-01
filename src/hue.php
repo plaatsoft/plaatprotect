@@ -137,7 +137,7 @@ function plaatprotect_hue_page() {
 	$page .= plaatprotect_link('pid='.PAGE_HOME, t('LINK_HOME'));
 	$page .=  '</div>';
 	
-	$page .= '<script>setTimeout(link,5000,\'pid='.$pid.'\');</script>';
+	//$page .= '<script>setTimeout(link,5000,\'pid='.$pid.'\');</script>';
 		
 	return $page;
 }

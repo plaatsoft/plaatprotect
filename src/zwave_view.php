@@ -73,7 +73,7 @@ function plaatprotect_zwave_page() {
 	$page .= '<tr>';
 	
 	$page .= '<th width="15%">';
-	$page .= 'NodeId';
+	$page .= 'ID';
 	$page .= '</th>';
 	
 	$page .= '<th width="15%">';
@@ -142,7 +142,7 @@ function plaatprotect_zwave_page() {
 	$page .= plaatprotect_link('pid='.PAGE_HOME, t('LINK_HOME'));
 	$page .=  '</div>';
 	
-	$page .= '<script>setTimeout(link,5000,\'pid='.$pid.'\');</script>';
+	//$page .= '<script>setTimeout(link,5000,\'pid='.$pid.'\');</script>';
 		
 	return $page;
 }
