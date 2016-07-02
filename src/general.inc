@@ -125,7 +125,7 @@ function plaatprotect_notification($topic, $content, $severity=0) {
 
   	$nma = new nmaApi(array('apikey' => $notification_nma_key));
 		if($nma->verify()) {
-         	$nma->notify('plaatprotect', $topic, $content, $severity );
+         	$nma->notify('PlaatProtect', $topic, $content, $severity );
 		}
    }
 }

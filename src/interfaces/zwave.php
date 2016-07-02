@@ -25,6 +25,18 @@ include "/var/www/html/plaatprotect/general.inc";
 include "/var/www/html/plaatprotect/database.inc";
 include "/var/www/html/plaatprotect/config.inc";
 
+define('EVENT_IDLE',        		10);
+define('EVENT_ALARM_ON',   		11);
+define('EVENT_ALARM_OFF', 	  		12);
+
+define('STATE_IDLE',        		20);
+define('STATE_ACTIVE',      		21);
+
+$state = STATE_IDLE;
+$event = EVENT_IDLE;
+$event_nodeid = 0;
+$event_timestamp = 0;
+
 define( 'LOCK_FILE', "/tmp/".basename( $argv[0], ".php" ).".lock" ); 
 if( plaatprotect_islocked() ) die( "Already running.\n" ); 
 
@@ -32,45 +44,120 @@ if( plaatprotect_islocked() ) die( "Already running.\n" );
 exec('stty -F /dev/ttyACM0 9600 raw');
 $fp=fopen("/dev/ttyACM0","c+");
 
+
 /**
  ********************************
  * Counter measures
  ********************************
  */
- 
-/* Set Alarm Coutermeasure */
-function setAlarm($nodeId, $event, $value) {
 
-   /* Log alarm in databae */  								
-	plaatprotect_event_insert(hexdec($nodeId), $event, $value);	
+function plaatprotect_hue_alarm_group($event) {
 
-  	plaatprotect_node_alive($nodeId);
-	
-   $sql  = 'select location from zwave where nodeid='.$nodeId;	
-   $result = plaatprotect_db_query($sql);
-   $row = plaatprotect_db_fetch_object($result);
-	
-	// Notication to mobile
-   plaatprotect_notification("Alarm" , "Location ".$row->location." [Zone ".$nodeId."] alarm ". ($value==0x00) ? 'off' : 'on' );
-  
    // Active Hue Bulbs
 	$sql = 'select hid from hue';
 	$result = plaatprotect_db_query($sql);
 	while ($row = plaatprotect_db_fetch_object($result)) {	
-		if ($value==0) {
-			plaatprotect_control_hue($row->hid, "false");
-		} else {
+		if ($event==EVENT_ALARM_ON) {
 			plaatprotect_control_hue($row->hid, "true");
+		} else {
+			plaatprotect_control_hue($row->hid, "false");
 		}
 	}
+}
+	
+function plaatprotect_zwave_sirene_group($event) {
 	
 	$sql  = 'select nodeid from zwave where alarm_enabled=1';	
    $result = plaatprotect_db_query($sql);
    while ($row = plaatprotect_db_fetch_object($result)) {
 	
-		SendDataActiveHorn($row->nodeid,$value,$row->nodeid);
+		if ($event==EVENT_ALARM_ON) {
+			SendDataActiveHorn($row->nodeid,1,$row->nodeid);
+			Receive();
+			Receive();
+		} else  {
+			SendDataActiveHorn($row->nodeid,0,$row->nodeid);
+			Receive();
+			Receive();
+		}		
 	}	
 }
+	
+function plaatprotect_zwave_notification_group($event, $nodeid) {
+
+	$sql  = 'select nodeid, location from zwave where nodeid='.$nodeid;	
+   $result = plaatprotect_db_query($sql);
+   $row = plaatprotect_db_fetch_object($result);
+	
+	// Notication to mobile
+	$subject =  "Alarm";
+	$body  = "Location=".$row->location." ";
+	$body .= "Zone=".$row->nodeid." ";
+   $body .= "Event=";
+
+   if ($event==EVENT_ALARM_ON) {
+		$body .= 'on';
+	} else {
+		$body .= 'off';
+	}
+	
+	LogText('Notification = '.$subject.' '.$body .' sent!');
+	
+   plaatprotect_notification($subject, $body );
+}
+	
+function plaatprotect_zwave_state_machine() {
+	
+	global $event;
+	global $event_nodeid;
+	global $state;
+	
+	switch ($event) {
+	
+		case EVENT_IDLE: 
+				break;
+				
+		case EVENT_ALARM_ON: 
+				if ($state==STATE_IDLE) {
+		
+					LogText("======================");					
+					plaatprotect_hue_alarm_group($event);
+					plaatprotect_zwave_sirene_group($event);
+					plaatprotect_zwave_notification_group($event, $event_nodeid);
+					LogText("======================");
+					
+					$state=STATE_ACTIVE;
+					$event=EVENT_IDLE;
+				}
+				break;
+				
+		case EVENT_ALARM_OFF: 
+		
+				if ($state==STATE_ACTIVE) {
+					LogText("======================");				
+					plaatprotect_hue_alarm_group($event);
+					plaatprotect_zwave_sirene_group($event);
+					plaatprotect_zwave_notification_group($event, $event_nodeid);
+					LogText("======================");
+					$state=STATE_IDLE;
+					$event=EVENT_IDLE;
+				}
+				break;
+	}
+	
+	switch ($state) {
+	
+		case STATE_IDLE: 
+		      LogText("StateMachine = Idle");
+				break;
+				
+		case STATE_ACTIVE:
+				LogText("StateMachine = Active");
+				break;
+	}
+}
+	
+
 
 /**
  ********************************
@@ -85,7 +172,7 @@ function plaatprotect_event_insert($nodeId, $event, $value) {
    $timestamp = date('Y-m-d H:i:s');
 	
    $sql  = 'INSERT INTO event (timestamp, nodeid, event, value) ';
-	$sql .= 'VALUES ("'.$timestamp.'",'.$nodeId.','.$event.','.$value.')';
+	$sql .= 'VALUES ("'.$timestamp.'",'.hexdec($nodeId).','.$event.','.$value.')';
 	
 	plaatprotect_db_query($sql);
 }
@@ -120,8 +207,6 @@ function plaatprotect_sensor_insert($nodeId, $type, $value) {
    $sql  = 'INSERT INTO sensor (nodeid, timestamp, temperature, luminance, humidity, ultraviolet, battery ) ';
 	$sql .= 'VALUES ('.hexdec($nodeId).',"'.$timestamp.'","'.$temperature.'","'.$luminance.'","'.$humidity.'","'.$ultraviolet.'",'.$battery.')';
 	
-	echo $sql."\r\n";
-	
 	plaatprotect_db_query($sql);
 }
 
@@ -139,14 +224,14 @@ function plaatprotect_control_hue($hue_bulb_nr, $value) {
 	
    $hue_url = "http://".$hue_ip."/api/".$hue_key."/lights/".$hue_bulb_nr."/state";
 
-   echo ("Hue command: ");
+   $tmp = "Hue command: ";
 
-   echo file_get_contents($hue_url, false, stream_context_create(["http" => [
+    $tmp .= file_get_contents($hue_url, false, stream_context_create(["http" => [
       "method" => "PUT", "header" => "Content-type: application/json",
       "content" => "{\"on\":". $value."}"
     ]]));
 
-	echo "\n\r";
+	LogText($tmp);
 }
   
   
@@ -274,7 +359,9 @@ function SendGetVersion() {
    * Byte 4 : Last byte is checksum
    */
  
-   LogText("SendGetVersion"); 
+   $tmp = "SendGetVersion"; 
+	LogText($tmp);
+	 
    $command = hex2bin("01030015");
    $command .= GenerateChecksum($command);
    LogTxCommand($command);
@@ -292,7 +379,9 @@ function SendGetMemoryId() {
    * Byte 4 : Last byte is checksum
    */
  
-   LogText("SendGetMemoryId"); 
+   $tmp = "SendGetMemoryId"; 
+	LogText($tmp);
+	 
    $command = hex2bin("01030020");
    $command .= GenerateChecksum($command);
    LogTxCommand($command);
@@ -314,7 +403,9 @@ function SendGetRouteInfo($node) {
    * Byte 7 : Function Id 0x03
    * Byte 8 : Last byte is checksum
    */
-   LogText("SendGetRouteInfo NodeId=".int2hex($node)); 
+   $tmp = "SendGetRouteInfo NodeId=".int2hex($node);
+	LogText($tmp);
+	
    $command = hex2bin("01070080".int2hex($node)."000003");
    $command .= GenerateChecksum($command);
    fwrite($fp, $command, strlen($command));
@@ -333,7 +424,9 @@ function SendGetIdentifyNode($node) {
    * Byte 5 : Last byte is checksum
    */
   
-  LogText("GetIndentifyNode NodeId=[".int2hex($node)."]");
+   $tmp= "GetIndentifyNode NodeId=[".int2hex($node)."]";
+   LogText($tmp);
+	
   $command = hex2bin("01040041".int2hex($node));
   $command .= GenerateChecksum($command);
   fwrite($fp, $command, strlen($command));
@@ -352,11 +445,13 @@ function SendGetCommandClassSupport($node ,$callbackId) {
    * Byte 5 : Last byte is checksum
    */
   
-  LogText("SentGetCommandClassSupport NodeId=[".int2hex($node)."] CallbackId=[".int2hex($callbackId)."]");
-  $command = hex2bin("01090013".int2hex($node)."02000025".int2hex($callbackId));
-  $command .= GenerateChecksum($command);
-  fwrite($fp, $command, strlen($command));
-  LogTxCommand($command);
+   $tmp= "SentGetCommandClassSupport NodeId=[".int2hex($node)."] CallbackId=[".int2hex($callbackId)."]";
+   LogText($tmp);
+	
+   $command = hex2bin("01090013".int2hex($node)."02000025".int2hex($callbackId));
+   $command .= GenerateChecksum($command);
+   fwrite($fp, $command, strlen($command));
+   LogTxCommand($command);
 }
 
 function SendGetProtocolStatus() {
@@ -370,6 +465,9 @@ function SendGetProtocolStatus() {
    * Byte 4 : Last byte is checksum
    */
  
+   $tmp= 'SendGetProtocolStatus';
+   LogText($tmp);
+	
    $command = hex2bin("010300bf");
    $command .= GenerateChecksum($command);
    fwrite($fp, $command, strlen($command));
@@ -388,6 +486,9 @@ function SendGetControllerCapabilities() {
    * Byte 4 : Last byte is checksum
    */
  
+   $tmp= 'SendGetControllerCapabilities';
+   LogText($tmp);
+  
    $command = hex2bin("01030005");
    $command .= GenerateChecksum($command);
    LogTxCommand($command);
@@ -406,6 +507,9 @@ function SendGetInitData() {
    * Byte 4 : Last byte is checksum
    */
 
+  $tmp= 'SendGetInitData';
+  LogText($tmp);
+
   $command = hex2bin("01030002");
   $command .= GenerateChecksum($command);
   fwrite($fp, $command, strlen($command));
@@ -422,7 +526,7 @@ function SendDataInitHorn($node, $sound, $volume, $callbackId) {
    * Byte 2 : Request (0x00) 
    * Byte 3 : SendData (0x13)
    * Byte 4 : NodeId
-   * Byte 5 : ConfigSet (0x05)
+   * Byte 5 : ConfigSet (0x03)
    * Byte 6 : Command Class CONFIGURATION 0x70
    * Byte 7 : Parameter (0x25)
    * Byte 8 : Value 1 (Sound) 0-5
@@ -461,11 +565,12 @@ function SendDataInitHorn($node, $sound, $volume, $callbackId) {
 		case 3:  $tmp .= "105dB ";
 		         break;
       default: $tmp .= "NotSupportVolume, abort";
-	       return;
+					return;
                break;	
    }
 
    LogText($tmp);
+	
    $command = hex2bin("010a0013".int2hex($node)."0570".int2hex($sound).int2hex($volume)."25".$callbackId);
    $command .= GenerateChecksum($command);
    LogTxCommand($command);
@@ -483,7 +588,7 @@ function SendDataActiveHorn($node,$value,$callbackId) {
    * Byte 2 : Request (0x00) 
    * Byte 3 : SendData (0x13)
    * Byte 4 : NodeId
-   * Byte 5 : ConfigSet (0x03)
+   * Byte 5 : Config Set (0x03)
    * Byte 6 : Command Class BASIC 0x20 
    * Byte 7 : Parameter (0x01)
    * Byte 8 : Value (On=0xff Off=0x00) 
@@ -491,9 +596,37 @@ function SendDataActiveHorn($node,$value,$callbackId) {
    * Byte 10: Last byte is checksum
    */
    
-   echo "SendDataActiveHorn NodeId=".int2hex($node)." value=".int2hex($value)." callbackId=".int2hex($callbackId)."\r\n";
+   $tmp = "SendDataActiveHorn NodeId=".int2hex($node)." value=".int2hex($value)." callbackId=".int2hex($callbackId);
+	LogText($tmp);
 
    $command = hex2bin("01090013".int2hex($node)."032001".int2hex($value).int2hex($callbackId));
+   $command .= GenerateChecksum($command);
+   fwrite($fp, $command, strlen($command));
+   LogTxCommand($command);
+}
+
+
+function GetHornState($node,$value,$callbackId) {
+
+  global $fp;
+  
+  /*
+   * Byte 0 : Start of Frame (0x01)
+   * Byte 1 : Length of frame - number of bytes to follow
+   * Byte 2 : Request (0x00) 
+   * Byte 3 : SendData (0x13)
+   * Byte 4 : NodeId
+   * Byte 5 : Config Get (0x02)
+   * Byte 6 : Command Class BASIC 0x20 
+   * Byte 7 : Parameter (0x01)
+   * Byte 8 : Value
+   * Byte 9 : CallBackId 
+   * Byte 10: Last byte is checksum
+   */
+   $tmp = "GetHornState NodeId=".int2hex($node)." value=".int2hex($value)." callbackId=".int2hex($callbackId);
+	LogText($tmp);
+
+   $command = hex2bin("01090013".int2hex($node)."022001".int2hex($value).int2hex($callbackId));
    $command .= GenerateChecksum($command);
    fwrite($fp, $command, strlen($command));
    LogTxCommand($command);
@@ -507,124 +640,142 @@ function SendDataActiveHorn($node,$value,$callbackId) {
  
 function decodeAlarm($data) {
 
-	$nodeId = bin2hex(substr($data,5,1));
+	global $event;
+	global $event_nodeid;
+	
+	$tmp = "";
+	$nodeid = bin2hex(substr($data,5,1));
 	$command= ord(substr($data,8,1));
 	
 	switch ($command) {
-		case 0x04: echo 'Get ';
+		case 0x04: $tmp .= 'Get ';
 					  break;
 					  
-	   case 0x05: echo 'Report ';
+	   case 0x05: $tmp .= 'Report ';
 					  break;
       
-		case 0x07: echo "SupportGet ";
+		case 0x07: $tmp .= "SupportGet ";
 				     break;
       
-		case 0x08: echo "SupportReport ";
+		case 0x08: $tmp .= "SupportReport ";
 				     break;
 	}
                  
 	$type = ord(substr($data,9,1));
 	switch ($type) {
-		case 0x00: echo 'General ';
+		case 0x00: $tmp .= 'General ';
 					  break;
 					  
-		case 0x01: echo 'Smoke ';
+		case 0x01: $tmp .= 'Smoke ';
 					  break;
 					  
-      case 0x02: echo 'Carbon Monoxide ';
+      case 0x02: $tmp .= 'Carbon Monoxide ';
 					  break;
 					  
-      case 0x03: echo 'Carbon Dioxide ';
+      case 0x03: $tmp .= 'Carbon Dioxide ';
 					  break;
 					  
-      case 0x04: echo 'Heat ';
+      case 0x04: $tmp .= 'Heat ';
 					  break;
 					  
-      case 0x05: echo 'Flood ';
+      case 0x05: $tmp .= 'Flood ';
 					  break;
 					  
-      case 0x06: echo 'Access control ';
+      case 0x06: $tmp .= 'Access control ';
 					  break;
 					  
-      case 0x07: echo 'Burglar ';
+      case 0x07: $tmp .= 'Burglar ';
 					  break;
 					  
-      case 0x08: echo 'Power Management ';
+      case 0x08: $tmp .= 'Power Management ';
 					  break;
 					  
-      case 0x09: echo 'System ';
+      case 0x09: $tmp .= 'System ';
 					  break;
 					  
-      case 0x0a: echo 'Emergency ';
+      case 0x0a: $tmp .= 'Emergency ';
 					  break;
 					  
-      case 0x0b: echo 'Clock ';
+      case 0x0b: $tmp .= 'Clock ';
 					  break;
 					  
-      case 0x0c: echo 'Appliance ';
+      case 0x0c: $tmp .= 'Appliance ';
 					  break;
 					  
-      case 0x0d: echo 'Health ';
+      case 0x0d: $tmp .= 'Health ';
 					  break;
    }
  	
-	$event = ord(substr($data,14,1));
-	switch ($event) {
-		case 0x00: echo 'AlarmOff';
-					  setAlarm($nodeId, $event, 0x00);
+	$action = ord(substr($data,14,1));
+	switch ($action) {
+		case 0x00: $tmp .= 'AlarmOff';
+					  $event = EVENT_ALARM_OFF;
+					  plaatprotect_event_insert($nodeid, $action, 0x00);	
+					  $event_nodeid = $nodeid;
+					  $event_timestamp = time();
 					  break;
 					  
-		case 0x03: echo 'AlarmVibrationDetected';
-					  setAlarm($nodeId, $event, 0xff);
+		case 0x03: $tmp .= 'AlarmVibrationDetected';
+					  $event = EVENT_ALARM_ON;
+					  plaatprotect_event_insert($nodeid, $action, 0xff);	
+					  $event_nodeid = $nodeid;
+					  $event_timestamp = time();
 					  break;
 					  
-		case 0x08: echo 'AlarmMotionDetected';
-					  setAlarm($nodeId, $event, 0xff);
+		case 0x08: $tmp .= 'AlarmMotionDetected';
+					  $event = EVENT_ALARM_ON;
+					  plaatprotect_event_insert($nodeid, $action, 0xff);	
+					  $event_nodeid = $nodeid;
+					  $event_timestamp = time();
 					  break;
 	}
+		
+	return $tmp;
 }
 
 function decodeSensor($data) {
 
+	$tmp ="";
 	$nodeId = bin2hex(substr($data,5,1));
 	$command = ord(substr($data,8,1));
 	$type = ord(substr($data,9,1));
 	
 	switch ($command) {
-		case 0x04: echo 'Get ';
+		case 0x04: $tmp .= 'Get ';
 					  break;
 					  
-	   case 0x05: echo 'Report ';
+	   case 0x05: $tmp .= 'Report ';
 					  break;
 	}
 	
 	$value = 0;
 	switch ($type) {
-		case 0x01: echo 'Temperature ';
+		case 0x01: $tmp .= 'Temperature ';
 					  $value = (((ord(substr($data,11,1)))*100)+ord(substr($data,12,1)))/10;
-					  echo 'Value='.$value;
+					  $tmp .= 'Value='.$value;
 					  plaatprotect_sensor_insert($nodeId, $type, $value);
 					  break;
 		
-		case 0x03: echo 'Luminance ';
+		case 0x03: $tmp .= 'Luminance ';
 					  $value = (((ord(substr($data,11,1)))*100)+ord(substr($data,12,1)))/10;
-					  echo 'Value='.$value;
+					  $tmp .= 'Value='.$value;
 					  plaatprotect_sensor_insert($nodeId, $type, $value);
 					  break;
 			  
-		case 0x05: echo 'Humidity ';
+		case 0x05: $tmp .= 'Humidity ';
 					  $value = ord(substr($data,11,1));
-					  echo 'Value='.$value;
+					  $tmp .= 'Value='.$value;
 					  plaatprotect_sensor_insert($nodeId, $type, $value);
 					  break;
 					 
-		case 0x1b: echo 'Ultraviolet ';
+		case 0x1b: $tmp .= 'Ultraviolet ';
 					  $value = ord(substr($data,11,1));
-					  echo 'Value='.$value;
+					  $tmp .= 'Value='.$value;
 					  plaatprotect_sensor_insert($nodeId, $type, $value);
 					  break;
 	}
+	
+	return $tmp;
 }
 
 function decodeApplicationCommandHandler($data) {
@@ -635,56 +786,59 @@ function decodeApplicationCommandHandler($data) {
   $len = substr($data,6,1);
   $commandClass = ord(substr($data,7,1));
  
-  echo "ApplicationCommandHandler ";
-  echo "NodeId=[".$nodeId."] ";
+  $tmp = "ApplicationCommandHandler NodeId=[".$nodeId."] ";
+  
   switch( $commandClass ) {
    
-    case 0x20: Echo 'Basic ';
+    case 0x20: $tmp .= 'Basic ';
  	       $command= ord(substr($data,8,1));
 	       switch ($command) {
 
-                   case 0x01: echo 'Set ';
+                   case 0x01: $tmp .= 'Set ';
                               $value= ord(substr($data,9,1));
-                              echo 'value='.$value;                              
+                              $tmp .= 'value='.$value;                              
                               break;
 										
-                   case 0x02: echo 'Get ';
+                   case 0x02: $tmp .= 'Get ';
                               break;
 										
-                   case 0x03: echo 'Report ';
+                   case 0x03: $tmp .= 'Report ';
                               $value= ord(substr($data,9,1));
-                              echo 'value='.$value;
+                              $tmp .= 'value='.$value;
                               break;
                }
                break;
 
-    case 0x31: Echo 'Sensor Multilevel ';
-					decodeSensor($data);
+    case 0x31: $tmp .= 'Sensor Multilevel ';
+					$tmp .= decodeSensor($data);
                break;
 
-    case 0x70: Echo 'Configuration ';
+    case 0x70: $tmp .= 'Configuration ';
                break;
 
-    case 0x71: Echo 'Alarm ';
-				   decodeAlarm($data);
+    case 0x71: $tmp .= 'Alarm ';
+				   $tmp .= decodeAlarm($data);
 					break;
 
-    case 0x80: Echo 'Battery ';
+    case 0x80: $tmp .= 'Battery ';
 					$command= ord(substr($data,8,1));
 					switch ($command) {
-                   case 0x02: echo 'Get ';
+					
+                   case 0x02: $tmp .= 'Get ';
                               break;
-                   case 0x03: echo 'Report ';
+										
+                   case 0x03: $tmp .= 'Report ';
 										$value= ord(substr($data,9,1));
-										echo 'BatteryValue='.$value.'%';
+										$tmp .= 'BatteryValue='.$value.'%';
 										plaatprotect_sensor_insert($nodeId, 0x00, $value);
                               break;
                }
                break;
 
-    default:   Echo 'Unknown';
+    default:   $tmp .= 'Unknown';
                break;
   }
+  LogText($tmp);
 }
 
 function decodeRouteInfo($data) {
@@ -856,10 +1010,9 @@ function DecodeMessage($data) {
 		case 0x80:	decodeRouteInfo($data);
 						break;
 						
-      default:		echo "Unknown message\n\r";
+      default:		LogText("Unknown message");
 						break;
    }
-   echo "\n\r";
 }
 
 function Receive() {
@@ -878,8 +1031,7 @@ function Receive() {
     if($c == false){
       $timer++;
       usleep(10000);
-      if ($timer>1000) {
-        LogText("Timeout");
+      if ($timer>500) {
         break;
       } else {
         continue;
@@ -905,10 +1057,12 @@ function Receive() {
       $start = 2;
 		
     } else if (($start==2) && ($len==$count)) {
+	 
+	   SendAck();	
       LogRxCommand($data, true);
-      SendAck();		
-      DecodeMessage($data);
-		
+		DecodeMessage($data);		     
+		echo "\r\n";
+      		
 		$start = 0;
       $count = 0;
       $len = 0;
@@ -925,6 +1079,8 @@ function Receive() {
  ********************************
  */
 
+plaatprotect_notification("startup", "Zwave interface is started!" );
+ 
 /* Init ZWave layer */
 SendGetVersion();
 Receive();
@@ -946,14 +1102,17 @@ while ($row = plaatprotect_db_fetch_object($result)) {
   Receive();
 }
 
-// Disable Hue Bulbs
+// Switch off Hue Bulbs
+LogText("Switch off Hue lights which are part of the alarm group.");
 $sql = 'select hid from hue';
 $result = plaatprotect_db_query($sql);
 while ($row = plaatprotect_db_fetch_object($result)) {	
 	plaatprotect_control_hue($row->hid, "false");
 }
+echo "\r\n";
 	
-// Disable Sirene
+// Switch off Sirene
+LogText("Switch off Sirenes which are part of the alarm group.");
 $sql  = 'select nodeid from zwave where alarm_enabled=1';	
 $result = plaatprotect_db_query($sql);
 while ($row = plaatprotect_db_fetch_object($result)) {	
@@ -962,10 +1121,13 @@ while ($row = plaatprotect_db_fetch_object($result)) {
 	Receive();
 }	
 	
-
 /* Read Zwave incoming events endless */
+
 while (true) {
-  Receive();
+   Receive();
+	
+	// Process state
+	plaatprotect_zwave_state_machine(); 
 }
 
 #SendDataActiveHorn(3, 1, "fe");
@@ -980,9 +1142,6 @@ while (true) {
 #SendDataActiveHorn(2, 1, "fe");
 #Receive();
 #Receive();
-
-#echo "Sleep";
-#sleep(1);
 
 /* Disable ZWave Horn (NodeId=2) (Off) (CallbackId="fd") */
 #SendDataActiveHorn(2, 0, "fd" );

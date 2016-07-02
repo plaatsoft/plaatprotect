@@ -27,18 +27,12 @@
 ** ---------------------
 */
 
-$note[2] = '<div class="subparagraph">Version 0.2 (27-06-2016)</div>
+$note[1] = '<div class="subparagraph">Version 0.1 (20-07-2016)</div>
 <div class="large_text">
 <ul>
 <li>General: Added vibration alarm detection.</li>
 <li>General: Added zwave node status on home page.</li>
 <li>General: Improve webcam error recovery.</li>
-</ul>
-</div>';
-
-$note[1] = '<div class="subparagraph">Version 0.1 (21-06-2016)</div>
-<div class="large_text">
-<ul>
 <li>General: Add Notify My Android (NMA) webservice integration for push messages to andriod phone.</li>
 <li>General: Add basic support for two webcams.</li>
 <li>General: Add option to make picture from webcam view.</li>
