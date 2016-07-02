@@ -31,13 +31,17 @@ function plaatprotect_chart_page() {
 
 	// input
 	global $pid;
-
+	global $date;
+	
+	list($year, $month, $day) = explode("-", $date);	
+	$day = ltrim($day ,'0');
+	$month = ltrim($month ,'0');
+	$current_date = mktime(0, 0, 0, $month, $day, $year);  
+	
    $i=0;	
 	$offset = 360;
 	$step = (24*60*60)/$offset;
-	
-	$current_date = $lastday = mktime(0, 0, 0, 7, 1, 2016);
-	
+		
 	$data="";
 	
 	while ($i++<$offset) {
@@ -92,12 +96,14 @@ function plaatprotect_chart_page() {
 		}
 		</script>';
 	
-	$page .= '<h1>Movement Detection Chart</h1>';
+	$page .= '<h1>Movement Chart '.plaatprotect_dayofweek($date).' '.$day.'-'.$month.'-'.$year.'</h1>';
 
 	$page .= '<div id="chart_div" style="width:950px; height:350px"></div>';
 	
 	$page .= '<div class="nav">';
+	$page .= plaatprotect_link('pid='.$pid.'&date='.plaatprotect_prev_day($date), t('LINK_PREV'));
 	$page .= plaatprotect_link('pid='.PAGE_HOME, t('LINK_HOME'));
+	$page .= plaatprotect_link('pid='.$pid.'&date='.plaatprotect_next_day($date), t('LINK_NEXT'));
 	$page .=  '</div>';
 
 	return $page;

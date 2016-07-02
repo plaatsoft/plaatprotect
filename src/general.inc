@@ -340,6 +340,64 @@ function i ($name) {
 // NAVIGATION
 // ----------------------------
 
+function plaatprotect_dayofweek($value) {
+
+    list($year, $month, $day) = explode("-", $value);
+    return t("DAY_".jddayofweek( cal_to_jd(CAL_GREGORIAN, $month, $day, $year))); 
+}
+
+/**
+ * Get previous day
+ */
+function plaatprotect_prev_day($date) {
+
+  list($year, $month, $day) = explode("-", $date);
+
+  $prev_day=$day-1;
+  $prev_month=$month;
+  $prev_year=$year;   
+
+  if ($prev_day<=0) {
+     $prev_month=$month-1;
+     $prev_year=$year;
+     $prev_day=date("t", strtotime($prev_year.'-'.$prev_month.'-1'));
+  }
+
+  if ($prev_month<=0) {
+     $prev_month=12;
+     $prev_year=$year-1;
+     $prev_day=date("t", strtotime($prev_year.'-'.$prev_month.'-1'));
+  }
+  
+  return $prev_year.'-'.$prev_month.'-'.$prev_day; 
+}
+
+/**
+ * Get next day
+ */
+function plaatprotect_next_day($date) {
+
+  list($year, $month, $day) = explode("-", $date);
+
+  $next_day=$day+1;   
+  $next_month=$month;
+  $next_year=$year;   
+  
+  if ($next_day>date("t", strtotime($next_year.'-'.$next_month.'-1'))) {
+     $next_day=1;
+     $next_month=$next_month+1;
+     $next_year=$year;
+  }
+  
+  if ($next_month>12) {
+     $next_day=1;
+     $next_month=1;
+     $next_year=$year+1;
+  }
+  
+  return $next_year.'-'.$next_month.'-'.$next_day; 
+}
+
 function plaatprotect_get($label, $default) {
 	
 	$value = $default;

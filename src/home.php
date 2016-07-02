@@ -241,7 +241,7 @@ function plaatprotect_home_page() {
 		$page .= '<td>';
 		$page .= '</td>';		
 		$page .= '<td>';		
-		$page .= plaatprotect_link('pid='.PAGE_CHART, 'Chart');
+		$page .= plaatprotect_link('pid='.PAGE_CHART, 'Movement Chart');
 		$page .= '</td>';
 		$page .= '<td>';
 		$page .= '</td>';

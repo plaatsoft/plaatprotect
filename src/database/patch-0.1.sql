@@ -79,6 +79,8 @@ ALTER TABLE `session` ADD PRIMARY KEY (`sid`);
 ALTER TABLE `sensor` ADD PRIMARY KEY (`sid`);
 ALTER TABLE `hue` ADD PRIMARY KEY (`hid`);
 
+ALTER TABLE `event` ADD INDEX(`timestamp`);
+
 INSERT INTO `config` (`id`, `category`, `token`, `value`, `options`, `date`, `readonly`, `rebuild`, `encrypt`) VALUES
 (1, 0, 'database_version', '0.1', '', '2016-06-04', 1, 0, 0),
 (2, 51, 'home_password', '', '', '2016-06-21', 0, 0, 1),
