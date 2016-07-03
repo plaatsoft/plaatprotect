@@ -69,20 +69,21 @@ $lang['LINK_PREV_FAST']     = i('backward');
 $lang['LINK_END']           = i('fast-forward'); 
 $lang['LINK_BEGIN']         = i('fast-backward'); 
 
-$lang['LINK_LOGGING']       = i('cog') . 'Alarm Logging';  
+$lang['LINK_LOGGING']       = i('database') . 'Logging';  
 $lang['LINK_SETTINGS']      = i('cog') . 'Settings';  
-$lang['LINK_RELEASE_NOTES'] = i('align-left') . 'Release Notes';
-$lang['LINK_ABOUT']         = i('users') . 'About';
+$lang['LINK_RELEASE_NOTES'] = i('calendar') . 'Release Notes';
+$lang['LINK_ABOUT']         = i('book') . 'About';
 $lang['LINK_DONATE']        = i('money') . 'Donate';
 $lang['LINK_DELETE']        = i('remove').'Delete'; 
 $lang['LINK_WEBCAM']        = i('camera') . 'Webcams'; 
 $lang['LINK_HUE']           = i('lightbulb-o') . 'HUE';
 $lang['LINK_PICTURE']       = i('camera') . 'Picture'; 
 $lang['LINK_ARCHIVE']       = i('folder-open') . 'Archive'; 
-$lang['LINK_ZWAVE']         = i('folder-open') . 'ZWave'; 
+$lang['LINK_ZWAVE']         = i('wifi') . 'Z-Wave'; 
 $lang['LINK_NOTIFICATION']  = i('folder-open') . 'Notification'; 
+$lang['LINK_CHART']         = i('area-chart') . 'Chart'; 
 
- 
+
 /*
 ** ------------------
 ** HOME
@@ -96,6 +97,10 @@ PlaatProtect can not  work without!<br/><br/>
 Rename config.inc.sample to config.inc, update the database settings en press F5 in your browser!';
 
 $lang['DATABASE_CONNECTION_FAILED' ] = 'The connection to the database failed. Please check if config.inc settings are right!';
+
+$lang['SCENARIO_HOME']       = 'HOME';  
+$lang['SCENARIO_SLEEP']      = 'SLEEP';  
+$lang['SCENARIO_AWAY']       = 'AWAY';  
 
 /*
 ** ------------------
@@ -195,15 +200,15 @@ $lang['TITLE_HUE'] ='Philips HUE System';
 
 /*
 ** ------------------
-** ZWAVE
+** Z-WAVE
 ** ------------------
 */
 
-$lang['TITLE_ZWAVE'] ='Zwave System';
+$lang['TITLE_ZWAVE'] ='Z-Wave System';
 
 /*
 ** ------------------
-** Notification
+** NOTIFICATION
 ** ------------------
 */
 

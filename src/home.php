@@ -72,7 +72,7 @@ function check_zwave_network() {
 			if ($value<(60*60*2)) {
 			
 				$page .= '<div class="checker good">';
-				$page .= 'Node '.$row->nodeid.' : ';
+				$page .= 'Sensor '.$row->nodeid.': ';
 				if (isset($row2->temperature)) {
 					$page .= ' '.$row2->temperature.'&deg;C';
 				}
@@ -84,7 +84,7 @@ function check_zwave_network() {
 			} else {
 			
 				$page .= '<div class="checker bad" >';
-				$page .= 'Node '.$row->nodeid;
+				$page .= 'Sensor '.$row->nodeid;
 				$page .= '</div> ';
 			}
 		}
@@ -221,7 +221,7 @@ function plaatprotect_home_page() {
 		$page .= '<td>';
 		$page .= '</td>';		
 		$page .= '<td>';		
-		$page .= plaatprotect_link('pid='.PAGE_CHART, 'Movement Chart');
+		$page .= plaatprotect_link('pid='.PAGE_CHART, t('LINK_CHART'));
 		$page .= '</td>';
 		$page .= '<td>';
 		if ($zwave_present=="true") {
@@ -263,15 +263,15 @@ function plaatprotect_home_page() {
 		switch (plaatprotect_db_get_config_item('alarm_scenario')) {
 	
 			case SLEEP: 
-				$page .= plaatprotect_link('pid='.$pid.'&sid='.SLEEP.'&eid='.EVENT_SWITCH_SCENARIO, 'SLEEP');
+				$page .= plaatprotect_link('pid='.$pid.'&sid='.SLEEP.'&eid='.EVENT_SWITCH_SCENARIO, t('SCENARIO_SLEEP'));
 				break;
 						
 			case AWAY: 
-				$page .= plaatprotect_link('pid='.$pid.'&sid='.AWAY.'&eid='.EVENT_SWITCH_SCENARIO, 'AWAY');
+				$page .= plaatprotect_link('pid='.$pid.'&sid='.AWAY.'&eid='.EVENT_SWITCH_SCENARIO, t('SCENARIO_AWAY'));
 			   break;
 				
 			default: 
-				$page .= plaatprotect_link('pid='.$pid.'&sid='.HOME.'&eid='.EVENT_SWITCH_SCENARIO, 'HOME');
+				$page .= plaatprotect_link('pid='.$pid.'&sid='.HOME.'&eid='.EVENT_SWITCH_SCENARIO, t('SCENARIO_HOME'));
 				break;
 		}
 		$page .= '</td>';

@@ -71,11 +71,13 @@ $lang['LINK_EXPORT']         = i('download') . 'Export naar CSV';
 $lang['LINK_LOGIN']          = 'Login';
 $lang['LINK_BACK']           = i('home') . 'Terug'; 
 $lang['LINK_SYSTEM'] 	     = i('fort-awesome') .'Systeem Overzicht';
-$lang['LINK_RELEASE_NOTES']  = i('align-left') . 'Release Notes';
-$lang['LINK_ABOUT']          = i('users') . 'Over';
+$lang['LINK_RELEASE_NOTES']  = i('calendar') . 'Release Notes';
+$lang['LINK_ABOUT']          = i('book') . 'Over';
 $lang['LINK_DONATE']         = i('money') . 'Donatie';
 $lang['LINK_DELETE']         = i('remove').'Verwijderen'; 
 $lang['LINK_WEBCAM']         = i('camera') . 'Webcams'; 
+$lang['LINK_LOGGING']        = i('database') . 'Logging';  
+
 $lang['LINK_HUE']            = i('lightbulb-o') . 'HUE';
 $lang['LINK_PICTURE']        = i('camera') . 'Foto'; 
 $lang['LINK_ARCHIVE']        = i('folder-open') . 'Archief'; 
@@ -88,7 +90,8 @@ $lang['LINK_NEXT_FAST']      = i('forward');
 $lang['LINK_PREV_FAST']      = i('backward');
 $lang['LINK_END']            = i('fast-forward');
 $lang['LINK_BEGIN']          = i('fast-backward');
-$lang['LINK_ZWAVE']         = i('folder-open') . 'ZWave'; 
+$lang['LINK_ZWAVE']          = i('wifi') . 'Z-Wave'; 
+$lang['LINK_CHART']          = i('area-chart') . 'Chart'; 
 
 /*
 ** ------------------
@@ -103,6 +106,10 @@ PlaatProtect werkt niet zonder dit bestand!<br/><br/>
 Hernoem config.inc.sample naar config.inc, zet de database instellingen goed en druk op F5 in je browser!';
 
 $lang['DATABASE_CONNECTION_FAILED' ] = 'De verbinding naar de database is niet goed. Controleer of het config.inc bestand de goede instellingen bevat!';
+
+$lang['SCENARIO_HOME']       = 'THUIS';  
+$lang['SCENARIO_SLEEP']      = 'SLAPEN';  
+$lang['SCENARIO_AWAY']       = 'BUITEN DE DEUR';  
 
 /*
 ** ------------------
@@ -208,11 +215,30 @@ $lang['TITLE_HUE'] ='Philips HUE System';
 
 /*
 ** ------------------
-** ZWAVE
+** Z-WAVE
 ** ------------------
 */
 
-$lang['TITLE_ZWAVE'] ='ZWAVE System';
+$lang['TITLE_ZWAVE'] ='Z-Wave System';
+
+/*
+** ------------------
+** NOTIFICATION
+** ------------------
+*/
+
+$lang['TITLE_NOTIFICATION'] ='Notifcation System';
+
+$lang['NOTIFICATION_1'] = 'Mobile';
+$lang['NOTIFICATION_2'] = 'Email';
+
+/*
+** ------------------
+** LOGGING
+** ------------------
+*/
+
+$lang['TITLE_LOGGING'] ='Alarm Logging';
 
 /*
 ** ------------------

@@ -27,19 +27,20 @@
 ** ---------------------
 */
 
-$note[1] = '<div class="subparagraph">Version 0.1 (20-07-2016)</div>
+$note[1] = '<div class="subparagraph">Version 0.1 (03-07-2016)</div>
 <div class="large_text">
 <ul>
-<li>General: Added vibration alarm detection.</li>
-<li>General: Added zwave node status on home page.</li>
-<li>General: Improve webcam error recovery.</li>
-<li>General: Add Notify My Android (NMA) webservice integration for push messages to andriod phone.</li>
-<li>General: Add basic support for two webcams.</li>
-<li>General: Add option to make picture from webcam view.</li>
-<li>General: Add motion detection with automatic recording to webcam sensor script.</li>
-<li>General: Add option to navigate through webcam recordings.</li>
-<li>General: Add basic support for Philips HUE lighting system.</li>
-<li>General: Passwords are now encrypted stored in database.</li>
+<li>General: Added notification page.</li>
+<li>General: Added logging page.</li>
+<li>General: Added movement chart page.</li>
+<li>General: Added Z-Wave vibration alarm detection.</li>
+<li>General: Added Z-Wave node status on home page.</li>
+<li>General: Added Notify My Android (NMA) webservice integration for push messages to andriod phone.</li>
+<li>General: Added basic support for two webcams.</li>
+<li>General: Added option to make picture from webcam view.</li>
+<li>General: Added motion detection with automatic recording to webcam sensor script.</li>
+<li>General: Added option to navigate through webcam recordings.</li>
+<li>General: Added basic support for Philips HUE lighting system.</li>
 </ul>
 </div>';
 
