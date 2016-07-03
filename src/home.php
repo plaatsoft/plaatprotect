@@ -54,7 +54,7 @@ function check_zwave_network() {
 	
 	if ($zwave_present=="true") {
 	
-	   $sql = 'select zid, nodeid, last_update from zwave';			
+	   $sql = 'select zid, nodeid, last_update from zwave where type=3';			
 		$result = plaatprotect_db_query($sql);
 		
 			
@@ -160,7 +160,8 @@ function plaatprotect_home_login_page() {
 function plaatprotect_home_page() {
 
 	// input	
-	global $webcam_present;
+	global $pid;
+	global $webcam_present;	
 	global $zwave_present;
 	global $hue_present;
 	global $name;
@@ -194,12 +195,7 @@ function plaatprotect_home_page() {
 		$page .= '<th width="25%"></th>';
 		$page .= '</tr>';
 		
-		$page .= '<tr>';
-		$page .= '<td>';
-		if ($zwave_present=="true") {
-			$page .= plaatprotect_link('pid='.PAGE_LOGGING, t('LINK_LOGGING'));
-		}
-		$page .= '</td>';		
+		$page .= '<tr>';		
 		$page .= '<td>';
 			if ($webcam_present=="true") {
 				$page .= plaatprotect_link('pid='.PAGE_WEBCAM, t('LINK_WEBCAM'));
@@ -215,8 +211,27 @@ function plaatprotect_home_page() {
 			$page .= plaatprotect_link('pid='.PAGE_HUE, t('LINK_HUE'));
 		} 
 		$page .= '</td>';		
+		$page .= '<td>';
+		$page .= plaatprotect_link('pid='.PAGE_NOTIFICATION, t('LINK_NOTIFICATION'));
+		$page .= '</td>';		
 		$page .= '</tr>';
 		
+		
+		$page .= '<tr>';	
+		$page .= '<td>';
+		$page .= '</td>';		
+		$page .= '<td>';		
+		$page .= plaatprotect_link('pid='.PAGE_CHART, 'Movement Chart');
+		$page .= '</td>';
+		$page .= '<td>';
+		if ($zwave_present=="true") {
+			$page .= plaatprotect_link('pid='.PAGE_LOGGING, t('LINK_LOGGING'));
+		}
+		$page .= '</td>';		
+		$page .= '<td>';
+		$page .= '</td>';
+		$page .= '</tr>';
+				
 		$page .= '<tr>';	
 		$page .= '<td>';
 		$settings_password = plaatprotect_db_get_config_item('settings_password',SECURITY);		
@@ -237,19 +252,33 @@ function plaatprotect_home_page() {
 		$page .= '</td>';
 		$page .= '</tr>';
 		
-		$page .= '<tr>';	
-		$page .= '<td>';
-		$page .= '</td>';		
-		$page .= '<td>';		
-		$page .= plaatprotect_link('pid='.PAGE_CHART, 'Movement Chart');
-		$page .= '</td>';
-		$page .= '<td>';
-		$page .= '</td>';
-		$page .= '<td>';
-		$page .= '</td>';
-		$page .= '</tr>';
-				
 		$page .= '</table>';
+		
+		$page .= '<br/>';	
+			
+		$page .= '<table>';
+				
+		$page .= '<tr>';	
+		$page .= '<td width="30%">';		
+		switch (plaatprotect_db_get_config_item('alarm_scenario')) {
+	
+			case SLEEP: 
+				$page .= plaatprotect_link('pid='.$pid.'&sid='.SLEEP.'&eid='.EVENT_SWITCH_SCENARIO, 'SLEEP');
+				break;
+						
+			case AWAY: 
+				$page .= plaatprotect_link('pid='.$pid.'&sid='.AWAY.'&eid='.EVENT_SWITCH_SCENARIO, 'AWAY');
+			   break;
+				
+			default: 
+				$page .= plaatprotect_link('pid='.$pid.'&sid='.HOME.'&eid='.EVENT_SWITCH_SCENARIO, 'HOME');
+				break;
+		}
+		$page .= '</td>';
+		$page .= '<tr>';
+
+		$page .= '</table>';
+		
 		$page .= '</div>';
 		
 		$page .= '<br/><br/>';
@@ -277,12 +306,31 @@ function plaatprotect_home() {
 	/* input */
 	global $pid;
 	global $eid;
+	global $sid;
 	
 	/* Event handler */
 	switch ($eid) {
 
 		case EVENT_LOGIN:
 			plaatprotect_home_login_event();
+			break;		
+			
+		case EVENT_SWITCH_SCENARIO:
+			switch ($sid) {	
+		
+				case HOME: 
+					$sid = SLEEP;
+					break;
+					
+				case SLEEP: 
+					$sid = AWAY;
+					break;
+					
+				case AWAY: 
+					$sid = HOME;
+					break;
+			}
+			plaatprotect_db_set_config_item('alarm_scenario', $sid);
 			break;		
    }
 		

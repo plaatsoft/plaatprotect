@@ -80,6 +80,7 @@ $lang['LINK_HUE']           = i('lightbulb-o') . 'HUE';
 $lang['LINK_PICTURE']       = i('camera') . 'Picture'; 
 $lang['LINK_ARCHIVE']       = i('folder-open') . 'Archive'; 
 $lang['LINK_ZWAVE']         = i('folder-open') . 'ZWave'; 
+$lang['LINK_NOTIFICATION']  = i('folder-open') . 'Notification'; 
 
  
 /*
@@ -186,15 +187,6 @@ $lang['TITLE_ARCHIVE' ] = 'Archive';
 
 /*
 ** ------------------
-** LOGGING
-** ------------------
-*/
-
-$lang['TITLE_LOGGING'] ='Alarm Logging';
-
-
-/*
-** ------------------
 ** HUE
 ** ------------------
 */
@@ -207,8 +199,26 @@ $lang['TITLE_HUE'] ='Philips HUE System';
 ** ------------------
 */
 
-$lang['TITLE_ZWAVE'] ='ZWAVE System';
+$lang['TITLE_ZWAVE'] ='Zwave System';
 
+/*
+** ------------------
+** Notification
+** ------------------
+*/
+
+$lang['TITLE_NOTIFICATION'] ='Notifcation System';
+
+$lang['NOTIFICATION_1'] = 'Mobile';
+$lang['NOTIFICATION_2'] = 'Email';
+
+/*
+** ------------------
+** LOGGING
+** ------------------
+*/
+
+$lang['TITLE_LOGGING'] ='Alarm Logging';
 
 /*
 ** ------------------

@@ -43,7 +43,9 @@ CREATE TABLE IF NOT EXISTS `zwave` (
   `vendor` varchar(32) NOT NULL,
   `description` varchar(128) NOT NULL,
   `location` varchar(128) NOT NULL,
-  `alarm_enabled` int(11) NOT NULL,
+  `home` int(11) NOT NULL,
+  `sleep` int(11) NOT NULL,
+  `away` int(11) NOT NULL,
   `last_update` datetime NOT NULL
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=latin1;
 
@@ -69,8 +71,19 @@ CREATE TABLE IF NOT EXISTS `sensor` (
 ) ENGINE=MyISAM AUTO_INCREMENT=1 DEFAULT CHARSET=latin1;
 
 CREATE TABLE IF NOT EXISTS `hue` (
-  `hid` int(11) NOT NULL
+  `hid` int(11) NOT NULL,
+  `home` int(11) NOT NULL,
+  `sleep` int(11) NOT NULL,
+  `away` int(11) NOT NULL
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+
+CREATE TABLE IF NOT EXISTS `notification` (
+`nid` int(11) NOT NULL,
+  `type` int(11) NOT NULL,
+  `home` int(11) NOT NULL,
+  `sleep` int(11) NOT NULL,
+  `away` int(11) NOT NULL
+) ENGINE=MyISAM AUTO_INCREMENT=3 DEFAULT CHARSET=latin1;
 
 ALTER TABLE `config` ADD PRIMARY KEY (`id`);
 ALTER TABLE `event` ADD PRIMARY KEY (`eid`);
@@ -78,6 +91,7 @@ ALTER TABLE `zwave` ADD PRIMARY KEY (`zid`);
 ALTER TABLE `session` ADD PRIMARY KEY (`sid`);
 ALTER TABLE `sensor` ADD PRIMARY KEY (`sid`);
 ALTER TABLE `hue` ADD PRIMARY KEY (`hid`);
+ALTER TABLE `notification` ADD PRIMARY KEY (`nid`);
 
 ALTER TABLE `event` ADD INDEX(`timestamp`);
 
@@ -107,3 +121,10 @@ INSERT INTO `config` (`id`, `category`, `token`, `value`, `options`, `date`, `re
 (23, 62, 'webcam_fps', '0.25', '0.1,0.2,0.25,0.5,0.75,1,1.2,1.5,1.75,2', '2016-06-27', 0, 0, 0),
 (24, 61, 'webcam_no_motion_area', '', '', '2016-07-01', 0, 0, 0),
 (25, 62, 'webcam_no_motion_area', '', '', '2016-07-01', 0, 0, 0);
+
+INSERT INTO `notification` (`nid`, `type`, `home`, `sleep`, `away`) VALUES
+(1, 1, 1, 0, 1),
+(2, 2, 1, 0, 1);
+
+INSERT INTO `plaatprotect`.`config` (`id`, `category`, `token`, `value`, `options`, `date`, `readonly`, `rebuild`, `encrypt`) 
+VALUES ('2', '0', 'alarm_scenario', '0', '', '2016-07-03', '1', '0', '0');

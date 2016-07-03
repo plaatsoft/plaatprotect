@@ -214,6 +214,11 @@ switch ($pid) {
 		$page = plaatprotect_hue();
 		break;
 		
+	case PAGE_NOTIFICATION: 
+		include "notification.php";
+		$page = plaatprotect_notification();
+		break;
+	
 	case PAGE_CHART: 
 		include "chart.php";
 		$page = plaatprotect_chart();

@@ -27,24 +27,48 @@
 ** ---------------------
 */
 
-function plaatprotect_get_alarm_zwave_state($id) {
+function plaatprotect_set_zwave_state($id, $scenario) {
 
-	$sql = 'select alarm_enabled from zwave where nodeid='.$id;
+	$sql = 'select zid, home, sleep, away from zwave where zid='.$id;
 	$result = plaatprotect_db_query($sql);
 	$row = plaatprotect_db_fetch_object($result);
 	
-	return (isset($row->alarm_enabled) && ($row->alarm_enabled==1));	
-}
-
-function plaatprotect_set_alarm_zwave_state($id) {
-
-	if (plaatprotect_get_alarm_zwave_state($id)) {
-	
-		$sql = 'update zwave set alarm_enabled=0 where nodeid='.$id;
+	$value = 0;
+	switch ($scenario) {
 		
+		case HOME: 	
+			$value= $row->home;
+			break;
+					
+		case SLEEP: 	
+			$value= $row->sleep;
+			break;
+					
+		case AWAY: 	
+			$value= $row->away;
+			break;
+	}
+		
+	if ($value==1) {
+		$value=0;
 	} else {
+		$value=1;
+	}
 	
-		$sql = 'update zwave set alarm_enabled=1 where nodeid='.$id;
+	$sql ="";
+	switch ($scenario) {
+		
+		case HOME: 	
+			$sql = 'update zwave set home='.$value.' where zid='.$id;
+			break;
+					
+		case SLEEP: 	
+			$sql = 'update zwave set sleep='.$value.' where zid='.$id;
+			break;
+					
+		case AWAY: 	
+			$sql = 'update zwave set away='.$value.' where zid='.$id;
+			break;
 	}
 	plaatprotect_db_query($sql);
 }
@@ -72,33 +96,41 @@ function plaatprotect_zwave_page() {
 	
 	$page .= '<tr>';
 	
-	$page .= '<th width="15%">';
+	$page .= '<th width="10%">';
 	$page .= 'ID';
 	$page .= '</th>';
 	
-	$page .= '<th width="15%">';
+	$page .= '<th width="10%">';
 	$page .= 'Description';
 	$page .= '</th>';
 	
-	$page .= '<th width="15%">';
+	$page .= '<th width="10%">';
 	$page .= 'Vendor';
 	$page .= '</th>';
 	
-	$page .= '<th width="15%">';
+	$page .= '<th width="10%">';
 	$page .= 'Location';
 	$page .= '</th>';
 		
-	$page .= '<th width="15%">';
+	$page .= '<th width="10%">';
 	$page .= 'State';
 	$page .= '</th>';
 	
-	$page .= '<th width="15%">';
-	$page .= 'Alarm';
+	$page .= '<th width="10%">';
+	$page .= 'Home';
+	$page .= '</th>';
+	
+	$page .= '<th width="10%">';
+	$page .= 'Sleep';
+	$page .= '</th>';
+	
+	$page .= '<th width="10%">';
+	$page .= 'Away';
 	$page .= '</th>';
 			
 	$page .= '</tr>';
 		
-	$sql = 'select nodeid, vendor, description, location, alarm_enabled from zwave';
+	$sql = 'select zid, nodeid, type, vendor, description, location, home, sleep, away from zwave';
 	$result = plaatprotect_db_query($sql);
 	while ($row = plaatprotect_db_fetch_object($result)) {
 
@@ -121,13 +153,38 @@ function plaatprotect_zwave_page() {
 		$page .= '</td>';
 				
 		$page .= '<td>';
-		$page .= "ONLINE";
+		if ($row->type==2) {
+			$page .= "OFF";
+		} else {
+			$page .= "ONLINE";
+		}
 		$page .= '</td>';
 		
 		$page .= '<td>';
-		if ($row->description=='Sirene') {
-			$page .= '<input type="checkbox" '. (plaatprotect_get_alarm_zwave_state($row->nodeid) ? "checked" : "");			
-			$page .= ' onchange="link(\'pid='.$pid.'&eid='.EVENT_UPDATE.'&id='.$row->nodeid.'\');">';
+		if ($row->type==2) {
+			$page .= '<input type="checkbox" ';
+			if ($row->home==1) { $page .= "checked"; }
+			$page .= ' onchange="link(\'pid='.$pid.'&eid='.EVENT_UPDATE.'&sid='.HOME.'&id='.$row->zid.'\');">';
+		} else {
+			$page .= '<input type="checkbox" disabled readonly>';			
+		}
+		$page .= '</td>';
+		
+		$page .= '<td>';
+		if ($row->type==2) {
+			$page .= '<input type="checkbox" ';
+			if ($row->sleep==1) { $page .= "checked"; }
+			$page .= ' onchange="link(\'pid='.$pid.'&eid='.EVENT_UPDATE.'&sid='.SLEEP.'&id='.$row->zid.'\');">';
+		} else {
+			$page .= '<input type="checkbox" disabled readonly>';			
+		}
+		$page .= '</td>';
+		
+			$page .= '<td>';
+		if ($row->type==2) {
+			$page .= '<input type="checkbox" ';
+			if ($row->away==1) { $page .= "checked"; }
+			$page .= ' onchange="link(\'pid='.$pid.'&eid='.EVENT_UPDATE.'&sid='.AWAY.'&id='.$row->zid.'\');">';
 		} else {
 			$page .= '<input type="checkbox" disabled readonly>';			
 		}
@@ -163,15 +220,16 @@ function plaatprotect_zwave() {
   global $pid;
   global $eid;
   global $id;
+  global $sid;
     
    /* Event handler */
   switch ($eid) {
   
 		case EVENT_UPDATE: 
-			plaatprotect_set_alarm_zwave_state($id);
+			plaatprotect_set_zwave_state($id, $sid);
 			break;
 	}
-
+    
   /* Page handler */
   switch ($pid) {
 

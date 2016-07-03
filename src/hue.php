@@ -36,8 +36,6 @@ function plaatprotect_get_inventory_hue() {
 	
    $json = file_get_contents($hue_url);
 	
-	//echo $json;
-	
 	$data = json_decode($json);
 
    return $data;
@@ -49,24 +47,57 @@ function plaatprotect_get_inventory_hue() {
 ** ---------------------
 */
 
-function plaatprotect_hue_alarm_enabled($id) {
+function plaatprotect_set_hue_state($id, $scenario) {
 
-	$sql = 'select hid from hue where hid='.$id;
+	$sql = 'select hid, home, sleep, away from hue where hid='.$id;
 	$result = plaatprotect_db_query($sql);
 	$row = plaatprotect_db_fetch_object($result);
 	
-	return (isset($row->hid));	
-}
-
-function plaatprotect_hue_alarm_update($id) {
-
-	if (plaatprotect_hue_alarm_enabled($id)) {
+	if (!isset($row->hid)) {
+		$sql = 'insert into hue (hid, home, sleep, away) value ('.$id.',0,0,0)';
+		plaatprotect_db_query($sql);
+	}
 	
-		$sql = 'delete from hue where hid='.$id;
+	$sql = 'select hid, home, sleep, away from hue where hid='.$id;
+	$result = plaatprotect_db_query($sql);
+	$row = plaatprotect_db_fetch_object($result);
+	
+	$value = 0;
+	switch ($scenario) {
 		
+		case HOME: 	
+			$value= $row->home;
+			break;
+					
+		case SLEEP: 	
+			$value= $row->sleep;
+			break;
+					
+		case AWAY: 	
+			$value= $row->away;
+			break;
+	}
+		
+	if ($value==1) {
+		$value=0;
 	} else {
+		$value=1;
+	}
 	
-		$sql = 'insert into hue (hid) value ('.$id.')';
+	$sql ="";
+	switch ($scenario) {
+		
+		case HOME: 	
+			$sql = 'update hue set home='.$value.' where hid='.$id;
+			break;
+					
+		case SLEEP: 	
+			$sql = 'update hue set sleep='.$value.' where hid='.$id;
+			break;
+					
+		case AWAY: 	
+			$sql = 'update hue set away='.$value.' where hid='.$id;
+			break;
 	}
 	plaatprotect_db_query($sql);
 }
@@ -93,36 +124,57 @@ function plaatprotect_hue_page() {
 	$page .= '<table>';
 	$page .= '<thead>';
 	$page .= '<tr>';
-	$page .= '<th width="12%">ID</th>';
-	$page .= '<th width="12%">Name</th>';
-	$page .= '<th width="12%">Type</th>';
-	$page .= '<th width="12%">Model</th>';
-	$page .= '<th width="12%">Vendor</th>';
-	$page .= '<th width="12%">Version</th>';
-   $page .= '<th width="12%">State</th>';
-	$page .= '<th width="12%">Alarm</th>';
+	$page .= '<th width="10%">ID</th>';
+	$page .= '<th width="10%">Name</th>';
+	$page .= '<th width="10%">Type</th>';
+	$page .= '<th width="10%">Vendor</th>';
+	$page .= '<th width="10%">Version</th>';
+   $page .= '<th width="10%">State</th>';
+	$page .= '<th width="10%">Home</th>';
+	$page .= '<th width="10%">Sleep</th>';
+	$page .= '<th width="10%">Away</th>';
 	$page .= '</tr>';
 	$page .= '</thead>';
 	$page .= '<tbody>';
 
 	foreach($data as $id => $bulb ) {
-	  $page .= '<tr>';
-  	  $page .= '<td>' . $id . '</td>';
-	  $page .= '<td>' . $bulb->name . '</td>';
-	  $page .= '<td>' . $bulb->type . '</td>';
-	  $page .= '<td>' . $bulb->modelid . '</td>';
-	  $page .= '<td>' . $bulb->manufacturername . '</td>';
-	  $page .= '<td>' . $bulb->swversion . '</td>';
-	  $page .= ($bulb->state->reachable ? ($bulb->state->on ? '<td class="on">ON</td>' : '<td class="off">OFF</td>') : '<td class="not">OFFLINE</td>') . '</td>';
-
+		$page .= '<tr>';
+		$page .= '<td>' . $id . '</td>';
+		$page .= '<td>' . $bulb->name . '</td>';
+		$page .= '<td>' . $bulb->type . '</td>';
+		$page .= '<td>' . $bulb->manufacturername . '</td>';
+		$page .= '<td>' . $bulb->swversion . '</td>';
+		$page .= ($bulb->state->reachable ? ($bulb->state->on ? '<td class="on">ON</td>' : '<td class="off">OFF</td>') : '<td class="not">OFFLINE</td>') . '</td>';
+		
+		$sql = 'select hid, home, sleep, away from hue where hid='.$id;
+		$result = plaatprotect_db_query($sql);
+		$row = plaatprotect_db_fetch_object($result);
+	
+		$page .= '<td>';
+		$page .= '<input type="checkbox" ';		
+		if ((isset($row->hid)) && ($row->home==1)) { 
+			$page .= "checked"; 
+		}		
+		$page .= ' onchange="link(\'pid='.$pid.'&eid='.EVENT_UPDATE.'&sid='.HOME.'&id='.$id.'\');">';			
+		$page .= '</td>';
 		
 		$page .= '<td>';
-		$page .= '<input type="checkbox" '. (plaatprotect_hue_alarm_enabled($id) ? "checked" : "");
-		$page .= ' onchange="link(\'pid='.$pid.'&eid='.EVENT_UPDATE.'&id='.$id.'\');">';
+		$page .= '<input type="checkbox" ';		
+		if ((isset($row->hid)) && ($row->sleep==1)) { 
+			$page .= "checked"; 
+		}		
+		$page .= ' onchange="link(\'pid='.$pid.'&eid='.EVENT_UPDATE.'&sid='.SLEEP.'&id='.$id.'\');">';			
 		$page .= '</td>';
 
-
-	  $page .= '</tr>';
+		$page .= '<td>';
+		$page .= '<input type="checkbox" ';		
+		if ((isset($row->hid)) && ($row->away==1)) { 
+			$page .= "checked"; 
+		}		
+		$page .= ' onchange="link(\'pid='.$pid.'&eid='.EVENT_UPDATE.'&sid='.AWAY.'&id='.$id.'\');">';			
+		$page .= '</td>';
+		
+		$page .= '</tr>';
 	}
 	
 	$page .= '</table>';
@@ -148,19 +200,20 @@ function plaatprotect_hue_page() {
  */
 function plaatprotect_hue() {
 
-  /* input */
+	/* input */
   global $pid;
   global $eid;
   global $id;
+  global $sid;
     
    /* Event handler */
   switch ($eid) {
   
 		case EVENT_UPDATE: 
-			plaatprotect_hue_alarm_update($id);
+			plaatprotect_set_hue_state($id, $sid);
 			break;
 	}
-
+	
   /* Page handler */
   switch ($pid) {
 

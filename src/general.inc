@@ -49,6 +49,7 @@ define('PAGE_ABOUT',                18);
 define('PAGE_DONATE',               19);
 define('PAGE_RELEASE_NOTES',        20);
 define('PAGE_CHART',                21);
+define('PAGE_NOTIFICATION',         22);
 
 
 define('PAGE_SETTING_LOGIN',        30);
@@ -81,6 +82,17 @@ define('EVENT_STOP',                125);
 define('EVENT_BEGIN',               126);
 define('EVENT_END',                 127);
 define('EVENT_UPDATE',              128);
+define('EVENT_SWITCH_SCENARIO',     129);
+
+/*
+** -----------
+** SCENARIO
+** -----------
+*/
+
+define('HOME',   1);
+define('SLEEP',  2);
+define('AWAY',   3);
 
 /*
 ** -----------
@@ -114,7 +126,7 @@ define('NOTIFICATION',              81);
 ** -----------
 */
 
-function plaatprotect_notification($topic, $content, $severity=0) {
+function plaatprotect_mobile_notification($topic, $content, $severity=0) {
 
   $notification_present = plaatprotect_db_get_config_item('notification_present', NOTIFICATION);
 

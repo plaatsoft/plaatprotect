@@ -245,6 +245,13 @@ function plaatprotect_db_get_config_item($key, $category=0) {
    return $value;
 }
 
+
+function plaatprotect_db_set_config_item($key, $value, $category=0) {
+
+  $sql  = 'update config set value="'.$value.'", date=SYSDATE() where token="'.$key.'" and category='.$category;		
+  plaatprotect_db_query($sql);
+}
+
 function plaatprotect_db_get_session($ip, $new=false) {
 
    $sql = 'select sid, session_id, requests from session where ip="'.$ip.'"';

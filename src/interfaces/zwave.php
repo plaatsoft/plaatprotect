@@ -53,8 +53,25 @@ $fp=fopen("/dev/ttyACM0","c+");
 
 function plaatprotect_hue_alarm_group($event) {
 
-   // Active Hue Bulbs
-	$sql = 'select hid from hue';
+	$sql = 'select value from config where token="alarm_scenario"';
+	$result = plaatprotect_db_query($sql);
+	$row = plaatprotect_db_fetch_object($result);
+	
+	switch ($row->value) {
+	
+		case HOME: 
+			$sql = 'select hid from hue where home=1';
+			break;
+			
+		case SLEEP: 
+			$sql = 'select hid from hue where sleep=1';
+			break;		
+			
+		case AWAY: 
+			$sql = 'select hid from hue where away=1';
+			break;
+	}
+
 	$result = plaatprotect_db_query($sql);
 	while ($row = plaatprotect_db_fetch_object($result)) {	
 		if ($event==EVENT_ALARM_ON) {
@@ -67,16 +84,34 @@ function plaatprotect_hue_alarm_group($event) {
 	
 function plaatprotect_zwave_sirene_group($event) {
 	
-	$sql  = 'select nodeid from zwave where alarm_enabled=1';	
+	$sql = 'select value from config where token="alarm_scenario"';
+	$result = plaatprotect_db_query($sql);
+	$row = plaatprotect_db_fetch_object($result);
+	
+	switch ($row->value) {
+	
+		case HOME: 
+			$sql = 'select zid, nodeid from zwave where home=1';
+			break;
+			
+		case SLEEP: 
+			$sql = 'select zid, nodeid from zwave where sleep=1';
+			break;		
+			
+		case AWAY: 
+			$sql = 'select zid, nodeid from zwave where away=1';
+			break;
+	}
+	
    $result = plaatprotect_db_query($sql);
    while ($row = plaatprotect_db_fetch_object($result)) {
 	
 		if ($event==EVENT_ALARM_ON) {
-			SendDataActiveHorn($row->nodeid,1,$row->nodeid);
+			SendDataActiveHorn($row->nodeid, 1, $row->nodeid);
 			Receive();
 			Receive();
 		} else  {
-			SendDataActiveHorn($row->nodeid,0,$row->nodeid);
+			SendDataActiveHorn($row->nodeid, 0, $row->nodeid);
 			Receive();
 			Receive();
 		}		
@@ -85,25 +120,49 @@ function plaatprotect_zwave_sirene_group($event) {
 	
 function plaatprotect_zwave_notification_group($event, $nodeid) {
 
-	$sql  = 'select nodeid, location from zwave where nodeid='.$nodeid;	
-   $result = plaatprotect_db_query($sql);
-   $row = plaatprotect_db_fetch_object($result);
+	$sql = 'select value from config where token="alarm_scenario"';
+	$result = plaatprotect_db_query($sql);
+	$row = plaatprotect_db_fetch_object($result);
 	
-	// Notication to mobile
-	$subject =  "Alarm";
-	$body  = "Location=".$row->location." ";
-	$body .= "Zone=".$row->nodeid." ";
-   $body .= "Event=";
-
-   if ($event==EVENT_ALARM_ON) {
-		$body .= 'on';
-	} else {
-		$body .= 'off';
+	switch ($row->value) {
+	
+		case HOME: 
+			$sql = 'select nid from notification where home=1 and type=1';
+			break;
+			
+		case SLEEP: 
+			$sql = 'select nid from notification where sleep=1 and type=1';
+			break;		
+			
+		case AWAY: 
+			$sql = 'select nid from notification where away=1 and type=1';
+			break;
 	}
 	
-	LogText('Notification = '.$subject.' '.$body .' sent!');
+	$result = plaatprotect_db_query($sql);
+   
+	while ($row = plaatprotect_db_fetch_object($result)) {
 	
-   plaatprotect_notification($subject, $body );
+		$sql2 = 'select nodeid, location from zwave where nodeid='.$nodeid;	
+		$result2 = plaatprotect_db_query($sql2);
+		$row2 = plaatprotect_db_fetch_object($result2);
+	
+		// Notication to mobile
+		$subject =  "Alarm";
+		$body  = "Location=".$row2->location." ";
+		$body .= "Zone=".$row2->nodeid." ";
+		$body .= "Event=";
+	
+		if ($event==EVENT_ALARM_ON) {
+			$body .= 'on';
+		} else {
+			$body .= 'off';
+		}
+	
+		LogText('Notification = '.$subject.' '.$body .' sent!');
+	
+		plaatprotect_mobile_notification($subject, $body );
+	}
 }
 	
 function plaatprotect_zwave_state_machine() {
@@ -1079,7 +1138,7 @@ function Receive() {
  ********************************
  */
 
-plaatprotect_notification("startup", "Zwave interface is started!" );
+plaatprotect_mobile_notification("startup", "Zwave interface is started!" );
  
 /* Init ZWave layer */
 SendGetVersion();
@@ -1113,7 +1172,7 @@ echo "\r\n";
 	
 // Switch off Sirene
 LogText("Switch off Sirenes which are part of the alarm group.");
-$sql  = 'select nodeid from zwave where alarm_enabled=1';	
+$sql  = 'select nodeid from zwave where type=2';	
 $result = plaatprotect_db_query($sql);
 while ($row = plaatprotect_db_fetch_object($result)) {	
 	SendDataActiveHorn($row->nodeid,0,$row->nodeid);
