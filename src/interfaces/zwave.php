@@ -427,6 +427,31 @@ function SendGetVersion() {
    fwrite($fp, $command, strlen($command));
 }
 
+/* 
+ ** Send GetVersion 
+ */
+function SendRequestNodeNeighborUpdate($node) {
+
+  global $fp;
+  /*
+   * Byte 0 : Start of Frame (0x01)
+   * Byte 1 : Length of frame - number of bytes to follow
+   * Byte 2 : Request (0x00) 
+   * Byte 3 : Message Class (0x48) RequestNodeNeighborUpdate
+	* Byte 4 : NodeId
+   * Byte 5 : Last byte is checksum
+   */
+ 
+   $tmp = "SendRequestNodeNeighborUpdate"; 
+	LogText($tmp);
+	 
+   $command = hex2bin("01040048".int2hex($node));
+   $command .= GenerateChecksum($command);
+   LogTxCommand($command);
+   fwrite($fp, $command, strlen($command));
+}
+
+
 function SendGetMemoryId() {
 
   global $fp;
@@ -893,6 +918,9 @@ function decodeApplicationCommandHandler($data) {
                               break;
                }
                break;
+					
+	case 0x84:  $tmp .=  'Received Wakeup Notification ';
+			      break;
 
     default:   $tmp .= 'Unknown';
                break;
@@ -917,6 +945,15 @@ function decodeRouteInfo($data) {
    }
 
   LogText($tmp);
+}
+
+function decodeRequestNodeNeighborUpdate($data) {
+
+  $nodeId = bin2hex(substr($data,5,1));
+  
+  $tmp = "RequestNodeNeighborUpdate NodeId=[".$nodeId."] ";
+  
+  return $tmp;
 }
 
 function decodeIdentifyNode($data) {
@@ -1066,6 +1103,9 @@ function DecodeMessage($data) {
 		case 0x41:	decodeIdentifyNode($data);
 						break;
 						
+		case 0x48:	decodeRequestNodeNeighborUpdate($data);
+						break;
+						
 		case 0x80:	decodeRouteInfo($data);
 						break;
 						
@@ -1116,9 +1156,9 @@ function Receive() {
       $start = 2;
 		
     } else if (($start==2) && ($len==$count)) {
-	 
-	   SendAck();	
+	 	  
       LogRxCommand($data, true);
+		SendAck();	
 		DecodeMessage($data);		     
 		echo "\r\n";
       		
@@ -1159,6 +1199,11 @@ while ($row = plaatprotect_db_fetch_object($result)) {
   
   SendGetRouteInfo($row->nodeid);
   Receive();
+  
+  SendRequestNodeNeighborUpdate($row->nodeid);
+  Receive();
+  
+  LogText("-----------------");
 }
 
 // Switch off Hue Bulbs
