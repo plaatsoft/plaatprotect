@@ -123,8 +123,9 @@ INSERT INTO `config` (`id`, `category`, `token`, `value`, `options`, `date`, `re
 (25, 62, 'webcam_no_motion_area', '', '', '2016-07-01', 0, 0, 0);
 
 INSERT INTO `notification` (`nid`, `type`, `home`, `sleep`, `away`) VALUES
-(1, 1, 1, 0, 1),
-(2, 2, 1, 0, 1);
+(1, 1, 0, 0, 0),
+(2, 2, 0, 0, 0),
+(3, 3, 0, 0, 0);
 
 INSERT INTO `plaatprotect`.`config` (`id`, `category`, `token`, `value`, `options`, `date`, `readonly`, `rebuild`, `encrypt`) 
 VALUES ('2', '0', 'alarm_scenario', '0', '', '2016-07-03', '1', '0', '0');

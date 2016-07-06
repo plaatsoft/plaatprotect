@@ -209,9 +209,14 @@ switch ($pid) {
 		$page = plaatprotect_webcam();
 		break;
 		
-	case PAGE_HUE: 
-		include "hue.php";
-		$page = plaatprotect_hue();
+	case PAGE_ZIGBEE: 
+		include "zigbee_view.php";
+		$page = plaatprotect_zigbee();
+		break;
+		
+	case PAGE_ZWAVE: 
+		include "zwave_view.php";
+		$page = plaatprotect_zwave();
 		break;
 		
 	case PAGE_NOTIFICATION: 
@@ -222,11 +227,6 @@ switch ($pid) {
 	case PAGE_CHART: 
 		include "chart.php";
 		$page = plaatprotect_chart();
-		break;
-		
-	case PAGE_ZWAVE: 
-		include "zwave_view.php";
-		$page = plaatprotect_zwave();
 		break;
 
 	case PAGE_DONATE: 

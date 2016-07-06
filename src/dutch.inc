@@ -16,6 +16,7 @@
 **  All copyrights reserved (c) 2008-2016 PlaatSoft
 */
  
+ 
 /**
  * @file
  * @brief contain dutch translation
@@ -78,7 +79,7 @@ $lang['LINK_DELETE']         = i('remove').'Verwijderen';
 $lang['LINK_WEBCAM']         = i('camera') . 'Webcams'; 
 $lang['LINK_LOGGING']        = i('database') . 'Logging';  
 
-$lang['LINK_HUE']            = i('lightbulb-o') . 'HUE';
+$lang['LINK_ZIGBEE']         = i('wifi') . 'Zigbee';
 $lang['LINK_PICTURE']        = i('camera') . 'Foto'; 
 $lang['LINK_ARCHIVE']        = i('folder-open') . 'Archief'; 
 $lang['LINK_PLAY']           = i('play');
@@ -185,16 +186,8 @@ $lang['CATEGORY11'] = 'Z-Wave';
 $lang['CATEGORY51'] = 'Beveiliging'; 
 $lang['CATEGORY61'] = 'Webcam 1'; 
 $lang['CATEGORY62'] = 'Webcam 2'; 
-$lang['CATEGORY71'] = 'Philips HUE'; 
+$lang['CATEGORY71'] = 'Zigbee'; 
 $lang['CATEGORY81'] = 'Android Notification'; 
-
-/*
-** ------------------
-** SYSTEM
-** ------------------
-*/
-
-$lang['SYSTEM_TITLE'] = 'Systeem Overzicht';
 
 /*
 ** ------------------
@@ -211,7 +204,7 @@ $lang['TITLE_ARCHIVE' ] = 'Archief';
 ** ------------------
 */
 
-$lang['TITLE_HUE'] ='Philips HUE System';
+$lang['TITLE_ZIGBEE'] ='Zigbee Netwerk';
 
 /*
 ** ------------------
@@ -219,7 +212,7 @@ $lang['TITLE_HUE'] ='Philips HUE System';
 ** ------------------
 */
 
-$lang['TITLE_ZWAVE'] ='Z-Wave System';
+$lang['TITLE_ZWAVE'] ='Z-Wave Netwerk';
 
 /*
 ** ------------------
@@ -227,10 +220,11 @@ $lang['TITLE_ZWAVE'] ='Z-Wave System';
 ** ------------------
 */
 
-$lang['TITLE_NOTIFICATION'] ='Notifcation System';
+$lang['TITLE_NOTIFICATION'] ='Notifcation Netwerk';
 
-$lang['NOTIFICATION_1'] = 'Mobile';
+$lang['NOTIFICATION_1'] = 'Mobiel';
 $lang['NOTIFICATION_2'] = 'Email';
+$lang['NOTIFICATION_3'] = 'Drone';
 
 /*
 ** ------------------

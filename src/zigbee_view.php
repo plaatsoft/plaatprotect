@@ -16,6 +16,7 @@
 **  All copyrights reserved (c) 2008-2016 PlaatSoft
 */
 
+
 /**
  * @file
  * @brief contain hue page
@@ -112,12 +113,12 @@ function plaatprotect_set_hue_state($id, $scenario) {
  * plaatprotect hue page
  * @return HTML block which page contain.
  */
-function plaatprotect_hue_page() {
+function plaatprotect_hue_zigbee() {
 
 	global $pid;
 
    $page ="<style>input[type='checkbox']{width:24px;height:24px}</style>";
-	$page .= '<h1>'.t('TITLE_HUE').'</h1>';
+	$page .= '<h1>'.t('TITLE_ZIGBEE').'</h1>';
 
 	$data  = plaatprotect_get_inventory_hue();
 
@@ -198,7 +199,7 @@ function plaatprotect_hue_page() {
  * plaatprotect about handler
  * @return HTML block which page contain.
  */
-function plaatprotect_hue() {
+function plaatprotect_zigbee() {
 
 	/* input */
   global $pid;
@@ -217,8 +218,8 @@ function plaatprotect_hue() {
   /* Page handler */
   switch ($pid) {
 
-     case PAGE_HUE:
-        return plaatprotect_hue_page();
+     case PAGE_ZIGBEE:
+        return plaatprotect_zigbee_page();
         break;
   }
 }

@@ -16,6 +16,7 @@
 **  All copyrights reserved (c) 2008-2016 PlaatSoft
 */
 
+
 /**
  * @file
  * @brief contain english translation
@@ -55,6 +56,7 @@ $lang['LINK_EDIT']          = i('edit') . 'Edit';
 $lang['LINK_INSERT']        = i('plus') . 'Insert';  
 $lang['LINK_UPDATE']        = i('edit') . 'Update';  
 $lang['LINK_EXECUTE']       = i('play') . 'Execute'; 
+
 $lang['LINK_SAVE']          = i('edit') . 'Save'; 
 $lang['LINK_CANCEL']        = i('times') . 'Cancel';
 $lang['LINK_LOGIN']         = 'Login';
@@ -74,9 +76,10 @@ $lang['LINK_SETTINGS']      = i('cog') . 'Settings';
 $lang['LINK_RELEASE_NOTES'] = i('calendar') . 'Release Notes';
 $lang['LINK_ABOUT']         = i('book') . 'About';
 $lang['LINK_DONATE']        = i('money') . 'Donate';
+
 $lang['LINK_DELETE']        = i('remove').'Delete'; 
 $lang['LINK_WEBCAM']        = i('camera') . 'Webcams'; 
-$lang['LINK_HUE']           = i('lightbulb-o') . 'HUE';
+$lang['LINK_ZIGBEE']        = i('wifi') . 'Zigbee';
 $lang['LINK_PICTURE']       = i('camera') . 'Picture'; 
 $lang['LINK_ARCHIVE']       = i('folder-open') . 'Archive'; 
 $lang['LINK_ZWAVE']         = i('wifi') . 'Z-Wave'; 
@@ -117,9 +120,7 @@ INCLUDING THE WARRANTY OF DESIGN, MERCHANTABILITY AND<br/> FITNESS FOR A PARTICU
 
 $lang['CREDITS_TITLE'] = 'Credits';
 $lang['CREDITS_CONTENT'] = 'The following people helped creating PlaatProtect:<br/><br/>
-wplaat (Architect / Developer)<br/>
-bplaat (Graphical Designer / Developer)<br/>
-lplaat (Tester)';
+wplaat (Architect / Developer)<br/>';
 
 /*
 ** ------------------
@@ -169,7 +170,7 @@ $lang['hue_ip_address'] = 'Philips HUE IP address of bridge';
 $lang['hue_key'] = 'Philips HUE access key';
 $lang['hue_present'] = 'Philips HUE present';
 
-$lang['notification_present'] = 'Notifcation present';
+$lang['notification_present'] = 'Notification present';
 $lang['notification_nma_key'] = 'Notify My Android key';
 
 $lang['CATEGORY0']  = 'General'; 
@@ -178,7 +179,7 @@ $lang['CATEGORY51'] = 'Security';
 $lang['CATEGORY52'] = 'Look and Feel'; 
 $lang['CATEGORY61'] = 'Webcam 1'; 
 $lang['CATEGORY62'] = 'Webcam 2'; 
-$lang['CATEGORY71'] = 'Philips HUE'; 
+$lang['CATEGORY71'] = 'Zigbee'; 
 $lang['CATEGORY81'] = 'Notification'; 
 
 /*
@@ -196,7 +197,7 @@ $lang['TITLE_ARCHIVE' ] = 'Archive';
 ** ------------------
 */
 
-$lang['TITLE_HUE'] ='Philips HUE System';
+$lang['TITLE_ZIGBEE'] ='Zigbee Network';
 
 /*
 ** ------------------
@@ -204,7 +205,7 @@ $lang['TITLE_HUE'] ='Philips HUE System';
 ** ------------------
 */
 
-$lang['TITLE_ZWAVE'] ='Z-Wave System';
+$lang['TITLE_ZWAVE'] ='Z-Wave Network';
 
 /*
 ** ------------------
@@ -212,10 +213,11 @@ $lang['TITLE_ZWAVE'] ='Z-Wave System';
 ** ------------------
 */
 
-$lang['TITLE_NOTIFICATION'] ='Notifcation System';
+$lang['TITLE_NOTIFICATION'] ='Notification System';
 
 $lang['NOTIFICATION_1'] = 'Mobile';
 $lang['NOTIFICATION_2'] = 'Email';
+$lang['NOTIFICATION_3'] = 'Drone';
 
 /*
 ** ------------------

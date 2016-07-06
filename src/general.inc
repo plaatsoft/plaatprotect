@@ -16,6 +16,7 @@
 **  All copyrights reserved (c) 2008-2016 PlaatSoft
 */
 
+
 /**
  * @file
  * @brief contain general logic
@@ -43,7 +44,7 @@ define('PAGE_LOGGING',              12);
 define('PAGE_WEBCAM',               13);
 define('PAGE_ARCHIVE',              14);
 define('PAGE_IMAGE_VIEWER',         15);
-define('PAGE_HUE',                  16);
+define('PAGE_ZIGBEE',               16);
 define('PAGE_ZWAVE',                17);
 define('PAGE_ABOUT',                18);
 define('PAGE_DONATE',               19);
