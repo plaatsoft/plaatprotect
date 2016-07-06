@@ -113,7 +113,7 @@ function plaatprotect_set_hue_state($id, $scenario) {
  * plaatprotect hue page
  * @return HTML block which page contain.
  */
-function plaatprotect_hue_zigbee() {
+function plaatprotect_zigbee_page() {
 
 	global $pid;
 

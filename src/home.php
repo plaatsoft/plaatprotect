@@ -208,7 +208,7 @@ function plaatprotect_home_page() {
 		$page .= '</td>';		
 		$page .= '<td>';
 		if ($hue_present=="true") {
-			$page .= plaatprotect_link('pid='.PAGE_HUE, t('LINK_HUE'));
+			$page .= plaatprotect_link('pid='.PAGE_ZIGBEE, t('LINK_ZIGBEE'));
 		} 
 		$page .= '</td>';		
 		$page .= '<td>';

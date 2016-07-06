@@ -368,17 +368,25 @@ function LogText($text) {
  */
 function LogRxCommand($data, $crc) {
 
-  $t = microtime(true);
-  $micro = sprintf("%06d",($t - floor($t)) * 1000000);
-  $d = new DateTime( date('Y-m-d H:i:s.'.$micro, $t) );
+   $t = microtime(true);
+   $micro = sprintf("%06d",($t - floor($t)) * 1000000);
+   $d = new DateTime( date('Y-m-d H:i:s.'.$micro, $t) );
 
-  print $d->format("Y-m-d H:i:s.u");
+   print $d->format("Y-m-d H:i:s.u");
     
-  echo ' Rx: '.GetHexString($data);
-  if ($crc==true) {
-	echo " [".bin2hex(GenerateChecksum($data, false))."]";
-  }
-  echo "\r\n";
+   echo ' Rx: '.GetHexString($data);
+   if ($crc==true) {
+	   echo " [".bin2hex(GenerateChecksum($data, false))."]";
+   }
+  
+   echo "\r\n";
+  
+	if ($crc==true) {
+		if ($data[strlen($data)-1]!=GenerateChecksum($data, false)) {
+			return false;
+		}
+	}
+	return true;
 }
 
 function int2hex($value) {
@@ -1157,9 +1165,10 @@ function Receive() {
 		
     } else if (($start==2) && ($len==$count)) {
 	 	  
-      LogRxCommand($data, true);
-		SendAck();	
-		DecodeMessage($data);		     
+      if (LogRxCommand($data, true)) {
+			SendAck();	
+			DecodeMessage($data);		     
+		}
 		echo "\r\n";
       		
 		$start = 0;
@@ -1200,8 +1209,8 @@ while ($row = plaatprotect_db_fetch_object($result)) {
   SendGetRouteInfo($row->nodeid);
   Receive();
   
-  SendRequestNodeNeighborUpdate($row->nodeid);
-  Receive();
+  #SendRequestNodeNeighborUpdate($row->nodeid);
+  #Receive();
   
   LogText("-----------------");
 }
