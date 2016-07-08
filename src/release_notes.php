@@ -27,9 +27,10 @@
 ** ---------------------
 */
 
-$note[1] = '<div class="subparagraph">Version 0.1 (03-07-2016)</div>
+$note[1] = '<div class="subparagraph">Version 0.1 (08-07-2016)</div>
 <div class="large_text">
 <ul>
+<li>General: Automatic cleanup old webcam records.</li>
 <li>General: Added notification page.</li>
 <li>General: Added logging page.</li>
 <li>General: Added movement chart page.</li>

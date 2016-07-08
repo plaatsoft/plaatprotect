@@ -69,7 +69,7 @@ function check_zwave_network() {
 			$row3 = plaatprotect_db_fetch_object($result3);
 		
 			$value = time()-strtotime($row->last_update);
-			if ($value<(60*60*2)) {
+			if ($value<(60*20)) {
 			
 				$page .= '<div class="checker good">';
 				$page .= 'Sensor '.$row->nodeid.': ';

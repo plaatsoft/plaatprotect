@@ -45,6 +45,22 @@ if ($webcam_present_1=="true") {
    exec('php '.BASE_DIR.'/interfaces/webcam.php 1 > /dev/null 2>&1 &');
 }
 
+$query  = 'select cid from cron where DATE(last_run)!="'.date("Y-m-d").'"'; 
+$result = plaatprotect_db_query($query);	
+if ($data = plaatprotect_db_fetch_object($result)) {
+	
+		/* Event handler */
+		switch ($data->cid) {
+		
+			case 1:
+				// Delete old webcam recording
+				$dir = BASE_DIR.'/webcam/'.date('Y-m-d', strtotime('-30 days'));
+				exec('rm -rf '.$dir);
+				plaatprotect_db_cron_update($data->cid);
+				break;
+		}
+}
+
 plaatprotect_db_close();
 
 // Calculate to page render time

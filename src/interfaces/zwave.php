@@ -412,6 +412,27 @@ function SendAck() {
 	LogTxCommand($command);
 }
 
+
+function SendSerialApiGetCapabilities() {
+
+  global $fp;
+  /*
+   * Byte 0 : Start of Frame (0x01)
+   * Byte 1 : Length of frame - number of bytes to follow
+   * Byte 2 : Request (0x00) 
+   * Byte 3 : Message Class (0x07) SerialApiGetCapabilities
+   * Byte 4 : Last byte is checksum
+   */
+ 
+   $tmp = "SendSerialApiGetCapabilities"; 
+	LogText($tmp);
+	 
+   $command = hex2bin("01030007");
+   $command .= GenerateChecksum($command);
+   LogTxCommand($command);
+   fwrite($fp, $command, strlen($command));
+}
+
 /* 
  ** Send GetVersion 
  */
@@ -523,27 +544,6 @@ function SendGetIdentifyNode($node) {
   $command .= GenerateChecksum($command);
   fwrite($fp, $command, strlen($command));
   LogTxCommand($command);
-}
-
-function SendGetCommandClassSupport($node ,$callbackId) {
-
-  global $fp;
-  /*
-   * Byte 0 : Start of Frame (0x01)
-   * Byte 1 : Length of frame - number of bytes to follow
-   * Byte 2 : Request (0x00) 
-   * Byte 3 : Message Class (0x41) IdentifyNode
-   * Byte 4 : NodeId
-   * Byte 5 : Last byte is checksum
-   */
-  
-   $tmp= "SentGetCommandClassSupport NodeId=[".int2hex($node)."] CallbackId=[".int2hex($callbackId)."]";
-   LogText($tmp);
-	
-   $command = hex2bin("01090013".int2hex($node)."02000025".int2hex($callbackId));
-   $command .= GenerateChecksum($command);
-   fwrite($fp, $command, strlen($command));
-   LogTxCommand($command);
 }
 
 function SendGetProtocolStatus() {
@@ -723,6 +723,36 @@ function GetHornState($node,$value,$callbackId) {
    fwrite($fp, $command, strlen($command));
    LogTxCommand($command);
 }
+
+
+function GetManufacturer($node, $callbackId) {
+	
+   global $fp;
+	
+  /*
+   * Byte 0 : Start of Frame (0x01)
+   * Byte 1 : Length of frame - number of bytes to follow
+   * Byte 2 : Request (0x00) 
+   * Byte 3 : SendData (0x13)
+   * Byte 4 : NodeId
+   * Byte 5 : SPECIFIC_GET (0x02)
+   * Byte 6 : Command Class COMMAND_CLASS_MANUFACTURER 0x72
+	* Byte 7 : 04
+	* Byte 8 : 25
+   * Byte 9 : CallBackId 
+   * Byte 10 : Last byte is checksum
+   */
+		
+   $tmp = "GetManufacturer " ; 
+	
+   LogText($tmp);
+	
+   $command = hex2bin("01090013".int2hex($node)."02720425".int2hex($callbackId));
+   $command .= GenerateChecksum($command);
+   LogTxCommand($command);
+   fwrite($fp, $command, strlen($command));
+}
+
 
 /**
  ********************************
@@ -936,6 +966,36 @@ function decodeApplicationCommandHandler($data) {
   LogText($tmp);
 }
 
+function decodeSerialApiGetCapabilities($data) {
+
+  $serialAPIVersion = GetHexString(substr($data,4,2));
+  $manufactureId = GetHexString(substr($data,6,2));
+  $deviceType = GetHexString(substr($data,8,2));
+  $deviceId = GetHexString(substr($data,10,2));
+ 
+  $tmp = "SerialApiGetCapabilities serialAPIVersion=[".$serialAPIVersion."] manufactureId=[".$manufactureId."] DeviceType=[".$deviceType."] DeviceId=[".$deviceId."]";
+  LogText($tmp);  
+}
+
+function decodeSerialInit($data) {
+
+ $count = 0;
+
+ $tmp = "Available Nodes ";
+ 
+ for ($i=7; $i<36; $i++ ) {
+   $raw_node = ord(substr($data,$i,1));
+  
+   for ($j=0; $j<8; $j++) {
+      if (($raw_node & (0x01 << $j)) != 0x00)
+         $tmp .= $j+1+(8*$count).' ';
+      }
+      $count++;
+   }
+
+  LogText($tmp);  
+}
+	
 function decodeRouteInfo($data) {
 
  $count = 0;
@@ -1068,9 +1128,9 @@ function decodeSentData($data) {
     $response = ord(substr($data,4,1));
     switch ($response) {
  
-    case 0x00: $tmp .= "Transmission complete and Ack received.";
+    case 0x00: $tmp .= "Delivered to Z-Wave stack (Ack received)";
 	       break;
-    case 0x01: $tmp .= "Transmission complete and no Ack received.";
+    case 0x01: $tmp .= "Delivered to Z-Wave stack (No Ack, device may be a sleep)";
 	       break;
     case 0x02: $tmp .= "Transmission failed.";
 	       break;
@@ -1096,8 +1156,15 @@ function DecodeMessage($data) {
 	
    switch (ord($data[3])) {
 
+
+		case 0x02: 	decodeSerialInit($data);
+						break;
+						
 		case 0x04: 	decodeApplicationCommandHandler($data);
 						break;
+						
+		case 0x07:	decodeSerialApiGetCapabilities($data);
+					   break;
 						
 		case 0x13:	decodeSentData($data);
 						break;
@@ -1187,17 +1254,29 @@ function Receive() {
  ********************************
  */
 
-plaatprotect_mobile_notification("startup", "Zwave interface is started!" );
- 
+#plaatprotect_mobile_notification("startup", "Zwave interface is started!" );
+
+Receive();
+
 /* Init ZWave layer */
 SendGetVersion();
 Receive();
 
+/* Init ZWave HomeId */
 SendGetMemoryId();
 Receive();
 
-/* Get for all zWave node information */
+/* Init information of all nodes in ZWave network */
+SendGetInitData();
+Receive();
 
+/* Get Manufactor of Controller */
+SendSerialApiGetCapabilities();
+Receive();
+  
+LogText("-----------------");
+
+/* Get for all zWave node information */
 $sql  = 'select nodeid from zwave';	
 $result = plaatprotect_db_query($sql);
 	
@@ -1205,11 +1284,15 @@ while ($row = plaatprotect_db_fetch_object($result)) {
 
   SendGetIdentifyNode($row->nodeid);
   Receive();
-  
+   
+  //SendRequestNodeNeighborUpdate($row->nodeid);
+  //Receive();
+ 
   SendGetRouteInfo($row->nodeid);
   Receive();
   
-  #SendRequestNodeNeighborUpdate($row->nodeid);
+  #GetManufacturer($row->nodeid, $row->nodeid);
+  #Receive();
   #Receive();
   
   LogText("-----------------");
@@ -1235,16 +1318,12 @@ while ($row = plaatprotect_db_fetch_object($result)) {
 }	
 	
 /* Read Zwave incoming events endless */
-
 while (true) {
    Receive();
 	
 	// Process state
 	plaatprotect_zwave_state_machine(); 
 }
-
-#SendDataActiveHorn(3, 1, "fe");
-#Receive();
 
 /* Init ZWave Horn (NodeId=2) (Sound=2) (Volume=1) (CallBackId="ff")*/
 #SendDataInitHorn(2, 2, 1, "ff");
@@ -1262,9 +1341,6 @@ while (true) {
 #Receive();
 
 #SendGetControllerCapabilities();
-#Receive();
-
-#SendGetInitData();
 #Receive();
 
 #SendGetProtocolStatus();

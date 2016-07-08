@@ -282,6 +282,25 @@ function plaatprotect_db_get_session($ip, $new=false) {
 
 /*
 ** ---------------------
+** CRON
+** ---------------------
+*/
+
+/**
+ * Update Cron
+ * @unitTest
+ */
+function plaatprotect_db_cron_update($cid) {
+		
+	$query  = 'update cron set '; 
+	$query .= 'last_run = "'.date("Y-m-d H:i:s").'" ';
+	$query .= 'where cid='.$cid; 
+	
+	return plaatprotect_db_query($query);
+}
+
+/*
+** ---------------------
 ** THE END
 ** ---------------------
 */

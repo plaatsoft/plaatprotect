@@ -17,6 +17,13 @@
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 SET time_zone = "+00:00";
 
+CREATE TABLE `cron` (
+  `cid` int(11) NOT NULL AUTO_INCREMENT,
+  `note` text NOT NULL,
+  `last_run` datetime NOT NULL,
+  PRIMARY KEY (`cid`)
+) ENGINE=MyISAM AUTO_INCREMENT=1 DEFAULT CHARSET=latin1;
+
 CREATE TABLE IF NOT EXISTS `config` (
   `id` int(11) NOT NULL,
   `category` int(11) NOT NULL,
@@ -127,5 +134,7 @@ INSERT INTO `notification` (`nid`, `type`, `home`, `sleep`, `away`) VALUES
 (2, 2, 0, 0, 0),
 (3, 3, 0, 0, 0);
 
-INSERT INTO `plaatprotect`.`config` (`id`, `category`, `token`, `value`, `options`, `date`, `readonly`, `rebuild`, `encrypt`) 
-VALUES ('2', '0', 'alarm_scenario', '0', '', '2016-07-03', '1', '0', '0');
+INSERT INTO cron (`cid`, `note`, `last_run`) VALUES ('1', 'webcam_cleanup', '2016-07-01 00:00:00');
+
+INSERT INTO config (`id`, `category`, `token`, `value`, `options`, `date`, `readonly`, `rebuild`, `encrypt`) 
+VALUES ('2', '0', 'alarm_scenario', '0', '', '2016-07-01', '1', '0', '0');
