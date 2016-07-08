@@ -216,8 +216,6 @@ function plaatprotect_zwave_state_machine() {
 	}
 }
 	
-
-
 /**
  ********************************
  * Database
@@ -293,6 +291,38 @@ function plaatprotect_control_hue($hue_bulb_nr, $value) {
 	LogText($tmp);
 }
   
+/**
+ ********************************
+ * Device support library
+ ********************************
+ */
+ 
+ function decodeManufacture($manufactureId, $deviceType, $deviceId) {
+ 
+	$tmp = "";
+	
+	if ($manufactureId=="0x00 0x86") {
+		$tmp .= " Aeon ";
+	}
+	
+	if ($manufactureId=="0x00 0x50") {
+		$tmp .= " Aeotec ";
+	}
+
+	if ($deviceId=="0x00 0x5a") {
+		$tmp .= "Z-Wave Controller ";
+	}
+	
+	if ($deviceId=="0x00 0x64") {
+		$tmp .= "Multi 6 Sensor ";
+	}
+		
+	if ($deviceId=="0x00 0x50") {
+		$tmp .= "Sirene ";
+	}
+	
+	return $tmp;
+}
   
 /**
  ********************************
@@ -900,6 +930,18 @@ function decodeSensor($data) {
 	return $tmp;
 }
 
+function decodeManufacturer($data) {
+
+  $manufactureId = GetHexString(substr($data,9,2));
+  $deviceType = GetHexString(substr($data,11,2));
+  $deviceId = GetHexString(substr($data,13,2));
+ 
+  $tmp = "manufactureId=[".$manufactureId."] DeviceType=[".$deviceType."] DeviceId=[".$deviceId."]";
+  $tmp .= decodeManufacture($manufactureId, $deviceType, $deviceId);
+  
+  return $tmp;
+}
+
 function decodeApplicationCommandHandler($data) {
 
   $nodeId = bin2hex(substr($data,5,1));
@@ -911,7 +953,7 @@ function decodeApplicationCommandHandler($data) {
   $tmp = "ApplicationCommandHandler NodeId=[".$nodeId."] ";
   
   switch( $commandClass ) {
-   
+   	 
     case 0x20: $tmp .= 'Basic ';
  	       $command= ord(substr($data,8,1));
 	       switch ($command) {
@@ -941,6 +983,10 @@ function decodeApplicationCommandHandler($data) {
     case 0x71: $tmp .= 'Alarm ';
 				   $tmp .= decodeAlarm($data);
 					break;
+					
+	 case 0x72: $tmp .= 'Manufacturer ';
+				   $tmp .= decodeManufacturer($data);
+					break;
 
     case 0x80: $tmp .= 'Battery ';
 					$command= ord(substr($data,8,1));
@@ -964,6 +1010,12 @@ function decodeApplicationCommandHandler($data) {
                break;
   }
   LogText($tmp);
+  
+   if ($commandClass==0x84) {
+	
+		echo "\r\n";
+		GetManufacturer(hexdec($nodeId), hexdec($nodeId));
+   }  
 }
 
 function decodeSerialApiGetCapabilities($data) {
@@ -974,6 +1026,7 @@ function decodeSerialApiGetCapabilities($data) {
   $deviceId = GetHexString(substr($data,10,2));
  
   $tmp = "SerialApiGetCapabilities serialAPIVersion=[".$serialAPIVersion."] manufactureId=[".$manufactureId."] DeviceType=[".$deviceType."] DeviceId=[".$deviceId."]";
+  $tmp .= decodeManufacture($manufactureId, $deviceType, $deviceId);
   LogText($tmp);  
 }
 
@@ -1290,11 +1343,7 @@ while ($row = plaatprotect_db_fetch_object($result)) {
  
   SendGetRouteInfo($row->nodeid);
   Receive();
-  
-  #GetManufacturer($row->nodeid, $row->nodeid);
-  #Receive();
-  #Receive();
-  
+   
   LogText("-----------------");
 }
 
@@ -1315,6 +1364,10 @@ while ($row = plaatprotect_db_fetch_object($result)) {
 	SendDataActiveHorn($row->nodeid,0,$row->nodeid);
 	Receive();
 	Receive();
+	
+	GetManufacturer($row->nodeid, $row->nodeid);
+   Receive();
+   Receive();
 }	
 	
 /* Read Zwave incoming events endless */

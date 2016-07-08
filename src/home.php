@@ -74,17 +74,20 @@ function check_zwave_network() {
 				$page .= '<div class="checker good">';
 				$page .= 'Sensor '.$row->nodeid.': ';
 				if (isset($row2->temperature)) {
-					$page .= ' '.$row2->temperature.'&deg;C';
+					$page .= ' '.$row2->temperature.'&deg;C ';
 				}
 				if (isset($row3->humidity)) {
-					$page .= ' '.$row3->humidity.'%';
+					$page .= ' '.$row3->humidity.'% ';
 				}
+				//$page .= ' ';
+				//$page .= $row->last_update;
 				$page .= '</div> ';
 				
 			} else {
 			
 				$page .= '<div class="checker bad" >';
-				$page .= 'Sensor '.$row->nodeid;
+				$page .= 'Sensor '.$row->nodeid.' ';
+				$page .= $row->last_update;
 				$page .= '</div> ';
 			}
 		}
