@@ -84,6 +84,8 @@ define('EVENT_BEGIN',               126);
 define('EVENT_END',                 127);
 define('EVENT_UPDATE',              128);
 define('EVENT_SWITCH_SCENARIO',     129);
+define('EVENT_ON',                  130);
+define('EVENT_OFF',                 131);
 
 /*
 ** -----------

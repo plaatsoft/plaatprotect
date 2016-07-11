@@ -94,6 +94,9 @@ $lang['LINK_BEGIN']          = i('fast-backward');
 $lang['LINK_ZWAVE']          = i('wifi') . 'Z-Wave'; 
 $lang['LINK_CHART']          = i('area-chart') . 'Chart'; 
 
+$lang['LINK_ON']             = 'AAN'; 
+$lang['LINK_OFF']            = 'UIT'; 
+
 /*
 ** ------------------
 ** HOME

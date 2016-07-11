@@ -28,6 +28,19 @@
 ** ---------------------
 */
 
+function plaatprotect_set_hue($hue_bulb_nr, $value) {
+	
+ 	$hue_ip = plaatprotect_db_get_config_item('hue_ip_address',HUE);
+ 	$hue_key = plaatprotect_db_get_config_item('hue_key',HUE);
+	
+   $hue_url = "http://".$hue_ip."/api/".$hue_key."/lights/".$hue_bulb_nr."/state";
+
+   file_get_contents($hue_url, false, stream_context_create(["http" => [
+      "method" => "PUT", "header" => "Content-type: application/json",
+      "content" => "{\"on\":". $value."}"
+    ]]));
+}
+    
 function plaatprotect_get_inventory_hue() {
 		
  	$hue_ip = plaatprotect_db_get_config_item('hue_ip_address',HUE);
@@ -145,8 +158,17 @@ function plaatprotect_zigbee_page() {
 		$page .= '<td>' . $bulb->type . '</td>';
 		$page .= '<td>' . $bulb->manufacturername . '</td>';
 		$page .= '<td>' . $bulb->swversion . '</td>';
-		$page .= ($bulb->state->reachable ? ($bulb->state->on ? '<td class="on">ON</td>' : '<td class="off">OFF</td>') : '<td class="not">OFFLINE</td>') . '</td>';
-		
+							
+		if ($bulb->state->reachable==1) {
+			if ($bulb->state->on==1) {
+				$page .= '<td class="on">'.plaatprotect_normal_link('pid='.$pid.'&id='.$id.'&eid='.EVENT_OFF,t('LINK_ON')).'</td>';
+			} else {
+				$page .= '<td class="off">'.plaatprotect_normal_link('pid='.$pid.'&id='.$id.'&eid='.EVENT_ON,t('LINK_OFF')).'</td>';
+			} 
+		} else {
+			$page .= '<td class="not">OFFLINE</td>';
+		}
+	
 		$sql = 'select hid, home, sleep, away from hue where hid='.$id;
 		$result = plaatprotect_db_query($sql);
 		$row = plaatprotect_db_fetch_object($result);
@@ -206,10 +228,18 @@ function plaatprotect_zigbee() {
   global $eid;
   global $id;
   global $sid;
-    
+      
    /* Event handler */
   switch ($eid) {
   
+		case EVENT_ON: 
+			plaatprotect_set_hue($id, "true");
+			break;
+			
+		case EVENT_OFF: 
+			plaatprotect_set_hue($id, "false");
+			break;
+						
 		case EVENT_UPDATE: 
 			plaatprotect_set_hue_state($id, $sid);
 			break;

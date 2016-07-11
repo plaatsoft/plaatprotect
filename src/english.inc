@@ -86,6 +86,9 @@ $lang['LINK_ZWAVE']         = i('wifi') . 'Z-Wave';
 $lang['LINK_NOTIFICATION']  = i('folder-open') . 'Notification'; 
 $lang['LINK_CHART']         = i('area-chart') . 'Chart'; 
 
+$lang['LINK_ON']             = 'ON'; 
+$lang['LINK_OFF']            = 'OFF'; 
+
 
 /*
 ** ------------------
