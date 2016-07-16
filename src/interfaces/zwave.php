@@ -54,7 +54,7 @@ plaatprotect_db_connect($dbhost, $dbuser, $dbpass, $dbname);
 
 function plaatprotect_node_alive($nodeId) {
 
-	$sql  = 'update zwave set last_update=SYSDATE() where nodeid='.hexdec($nodeId);	
+	$sql  = 'update zwave set last_update=SYSDATE() where zid='.hexdec($nodeId);	
    plaatprotect_db_query($sql);
 }
 

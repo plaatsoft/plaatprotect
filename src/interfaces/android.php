@@ -38,16 +38,20 @@ function plaatprotect_mobile_notification($topic, $content, $severity=0) {
   $mobile_present = plaatprotect_db_config_value('mobile_present', CATEGORY_MOBILE);
 
   if ($mobile_present=="true" ) {
-  	$nma_key = plaatprotect_db_config_value('mobile_nma_key', CATEGORY_MOBILE);
+  
+		plaatprotect_log("plaatprotect_mobile_notification: on");
 
-  	require_once 'nmaApi.class.php';
+		$nma_key = plaatprotect_db_config_value('mobile_nma_key', CATEGORY_MOBILE);
 
-  	$nma = new nmaApi(array('apikey' => $nma_key));
+		require_once 'nmaApi.class.php';
+
+		$nma = new nmaApi(array('apikey' => $nma_key));
 		if($nma->verify()) {
-         	$nma->notify('PlaatProtect', $topic, $content, $severity );
+				$nma->notify('PlaatProtect', $topic, $content, $severity );
+		} else {
+			plaatprotect_log("plaatprotect_mobile_notification: authenication failed!");
 		}
-   }
+	}	
 }
-
 
 ?>

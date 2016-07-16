@@ -51,14 +51,14 @@ function plaatprotect_hue_alarm_group($event) {
 	$result = plaatprotect_db_query($sql);
 	while ($row = plaatprotect_db_fetch_object($result)) {	
 		if ($event==EVENT_ALARM_ON) {
-			plaatprotect_control_hue($row->hid, "true");
+			plaatprotect_set_hue($row->hid, "true");
 		} else {
-			plaatprotect_control_hue($row->hid, "false");
+			plaatprotect_set_hue($row->hid, "false");
 		}
 	}
 }
 
-function plaatprotect_mobile_alarm_group($event) {
+function plaatprotect_mobile_alarm_group($event, $zid=0) {
 
 	$scenario = plaatprotect_db_config_value('alarm_scenario', CATEGORY_GENERAL);
 
@@ -83,18 +83,24 @@ function plaatprotect_mobile_alarm_group($event) {
 	
 		// Notication to mobile
 		$subject =  "Alarm";
-		$body .= "Event=";
+		$body = "Event=";
 	
 		if ($event==EVENT_ALARM_ON) {
 			$body .= 'on';
 		} else {
 			$body .= 'off';
 		}
+		
+		$data = plaatprotect_db_zwave($zid);
+		if ( isset($data->location) ) {
+			$body .= ' '.$data->location;
+		}
+		
 		plaatprotect_mobile_notification($subject, $body, 2);
 	}
 }
 
-function plaatprotect_zwave_alarm_group($event) {
+function plaatprotect_zwave_alarm_group($event,$zid=0) {
 
 	$scenario = plaatprotect_db_config_value('alarm_scenario', CATEGORY_GENERAL);
 
@@ -120,8 +126,7 @@ function plaatprotect_zwave_alarm_group($event) {
 		} else {
 			$event = '{"nodeid":'.$row->zid.', "action":"sirene", "value":"off"}';
 		}
-		plaatprotect_event_insert(CATEGORY_ZWAVE_CONTROL, $event);
-		
+		plaatprotect_event_insert(CATEGORY_ZWAVE_CONTROL, $event);		
 	}
 }
 
@@ -139,6 +144,10 @@ function plaatprotect_event_init() {
 	
 	plaatprotect_hue_all_off();
 	plaatprotect_zwave_alarm_group(EVENT_ALARM_OFF);
+	
+	$subject =  "INFO";
+	$body =  "Event process (re)start!";
+	plaatprotect_mobile_notification($subject, $body, 0);
 	
 	$state = STATE_IDLE;
 }
@@ -160,10 +169,12 @@ function plaatprotect_event_idle() {
 		if (isset($data->alarm)) {
 			if (($data->alarm=="motion" || $data->alarm=="vibration")) {
 				$state = STATE_ALARM;
-				$duration = plaatprotect_db_config("alarm_duration", 0);
+				$duration = plaatprotect_db_config_value("alarm_duration", CATEGORY_GENERAL);
 				$expire = time() + $duration;
+				
 				plaatprotect_hue_alarm_group(EVENT_ALARM_ON);
-				plaatprotect_mobile_alarm_group(EVENT_ALARM_ON);
+				plaatprotect_mobile_alarm_group(EVENT_ALARM_ON, $data->nodeid);
+				plaatprotect_zwave_alarm_group(EVENT_ALARM_ON, $data->nodeid);
 			}
 		}
 		
@@ -186,20 +197,25 @@ function plaatprotect_event_alarm() {
 	$row = plaatprotect_db_event(CATEGORY_ZWAVE);			
 	if (isset($row->eid)) {
 		
-		$data = decode_json($row->action);
-		if (($data->alarm=="motion" || $data->alarm=="vibration")) {
-			$duration = plaatprotect_db_config("alarm_duration", 0);
-			$expire = time() + $duration;
+		$data = json_decode($row->action);
+		if (isset($data->alarm)) {
+			if (($data->alarm=="motion" || $data->alarm=="vibration")) {
+				$duration = plaatprotect_db_config_value("alarm_duration", CATEGORY_GENERAL);
+				$expire = time() + $duration;
+			}
 		}
 		
-		$data->processed=1;
-		plaatprotect_db_event_update($data);
+		$row->processed=1;
+		plaatprotect_db_event_update($row);
 	}
 	
 	if (($expire-time())<=0) {
+	
 		$state = STATE_IDLE;
+		
 		plaatprotect_hue_alarm_group(EVENT_ALARM_OFF);
 		plaatprotect_mobile_alarm_group(EVENT_ALARM_OFF);
+		plaatprotect_zwave_alarm_group(EVENT_ALARM_OFF);
 
 	} else {
 		usleep($sleep);

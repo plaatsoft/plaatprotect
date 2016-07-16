@@ -269,6 +269,7 @@ $lang['EVENT_TIMESTAMP'] = 'Timestamp';
 $lang['EVENT_AGO'] = 'Ago';
 $lang['EVENT_CATEGORY'] = 'Category';
 $lang['EVENT_ACTION'] = 'Action';
+$lang['EVENT_PROCESSED' ] = 'Processed';
 
 /*
 ** ------------------

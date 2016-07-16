@@ -272,6 +272,7 @@ $lang['EVENT_TIMESTAMP'] = 'Tijdstip';
 $lang['EVENT_AGO'] = 'Geleden';
 $lang['EVENT_CATEGORY'] = 'Categorie';
 $lang['EVENT_ACTION'] = 'Actie';
+$lang['EVENT_PROCESSED' ] = 'Verwerkt';
 
 /*
 ** ------------------

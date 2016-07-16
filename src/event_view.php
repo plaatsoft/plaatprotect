@@ -36,7 +36,7 @@ function plaatprotect_event_view_page() {
 	$page .= '<h1>'.t('TITLE_EVENT').'</h1>';
 	$page .= '<br>';
 	
-	$sql  = 'select timestamp, category, action from event order by timestamp desc limit '.($id*20).',20 ';
+	$sql  = 'select timestamp, category, action, processed from event order by timestamp desc limit '.($id*15).',15 ';
 	$result = plaatprotect_db_query($sql);
 
 	$page .= '<table>';
@@ -55,8 +55,12 @@ function plaatprotect_event_view_page() {
 	$page .= t('EVENT_CATEGORY');
 	$page .= '</th>';
 
-	$page .= '<th width="500px">';
+	$page .= '<th width="400px">';
 	$page .= t('EVENT_ACTION');
+	$page .= '</th>';
+	
+	$page .= '<th width="10px">';
+	$page .= t('EVENT_PROCESSED');
 	$page .= '</th>';
 
 	$page .= '</tr>';
@@ -111,6 +115,11 @@ function plaatprotect_event_view_page() {
 		$page .= '<td>';
 		$page .= $row->action;
 		$page .= '</td>';
+		
+		$page .= '<td>';
+		$page .= $row->processed;
+		$page .= '</td>';
+				
 		$page .= '<tr>';
     }
 	$page .= '</table>';
