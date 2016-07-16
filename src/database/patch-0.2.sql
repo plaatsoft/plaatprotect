@@ -21,6 +21,6 @@ INSERT INTO config (category, token, value, options, date, readonly, rebuild, en
 INSERT INTO config (category, token, value, options, date, readonly, rebuild, encrypt) VALUES (0, 'device_offline_timeout', '900', '', '0000-00-00', '0', '0', '0');
 INSERT INTO config (category, token, value, options, date, readonly, rebuild, encrypt) VALUES (21, 'email_present', 'no', 'yes,no', '0000-00-00', '0', '0', '0');
 INSERT INTO config (category, token, value, options, date, readonly, rebuild, encrypt) VALUES (21, 'email_address', '', '', '0000-00-00', '0', '0', '0');
-UPDATE config SET token='mobile_present' WHERE token="notivcaition_present";
+UPDATE config SET token='mobile_present' WHERE token="notification_present";
 UPDATE config SET token='mobile_nma_key' WHERE token="notification_nma_key";
 

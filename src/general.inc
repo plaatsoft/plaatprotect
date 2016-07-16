@@ -28,7 +28,7 @@
 */
 
 // Installation path
-define('BASE_DIR', 'c:\wamp\www\plaatprotect');
+define('BASE_DIR', '/var/www/html/plaatprotect');
  
 /*
 ** -----------

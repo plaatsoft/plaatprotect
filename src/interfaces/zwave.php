@@ -55,8 +55,7 @@ plaatprotect_db_connect($dbhost, $dbuser, $dbpass, $dbname);
 function plaatprotect_node_alive($nodeId) {
 
 	$sql  = 'update zwave set last_update=SYSDATE() where nodeid='.hexdec($nodeId);	
-   $result = plaatprotect_db_query($sql);
-   $row = plaatprotect_db_fetch_object($result);
+   plaatprotect_db_query($sql);
 }
 
 function plaatprotect_control_hue($hue_bulb_nr, $value) {
@@ -578,7 +577,7 @@ function GetManufacturer($node, $callbackId) {
 function decodeAlarm($data) {
 	
 	$tmp = "";
-	$nodeid = bin2hex(substr($data,5,1));
+	$nodeId = bin2hex(substr($data,5,1));
 	$command = ord(substr($data,8,1));
 	
 	switch ($command) {
@@ -643,15 +642,15 @@ function decodeAlarm($data) {
 	$action = ord(substr($data,14,1));
 	switch ($action) {
 		case 0x00: $tmp .= 'AlarmOff';
-					  plaatprotect_event_insert(CATEGORY_ZWAVE, '{"nodeid":'.$nodeId.',"type":"report", "alarm":"off"}');
+					  plaatprotect_event_insert(CATEGORY_ZWAVE, '{"nodeid":'.hexdec($nodeId).',"type":"report", "alarm":"off"}');
 					  break;
 					  
 		case 0x03: $tmp .= 'AlarmVibrationDetected';
-					  plaatprotect_event_insert(CATEGORY_ZWAVE, '{"nodeid":'.$nodeId.',"type":"report", "alarm":"vibration"}');
+					  plaatprotect_event_insert(CATEGORY_ZWAVE, '{"nodeid":'.hexdec($nodeId).',"type":"report", "alarm":"vibration"}');
 					  break;
 					  
 		case 0x08: $tmp .= 'AlarmMotionDetected';
-					  plaatprotect_event_insert(CATEGORY_ZWAVE, '{"nodeid":'.$nodeId.',"type":"report", "alarm":"motion"}');
+					  plaatprotect_event_insert(CATEGORY_ZWAVE, '{"nodeid":'.hexdec($nodeId).',"type":"report", "alarm":"motion"}');
 					  break;
 	}
 		
@@ -678,25 +677,25 @@ function decodeSensor($data) {
 		case 0x01: $tmp .= 'Temperature ';
 					  $value = (((ord(substr($data,11,1)))*100)+ord(substr($data,12,1)))/10;
 					  $tmp .= 'Value='.$value;
-					  plaatprotect_event_insert(CATEGORY_ZWAVE, '{"nodeid":'.$nodeId.',"type":"report", "temperature":'.$value.'}');
+					  plaatprotect_event_insert(CATEGORY_ZWAVE, '{"nodeid":'.hexdec($nodeId).',"type":"report", "temperature":'.$value.'}');
 					  break;
 		
 		case 0x03: $tmp .= 'Luminance ';
 					  $value = (((ord(substr($data,11,1)))*100)+ord(substr($data,12,1)))/10;
 					  $tmp .= 'Value='.$value;
-					  plaatprotect_event_insert(CATEGORY_ZWAVE, '{"nodeid":'.$nodeId.',"type":"report", "luminance":'.$value.'}');
+					  plaatprotect_event_insert(CATEGORY_ZWAVE, '{"nodeid":'.hexdec($nodeId).',"type":"report", "luminance":'.$value.'}');
 					  break;
 			  
 		case 0x05: $tmp .= 'Humidity ';
 					  $value = ord(substr($data,11,1));
 					  $tmp .= 'Value='.$value;
-					  plaatprotect_event_insert(CATEGORY_ZWAVE, '{"nodeid":'.$nodeId.',"type":"report", "humidity":'.$value.'}');
+					  plaatprotect_event_insert(CATEGORY_ZWAVE, '{"nodeid":'.hexdec($nodeId).',"type":"report", "humidity":'.$value.'}');
 					  break;
 					 
 		case 0x1b: $tmp .= 'Ultraviolet ';
 					  $value = ord(substr($data,11,1));
 					  $tmp .= 'Value='.$value;
-					  plaatprotect_event_insert(CATEGORY_ZWAVE, '{"nodeid":'.$nodeId.',"type":"report", "ultraviolet":'.$value.'}');
+					  plaatprotect_event_insert(CATEGORY_ZWAVE, '{"nodeid":'.hexdec($nodeId).',"type":"report", "ultraviolet":'.$value.'}');
 					  break;
 	}
 	
@@ -772,13 +771,13 @@ function decodeApplicationCommandHandler($data) {
 										$value= ord(substr($data,9,1));
 										$tmp .= 'BatteryValue='.$value.'%';
 
-										plaatprotect_event_insert(CATEGORY_ZWAVE, '{"nodeid":'.$nodeId.',"type":"report", "battery":'.$value.'}');
+										plaatprotect_event_insert(CATEGORY_ZWAVE, '{"nodeid":'.hexdec($nodeId).',"type":"report", "battery":'.$value.'}');
                               break;
                }
                break;
 					
 	case 0x84:  $tmp .=  'Received Wakeup Notification ';
-					plaatprotect_event_insert(CATEGORY_ZWAVE, '{"nodeid":'.$nodeId.',"type":"notification", "value":"wakeup"}');
+					plaatprotect_event_insert(CATEGORY_ZWAVE, '{"nodeid":'.hexdec($nodeId).',"type":"notification", "value":"wakeup"}');
 			      break;
 
     default:   $tmp .= 'Unknown';
@@ -1084,6 +1083,8 @@ function Receive() {
 
 function plaatprotect_zwave_state_machine() {
 	
+	LogText("Idle");
+	
 	$row = plaatprotect_db_event(CATEGORY_ZWAVE_CONTROL);			
 	if (isset($row->eid)) {
 	
@@ -1133,7 +1134,6 @@ function plaatprotect_zwave_state_machine() {
 		
 			if ($data->value=="on") {
 
-
 				/* Init ZWave Horn (NodeId=2) (Sound=2) (Volume=1) (CallBackId="ff")*/
 				#SendDataInitHorn(2, 2, 1, "ff");
 				#Receive();
@@ -1159,13 +1159,18 @@ function plaatprotect_zwave_state_machine() {
 	}
 }
 	
+LogText("ZWave Interface - starting...");
+	
 /* Read Zwave incoming events endless */
-while (true) {
+while (true) {	
+
    Receive();
 	
 	// Process state
 	plaatprotect_zwave_state_machine(); 
 }
+
+LogText("ZWave Interface - ending...");
 
 unlink( LOCK_FILE ); 
 exit(0); 
