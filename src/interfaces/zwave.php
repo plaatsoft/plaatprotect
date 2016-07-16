@@ -21,9 +21,9 @@
  * @brief contain zwave interface 
  */
  
-include "/var/www/html/plaatprotect/general.inc";
-include "/var/www/html/plaatprotect/database.inc";
-include "/var/www/html/plaatprotect/config.inc";
+include "../general.inc";
+include "../database.inc";
+include "../config.inc";
 
 define('EVENT_IDLE',        		10);
 define('EVENT_ALARM_ON',   		11);
@@ -43,178 +43,6 @@ if( plaatprotect_islocked() ) die( "Already running.\n" );
 // Open Aeotec Zstick (Gen. 5) device 
 exec('stty -F /dev/ttyACM0 9600 raw');
 $fp=fopen("/dev/ttyACM0","c+");
-
-
-/**
- ********************************
- * Counter measures
- ********************************
- */
-
-function plaatprotect_hue_alarm_group($event) {
-
-	$sql = 'select value from config where token="alarm_scenario"';
-	$result = plaatprotect_db_query($sql);
-	$row = plaatprotect_db_fetch_object($result);
-	
-	switch ($row->value) {
-	
-		case HOME: 
-			$sql = 'select hid from hue where home=1';
-			break;
-			
-		case SLEEP: 
-			$sql = 'select hid from hue where sleep=1';
-			break;		
-			
-		case AWAY: 
-			$sql = 'select hid from hue where away=1';
-			break;
-	}
-
-	$result = plaatprotect_db_query($sql);
-	while ($row = plaatprotect_db_fetch_object($result)) {	
-		if ($event==EVENT_ALARM_ON) {
-			plaatprotect_control_hue($row->hid, "true");
-		} else {
-			plaatprotect_control_hue($row->hid, "false");
-		}
-	}
-}
-	
-function plaatprotect_zwave_sirene_group($event) {
-	
-	$sql = 'select value from config where token="alarm_scenario"';
-	$result = plaatprotect_db_query($sql);
-	$row = plaatprotect_db_fetch_object($result);
-	
-	switch ($row->value) {
-	
-		case HOME: 
-			$sql = 'select zid, nodeid from zwave where home=1';
-			break;
-			
-		case SLEEP: 
-			$sql = 'select zid, nodeid from zwave where sleep=1';
-			break;		
-			
-		case AWAY: 
-			$sql = 'select zid, nodeid from zwave where away=1';
-			break;
-	}
-	
-   $result = plaatprotect_db_query($sql);
-   while ($row = plaatprotect_db_fetch_object($result)) {
-	
-		if ($event==EVENT_ALARM_ON) {
-			SendDataActiveHorn($row->nodeid, 1, $row->nodeid);
-			Receive();
-			Receive();
-		} else  {
-			SendDataActiveHorn($row->nodeid, 0, $row->nodeid);
-			Receive();
-			Receive();
-		}		
-	}	
-}
-	
-function plaatprotect_zwave_notification_group($event, $nodeid) {
-
-	$sql = 'select value from config where token="alarm_scenario"';
-	$result = plaatprotect_db_query($sql);
-	$row = plaatprotect_db_fetch_object($result);
-	
-	switch ($row->value) {
-	
-		case HOME: 
-			$sql = 'select nid from notification where home=1 and type=1';
-			break;
-			
-		case SLEEP: 
-			$sql = 'select nid from notification where sleep=1 and type=1';
-			break;		
-			
-		case AWAY: 
-			$sql = 'select nid from notification where away=1 and type=1';
-			break;
-	}
-	
-	$result = plaatprotect_db_query($sql);
-   
-	while ($row = plaatprotect_db_fetch_object($result)) {
-	
-		$sql2 = 'select nodeid, location from zwave where nodeid='.$nodeid;	
-		$result2 = plaatprotect_db_query($sql2);
-		$row2 = plaatprotect_db_fetch_object($result2);
-	
-		// Notication to mobile
-		$subject =  "Alarm";
-		$body  = "Location=".$row2->location." ";
-		$body .= "Zone=".$row2->nodeid." ";
-		$body .= "Event=";
-	
-		if ($event==EVENT_ALARM_ON) {
-			$body .= 'on';
-		} else {
-			$body .= 'off';
-		}
-	
-		LogText('Notification = '.$subject.' '.$body .' sent!');
-	
-		plaatprotect_mobile_notification($subject, $body );
-	}
-}
-	
-function plaatprotect_zwave_state_machine() {
-	
-	global $event;
-	global $event_nodeid;
-	global $state;
-	
-	switch ($event) {
-	
-		case EVENT_IDLE: 
-				break;
-				
-		case EVENT_ALARM_ON: 
-				if ($state==STATE_IDLE) {
-		
-					LogText("======================");					
-					plaatprotect_hue_alarm_group($event);
-					plaatprotect_zwave_sirene_group($event);
-					plaatprotect_zwave_notification_group($event, $event_nodeid);
-					LogText("======================");
-					
-					$state=STATE_ACTIVE;
-					$event=EVENT_IDLE;
-				}
-				break;
-				
-		case EVENT_ALARM_OFF: 
-		
-				if ($state==STATE_ACTIVE) {
-					LogText("======================");				
-					plaatprotect_hue_alarm_group($event);
-					plaatprotect_zwave_sirene_group($event);
-					plaatprotect_zwave_notification_group($event, $event_nodeid);
-					LogText("======================");
-					$state=STATE_IDLE;
-					$event=EVENT_IDLE;
-				}
-				break;
-	}
-	
-	switch ($state) {
-	
-		case STATE_IDLE: 
-		      LogText("StateMachine = Idle");
-				break;
-				
-		case STATE_ACTIVE:
-				LogText("StateMachine = Active");
-				break;
-	}
-}
 	
 /**
  ********************************
@@ -223,49 +51,6 @@ function plaatprotect_zwave_state_machine() {
  */
  
 plaatprotect_db_connect($dbhost, $dbuser, $dbpass, $dbname);
-
-function plaatprotect_event_insert($nodeId, $event, $value) {
- 
-   $timestamp = date('Y-m-d H:i:s');
-	
-   $sql  = 'INSERT INTO event (timestamp, nodeid, event, value) ';
-	$sql .= 'VALUES ("'.$timestamp.'",'.hexdec($nodeId).','.$event.','.$value.')';
-	
-	plaatprotect_db_query($sql);
-}
-
-function plaatprotect_sensor_insert($nodeId, $type, $value) {
- 
-   $timestamp = date('Y-m-d H:i:s');
-	
-	$temperature = 0;
-	$luminance = 0;
-	$humidity = 0;
-	$ultraviolet = 0;
-	$battery = 0;
-	
-	switch ($type) {
-		case 0x00: $battery = $value;
-					  break;
-					  
-		case 0x01: $temperature = $value;
-					  break;
-		
-		case 0x03: $luminance = $value;
-					  break;
-			  
-		case 0x05: $humidity = $value;
-					  break;
-					 
-		case 0x1b: $ultraviolet = $value;
-					  break;
-	}
-	
-   $sql  = 'INSERT INTO sensor (nodeid, timestamp, temperature, luminance, humidity, ultraviolet, battery ) ';
-	$sql .= 'VALUES ('.hexdec($nodeId).',"'.$timestamp.'","'.$temperature.'","'.$luminance.'","'.$humidity.'","'.$ultraviolet.'",'.$battery.')';
-	
-	plaatprotect_db_query($sql);
-}
 
 function plaatprotect_node_alive($nodeId) {
 
@@ -791,13 +576,10 @@ function GetManufacturer($node, $callbackId) {
  */
  
 function decodeAlarm($data) {
-
-	global $event;
-	global $event_nodeid;
 	
 	$tmp = "";
 	$nodeid = bin2hex(substr($data,5,1));
-	$command= ord(substr($data,8,1));
+	$command = ord(substr($data,8,1));
 	
 	switch ($command) {
 		case 0x04: $tmp .= 'Get ';
@@ -861,24 +643,15 @@ function decodeAlarm($data) {
 	$action = ord(substr($data,14,1));
 	switch ($action) {
 		case 0x00: $tmp .= 'AlarmOff';
-					  $event = EVENT_ALARM_OFF;
-					  plaatprotect_event_insert($nodeid, $action, 0x00);	
-					  $event_nodeid = $nodeid;
-					  $event_timestamp = time();
+					  plaatprotect_event_insert(CATEGORY_ZWAVE, '{"nodeid":'.$nodeId.',"type":"report", "alarm":"off"}');
 					  break;
 					  
 		case 0x03: $tmp .= 'AlarmVibrationDetected';
-					  $event = EVENT_ALARM_ON;
-					  plaatprotect_event_insert($nodeid, $action, 0xff);	
-					  $event_nodeid = $nodeid;
-					  $event_timestamp = time();
+					  plaatprotect_event_insert(CATEGORY_ZWAVE, '{"nodeid":'.$nodeId.',"type":"report", "alarm":"vibration"}');
 					  break;
 					  
 		case 0x08: $tmp .= 'AlarmMotionDetected';
-					  $event = EVENT_ALARM_ON;
-					  plaatprotect_event_insert($nodeid, $action, 0xff);	
-					  $event_nodeid = $nodeid;
-					  $event_timestamp = time();
+					  plaatprotect_event_insert(CATEGORY_ZWAVE, '{"nodeid":'.$nodeId.',"type":"report", "alarm":"motion"}');
 					  break;
 	}
 		
@@ -905,25 +678,25 @@ function decodeSensor($data) {
 		case 0x01: $tmp .= 'Temperature ';
 					  $value = (((ord(substr($data,11,1)))*100)+ord(substr($data,12,1)))/10;
 					  $tmp .= 'Value='.$value;
-					  plaatprotect_sensor_insert($nodeId, $type, $value);
+					  plaatprotect_event_insert(CATEGORY_ZWAVE, '{"nodeid":'.$nodeId.',"type":"report", "temperature":'.$value.'}');
 					  break;
 		
 		case 0x03: $tmp .= 'Luminance ';
 					  $value = (((ord(substr($data,11,1)))*100)+ord(substr($data,12,1)))/10;
 					  $tmp .= 'Value='.$value;
-					  plaatprotect_sensor_insert($nodeId, $type, $value);
+					  plaatprotect_event_insert(CATEGORY_ZWAVE, '{"nodeid":'.$nodeId.',"type":"report", "luminance":'.$value.'}');
 					  break;
 			  
 		case 0x05: $tmp .= 'Humidity ';
 					  $value = ord(substr($data,11,1));
 					  $tmp .= 'Value='.$value;
-					  plaatprotect_sensor_insert($nodeId, $type, $value);
+					  plaatprotect_event_insert(CATEGORY_ZWAVE, '{"nodeid":'.$nodeId.',"type":"report", "humidity":'.$value.'}');
 					  break;
 					 
 		case 0x1b: $tmp .= 'Ultraviolet ';
 					  $value = ord(substr($data,11,1));
 					  $tmp .= 'Value='.$value;
-					  plaatprotect_sensor_insert($nodeId, $type, $value);
+					  plaatprotect_event_insert(CATEGORY_ZWAVE, '{"nodeid":'.$nodeId.',"type":"report", "ultraviolet":'.$value.'}');
 					  break;
 	}
 	
@@ -998,12 +771,14 @@ function decodeApplicationCommandHandler($data) {
                    case 0x03: $tmp .= 'Report ';
 										$value= ord(substr($data,9,1));
 										$tmp .= 'BatteryValue='.$value.'%';
-										plaatprotect_sensor_insert($nodeId, 0x00, $value);
+
+										plaatprotect_event_insert(CATEGORY_ZWAVE, '{"nodeid":'.$nodeId.',"type":"report", "battery":'.$value.'}');
                               break;
                }
                break;
 					
 	case 0x84:  $tmp .=  'Received Wakeup Notification ';
+					plaatprotect_event_insert(CATEGORY_ZWAVE, '{"nodeid":'.$nodeId.',"type":"notification", "value":"wakeup"}');
 			      break;
 
     default:   $tmp .= 'Unknown';
@@ -1307,68 +1082,82 @@ function Receive() {
  ********************************
  */
 
-#plaatprotect_mobile_notification("startup", "Zwave interface is started!" );
-
-Receive();
-
-/* Init ZWave layer */
-SendGetVersion();
-Receive();
-
-/* Init ZWave HomeId */
-SendGetMemoryId();
-Receive();
-
-/* Init information of all nodes in ZWave network */
-SendGetInitData();
-Receive();
-
-/* Get Manufactor of Controller */
-SendSerialApiGetCapabilities();
-Receive();
-  
-LogText("-----------------");
-
-/* Get for all zWave node information */
-$sql  = 'select nodeid from zwave';	
-$result = plaatprotect_db_query($sql);
+function plaatprotect_zwave_state_machine() {
 	
-while ($row = plaatprotect_db_fetch_object($result)) {
+	$row = plaatprotect_db_event(CATEGORY_ZWAVE_CONTROL);			
+	if (isset($row->eid)) {
+	
+		$row->processed=1;
+		plaatprotect_db_event_update($row);
+			
+		$data = decode_json($row->action);
+		if ($data->action=="init") {
 
-  SendGetIdentifyNode($row->nodeid);
-  Receive();
+			/* Init ZWave layer */
+			SendGetVersion();
+			Receive();
+
+			/* Init ZWave HomeId */
+			SendGetMemoryId();
+			Receive();
+
+			/* Init information of all nodes in ZWave network */
+			SendGetInitData();
+			Receive();
+
+			/* Get Manufactor controller */	
+			SendSerialApiGetCapabilities();
+			Receive();
+		}
+
+		if ($data->action=="reset") {
+
+			/* Get for all zWave node information */
+			$sql  = 'select zid from zwave';	
+			$result = plaatprotect_db_query($sql);
+	
+			while ($row = plaatprotect_db_fetch_object($result)) {
+
+				SendGetIdentifyNode($row->zid);
+				Receive();
    
-  //SendRequestNodeNeighborUpdate($row->nodeid);
-  //Receive();
+				//SendRequestNodeNeighborUpdate($row->nodeid);
+				//Receive();
  
-  SendGetRouteInfo($row->nodeid);
-  Receive();
-   
-  LogText("-----------------");
-}
+				SendGetRouteInfo($row->zid);
+				Receive();
+			}
+		}	
+		
+		if ($data->action=="sirene") {
+		
+			if ($data->value=="on") {
 
-// Switch off Hue Bulbs
-LogText("Switch off Hue lights which are part of the alarm group.");
-$sql = 'select hid from hue';
-$result = plaatprotect_db_query($sql);
-while ($row = plaatprotect_db_fetch_object($result)) {	
-	plaatprotect_control_hue($row->hid, "false");
+
+				/* Init ZWave Horn (NodeId=2) (Sound=2) (Volume=1) (CallBackId="ff")*/
+				#SendDataInitHorn(2, 2, 1, "ff");
+				#Receive();
+				#Receive();
+				
+				/* Enable Sirene */
+				SendDataActiveHorn($data->nodeid, 1, $data->nodeid);
+				Receive();
+			}
+			
+			if ($data->value=="off") {
+			
+				/* Disable Sirene */
+				SendDataActiveHorn($data->nodeid, 0, $data->nodeid);
+				Receive();
+				
+				/* Get Manufacturer of sirene */
+				GetManufacturer($row->nodeid, $row->nodeid);
+				Receive();
+				Receive();
+			}
+		}
+	}
 }
-echo "\r\n";
-	
-// Switch off Sirene
-LogText("Switch off Sirenes which are part of the alarm group.");
-$sql  = 'select nodeid from zwave where type=2';	
-$result = plaatprotect_db_query($sql);
-while ($row = plaatprotect_db_fetch_object($result)) {	
-	SendDataActiveHorn($row->nodeid,0,$row->nodeid);
-	Receive();
-	Receive();
-	
-	GetManufacturer($row->nodeid, $row->nodeid);
-   Receive();
-   Receive();
-}	
 	
 /* Read Zwave incoming events endless */
 while (true) {
@@ -1377,27 +1166,6 @@ while (true) {
 	// Process state
 	plaatprotect_zwave_state_machine(); 
 }
-
-/* Init ZWave Horn (NodeId=2) (Sound=2) (Volume=1) (CallBackId="ff")*/
-#SendDataInitHorn(2, 2, 1, "ff");
-#Receive();
-#Receive();
-
-/* Enable ZWave Horn (NodeId=2) (On) (CallBackId="fe") */
-#SendDataActiveHorn(2, 1, "fe");
-#Receive();
-#Receive();
-
-/* Disable ZWave Horn (NodeId=2) (Off) (CallbackId="fd") */
-#SendDataActiveHorn(2, 0, "fd" );
-#Receive();
-#Receive();
-
-#SendGetControllerCapabilities();
-#Receive();
-
-#SendGetProtocolStatus();
-#Receive();
 
 unlink( LOCK_FILE ); 
 exit(0); 

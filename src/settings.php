@@ -50,7 +50,7 @@ function plaatprotect_setting_login_event() {
 	global $pid;
 	global $password;
 	
-	$settings_password = plaatprotect_db_get_config_item('settings_password',SECURITY);
+	$settings_password = plaatprotect_db_config_value('settings_password',CATEGORY_SECURITY);
 	
 	if ((strlen($settings_password)==0) || ($settings_password==md5($password))) {
 	

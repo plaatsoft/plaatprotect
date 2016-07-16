@@ -24,40 +24,7 @@
 
 /*
 ** ---------------------
-** HUE
-** ---------------------
-*/
-
-function plaatprotect_set_hue($hue_bulb_nr, $value) {
-	
- 	$hue_ip = plaatprotect_db_get_config_item('hue_ip_address',HUE);
- 	$hue_key = plaatprotect_db_get_config_item('hue_key',HUE);
-	
-   $hue_url = "http://".$hue_ip."/api/".$hue_key."/lights/".$hue_bulb_nr."/state";
-
-   file_get_contents($hue_url, false, stream_context_create(["http" => [
-      "method" => "PUT", "header" => "Content-type: application/json",
-      "content" => "{\"on\":". $value."}"
-    ]]));
-}
-    
-function plaatprotect_get_inventory_hue() {
-		
- 	$hue_ip = plaatprotect_db_get_config_item('hue_ip_address',HUE);
- 	$hue_key = plaatprotect_db_get_config_item('hue_key',HUE);
-	
-   $hue_url = "http://".$hue_ip."/api/".$hue_key."/lights/";
-	
-   $json = file_get_contents($hue_url);
-	
-	$data = json_decode($json);
-
-   return $data;
-}
-
-/*
-** ---------------------
-** DATABASE
+** ACTIONS
 ** ---------------------
 */
 
@@ -79,15 +46,15 @@ function plaatprotect_set_hue_state($id, $scenario) {
 	$value = 0;
 	switch ($scenario) {
 		
-		case HOME: 	
+		case SCENARIO_HOME: 	
 			$value= $row->home;
 			break;
 					
-		case SLEEP: 	
+		case SCENARIO_SLEEP: 	
 			$value= $row->sleep;
 			break;
 					
-		case AWAY: 	
+		case SCENARIO_AWAY: 	
 			$value= $row->away;
 			break;
 	}
@@ -101,15 +68,15 @@ function plaatprotect_set_hue_state($id, $scenario) {
 	$sql ="";
 	switch ($scenario) {
 		
-		case HOME: 	
+		case SCENARIO_HOME: 	
 			$sql = 'update hue set home='.$value.' where hid='.$id;
 			break;
 					
-		case SLEEP: 	
+		case SCENARIO_SLEEP: 	
 			$sql = 'update hue set sleep='.$value.' where hid='.$id;
 			break;
 					
-		case AWAY: 	
+		case SCENARIO_AWAY: 	
 			$sql = 'update hue set away='.$value.' where hid='.$id;
 			break;
 	}
@@ -138,15 +105,43 @@ function plaatprotect_zigbee_page() {
 	$page .= '<table>';
 	$page .= '<thead>';
 	$page .= '<tr>';
-	$page .= '<th width="10%">ID</th>';
-	$page .= '<th width="10%">Name</th>';
-	$page .= '<th width="10%">Type</th>';
-	$page .= '<th width="10%">Vendor</th>';
-	$page .= '<th width="10%">Version</th>';
-   $page .= '<th width="10%">State</th>';
-	$page .= '<th width="10%">Home</th>';
-	$page .= '<th width="10%">Sleep</th>';
-	$page .= '<th width="10%">Away</th>';
+	
+	$page .= '<th width="10%">';
+	$page .= t('ZIGBEE_ID');
+	$page .= '</th>';
+	
+	$page .= '<th width="10%">';
+	$page .= t('ZIGBEE_LOCATION');
+	$page .= '</th>';
+	
+	$page .= '<th width="10%">';
+	$page .= t('ZIGBEE_TYPE');
+	$page .= '</th>';
+	
+	$page .= '<th width="10%">';
+	$page .= t('ZIGBEE_VENDOR');
+	$page .= '</th>';
+	
+	$page .= '<th width="10%">';
+	$page .= t('ZIGBEE_VERSION');
+	$page .= '</th>';
+	
+	$page .= '<th width="10%">';
+	$page .= t('ZIGBEE_STATE');
+	$page .= '</th>';
+	
+	$page .= '<th width="10%">';
+	$page .= t('ZIGBEE_HOME');
+	$page .= '</th>';
+	
+	$page .= '<th width="10%">';
+	$page .= t('ZIGBEE_SLEEP');
+	$page .= '</th>';
+	
+	$page .= '<th width="10%">';
+	$page .= t('ZIGBEE_AWAY');
+	$page .= '</th>';
+	
 	$page .= '</tr>';
 	$page .= '</thead>';
 	$page .= '<tbody>';
@@ -161,14 +156,14 @@ function plaatprotect_zigbee_page() {
 							
 		if ($bulb->state->reachable==1) {
 			if ($bulb->state->on==1) {
-				$page .= '<td class="on">'.plaatprotect_normal_link('pid='.$pid.'&id='.$id.'&eid='.EVENT_OFF,t('LINK_ON')).'</td>';
+				$page .= '<td><div class="online">'.plaatprotect_normal_link('pid='.$pid.'&id='.$id.'&eid='.EVENT_OFF,t('LINK_ON')).'</div></td>';
 			} else {
-				$page .= '<td class="off">'.plaatprotect_normal_link('pid='.$pid.'&id='.$id.'&eid='.EVENT_ON,t('LINK_OFF')).'</td>';
+				$page .= '<td><div class="online">'.plaatprotect_normal_link('pid='.$pid.'&id='.$id.'&eid='.EVENT_ON,t('LINK_OFF')).'</div></td>';
 			} 
 		} else {
-			$page .= '<td class="not">OFFLINE</td>';
+			$page .= '<td><div class="offline">OFFLINE</div></td>';
 		}
-	
+			
 		$sql = 'select hid, home, sleep, away from hue where hid='.$id;
 		$result = plaatprotect_db_query($sql);
 		$row = plaatprotect_db_fetch_object($result);
@@ -178,7 +173,7 @@ function plaatprotect_zigbee_page() {
 		if ((isset($row->hid)) && ($row->home==1)) { 
 			$page .= "checked"; 
 		}		
-		$page .= ' onchange="link(\'pid='.$pid.'&eid='.EVENT_UPDATE.'&sid='.HOME.'&id='.$id.'\');">';			
+		$page .= ' onchange="link(\'pid='.$pid.'&eid='.EVENT_UPDATE.'&sid='.SCENARIO_HOME.'&id='.$id.'\');">';			
 		$page .= '</td>';
 		
 		$page .= '<td>';
@@ -186,7 +181,7 @@ function plaatprotect_zigbee_page() {
 		if ((isset($row->hid)) && ($row->sleep==1)) { 
 			$page .= "checked"; 
 		}		
-		$page .= ' onchange="link(\'pid='.$pid.'&eid='.EVENT_UPDATE.'&sid='.SLEEP.'&id='.$id.'\');">';			
+		$page .= ' onchange="link(\'pid='.$pid.'&eid='.EVENT_UPDATE.'&sid='.SCENARIO_SLEEP.'&id='.$id.'\');">';			
 		$page .= '</td>';
 
 		$page .= '<td>';
@@ -194,7 +189,7 @@ function plaatprotect_zigbee_page() {
 		if ((isset($row->hid)) && ($row->away==1)) { 
 			$page .= "checked"; 
 		}		
-		$page .= ' onchange="link(\'pid='.$pid.'&eid='.EVENT_UPDATE.'&sid='.AWAY.'&id='.$id.'\');">';			
+		$page .= ' onchange="link(\'pid='.$pid.'&eid='.EVENT_UPDATE.'&sid='.SCENARIO_AWAY.'&id='.$id.'\');">';			
 		$page .= '</td>';
 		
 		$page .= '</tr>';

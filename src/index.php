@@ -23,7 +23,7 @@
 
 $time_start = microtime(true);
 
-@include "config.inc";
+include "config.inc";
 include "general.inc";
 include "database.inc";
 include "english.inc";
@@ -33,7 +33,6 @@ include "english.inc";
 ** DATABASE
 ** --------------------
 */
-
 
 if ( @plaatprotect_db_connect($dbhost, $dbuser, $dbpass, $dbname) == false) {
 
@@ -88,11 +87,11 @@ if (strlen($token)>0) {
 
 /*
 ** --------------------------------------
-** SECURITY (Very basic not really secure)
+** SECURITY
 ** --------------------------------------
 */
 
-$home_password = plaatprotect_db_get_config_item('home_password',SECURITY);
+$home_password = plaatprotect_db_config_value('home_password',CATEGORY_SECURITY);
 
 // Create for each visitor an account (without session_id)
 $session_id = plaatprotect_db_get_session($ip);
@@ -210,11 +209,13 @@ switch ($pid) {
 		break;
 		
 	case PAGE_ZIGBEE: 
+		include "interfaces/zigbee.php";
 		include "zigbee_view.php";
 		$page = plaatprotect_zigbee();
 		break;
 		
-	case PAGE_ZWAVE: 
+	case PAGE_ZWAVE:
+   case PAGE_ZWAVE_EDIT: 
 		include "zwave_view.php";
 		$page = plaatprotect_zwave();
 		break;
@@ -247,9 +248,9 @@ switch ($pid) {
 		$page = plaatprotect_settings();
 		break;
 		
-	case PAGE_LOGGING:
-		include "logging.php";
-		$page = plaatprotect_logging();
+	case PAGE_EVENT_VIEW:
+		include "event_view.php";
+		$page = plaatprotect_event_view();
 		break;
 }
 

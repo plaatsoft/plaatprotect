@@ -29,7 +29,7 @@
 
 function plaatprotect_action_picture() {
 	
-	$device1 = plaatprotect_db_get_config_item('webcam_present', WEBCAM_1);
+	$device1 = plaatprotect_db_config_value('webcam_present', CATEGORY_WEBCAM_1);
 	
 	$path = 'webcam/'.date('Y-m-d');		
 	plaatprotect_create_path($path);
@@ -43,7 +43,7 @@ function plaatprotect_action_picture() {
 		}
 	}
 	
-	$device2 = plaatprotect_db_get_config_item('webcam_present', WEBCAM_2);
+	$device2 = plaatprotect_db_config_value('webcam_present', CATEGORY_WEBCAM_2);
 	
 	if ($device2=="true" ) {
 		$source = 'webcam/image2.jpg';
@@ -210,8 +210,8 @@ function plaatprotect_webcam_page() {
 	// input
 	global $pid;
 	
-	$device1 = plaatprotect_db_get_config_item('webcam_present', WEBCAM_1);
-	$device2 = plaatprotect_db_get_config_item('webcam_present', WEBCAM_2);
+	$device1 = plaatprotect_db_config_value('webcam_present', CATEGORY_WEBCAM_1);
+	$device2 = plaatprotect_db_config_value('webcam_present', CATEGORY_WEBCAM_2);
 		
 	$page  = '<h1>'.t('TITLE_WEBCAM').'</h1>';
 	$page .= '<br/>';

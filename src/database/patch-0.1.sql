@@ -36,25 +36,29 @@ CREATE TABLE IF NOT EXISTS `config` (
   `encrypt` int(11) NOT NULL
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 
+ALTER TABLE `config` CHANGE `id` `id` INT(11) NOT NULL AUTO_INCREMENT;
+
 CREATE TABLE IF NOT EXISTS `event` (
   `eid` int(11) NOT NULL,
   `timestamp` datetime NOT NULL,
-  `nodeid` int(11) NOT NULL,
-  `event` int(11) NOT NULL,
-  `value` int(11) NOT NULL
-) ENGINE=MyISAM AUTO_INCREMENT=1 DEFAULT CHARSET=latin1;
+  `category` int(11) NOT NULL, 
+  `action` varchar(256) NOT NULL,
+  `processed` int(11) NOT NULL
+) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+
+ALTER TABLE `event` CHANGE `eid` `eid` INT(11) NOT NULL AUTO_INCREMENT;
 
 CREATE TABLE IF NOT EXISTS `zwave` (
   `zid` int(11) NOT NULL,
-  `nodeid` int(11) NOT NULL,
   `vendor` varchar(32) NOT NULL,
-  `description` varchar(128) NOT NULL,
+  `type` varchar(128) NOT NULL,
   `location` varchar(128) NOT NULL,
+  `version` varchar(32) NOT NULL,
   `home` int(11) NOT NULL,
   `sleep` int(11) NOT NULL,
   `away` int(11) NOT NULL,
   `last_update` datetime NOT NULL
-) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=latin1;
+) ENGINE=MyISAM AUTO_INCREMENT=1 DEFAULT CHARSET=latin1;
 
 CREATE TABLE IF NOT EXISTS `session` (
   `sid` int(11) NOT NULL,
@@ -68,7 +72,7 @@ CREATE TABLE IF NOT EXISTS `session` (
 
 CREATE TABLE IF NOT EXISTS `sensor` (
   `sid` int(11) NOT NULL,
-  `nodeid` int(11) NOT NULL,
+  `zid` int(11) NOT NULL,
   `timestamp` datetime NOT NULL,
   `temperature` double NOT NULL,
   `luminance` double NOT NULL,
@@ -90,7 +94,7 @@ CREATE TABLE IF NOT EXISTS `notification` (
   `home` int(11) NOT NULL,
   `sleep` int(11) NOT NULL,
   `away` int(11) NOT NULL
-) ENGINE=MyISAM AUTO_INCREMENT=3 DEFAULT CHARSET=latin1;
+) ENGINE=MyISAM AUTO_INCREMENT=1 DEFAULT CHARSET=latin1;
 
 ALTER TABLE `config` ADD PRIMARY KEY (`id`);
 ALTER TABLE `event` ADD PRIMARY KEY (`eid`);
@@ -135,6 +139,3 @@ INSERT INTO `notification` (`nid`, `type`, `home`, `sleep`, `away`) VALUES
 (3, 3, 0, 0, 0);
 
 INSERT INTO cron (`cid`, `note`, `last_run`) VALUES ('1', 'webcam_cleanup', '2016-07-01 00:00:00');
-
-INSERT INTO config (`id`, `category`, `token`, `value`, `options`, `date`, `readonly`, `rebuild`, `encrypt`) 
-VALUES ('2', '0', 'alarm_scenario', '0', '', '2016-07-01', '1', '0', '0');

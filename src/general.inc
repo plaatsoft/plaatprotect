@@ -16,7 +16,6 @@
 **  All copyrights reserved (c) 2008-2016 PlaatSoft
 */
 
-
 /**
  * @file
  * @brief contain general logic
@@ -29,7 +28,7 @@
 */
 
 // Installation path
-define('BASE_DIR', '/var/www/html/plaatprotect');
+define('BASE_DIR', 'c:\wamp\www\plaatprotect');
  
 /*
 ** -----------
@@ -39,24 +38,22 @@ define('BASE_DIR', '/var/www/html/plaatprotect');
 
 define('PAGE_HOME_LOGIN',           10);
 define('PAGE_HOME',                 11);
-
-define('PAGE_LOGGING',              12);
+define('PAGE_EVENT_VIEW',           12);
 define('PAGE_WEBCAM',               13);
 define('PAGE_ARCHIVE',              14);
 define('PAGE_IMAGE_VIEWER',         15);
 define('PAGE_ZIGBEE',               16);
 define('PAGE_ZWAVE',                17);
-define('PAGE_ABOUT',                18);
-define('PAGE_DONATE',               19);
-define('PAGE_RELEASE_NOTES',        20);
-define('PAGE_CHART',                21);
-define('PAGE_NOTIFICATION',         22);
-
-
-define('PAGE_SETTING_LOGIN',        30);
-define('PAGE_SETTING_CATEGORY',     31);
-define('PAGE_SETTING_LIST',         32);
-define('PAGE_SETTING_EDIT',         33);
+define('PAGE_ZWAVE_EDIT',           18);
+define('PAGE_ABOUT',                19);
+define('PAGE_DONATE',               20);
+define('PAGE_RELEASE_NOTES',        21);
+define('PAGE_CHART',                22);
+define('PAGE_NOTIFICATION',         23);
+define('PAGE_SETTING_LOGIN',        24);
+define('PAGE_SETTING_CATEGORY',     25);
+define('PAGE_SETTING_LIST',         26);
+define('PAGE_SETTING_EDIT',         27);
 
 /*
 ** -----------
@@ -86,6 +83,7 @@ define('EVENT_UPDATE',              128);
 define('EVENT_SWITCH_SCENARIO',     129);
 define('EVENT_ON',                  130);
 define('EVENT_OFF',                 131);
+define('EVENT_EDIT',                132);
 
 /*
 ** -----------
@@ -93,9 +91,9 @@ define('EVENT_OFF',                 131);
 ** -----------
 */
 
-define('HOME',   1);
-define('SLEEP',  2);
-define('AWAY',   3);
+define('SCENARIO_HOME',   1);
+define('SCENARIO_SLEEP',  2);
+define('SCENARIO_AWAY',   3);
 
 /*
 ** -----------
@@ -103,46 +101,32 @@ define('AWAY',   3);
 ** -----------
 */
 
-define('ZWAVE',                     11);
-define('SECURITY',                  51);
-define('LOOK_AND_FEEL',             52);
-define('WEBCAM_1',                  61);
-define('WEBCAM_2',                  62);
-define('HUE',                       71);
-define('NOTIFICATION',              81);
+define('CATEGORY_GENERAL',           0);
+define('CATEGORY_ZWAVE',            11);
+define('CATEGORY_ZWAVE_CONTROL',    12);
+define('CATEGORY_EMAIL',            21);
+define('CATEGORY_DRONE',            31);
+define('CATEGORY_SECURITY',         51);
+define('CATEGORY_LOOK_AND_FEEL',    52);
+define('CATEGORY_WEBCAM_1',         61);
+define('CATEGORY_WEBCAM_2',         62);
+define('CATEGORY_ZIGBEE',           71);
+define('CATEGORY_MOBILE',           81);
 
-/*
-** -----------
-** CONSTANTS
-** -----------
-*/
+/**
+ ********************************
+ * LOG
+ ********************************
+ */
+ 
+function plaatprotect_log($text) {
 
-/*
-** -----------
-** NOTIFCATION
-** serverity
-** 2 = top
-** 1 = high
-** 0 = normal
-** -1 = low
-** -2 = none
-** -----------
-*/
+  $t = microtime(true);
+  $micro = sprintf("%06d",($t - floor($t)) * 1000000);
+  $d = new DateTime( date('Y-m-d H:i:s.'.$micro, $t) );
 
-function plaatprotect_mobile_notification($topic, $content, $severity=0) {
-
-  $notification_present = plaatprotect_db_get_config_item('notification_present', NOTIFICATION);
-
-  if ($notification_present=="true" ) {
-  	$notification_nma_key = plaatprotect_db_get_config_item('notification_nma_key', NOTIFICATION);
-
-  	require_once 'nmaApi.class.php';
-
-  	$nma = new nmaApi(array('apikey' => $notification_nma_key));
-		if($nma->verify()) {
-         	$nma->notify('PlaatProtect', $topic, $content, $severity );
-		}
-   }
+  print $d->format("Y-m-d H:i:s.u");
+  echo " ".$text."\r\n";
 }
 
 /*
@@ -349,6 +333,30 @@ function i ($name) {
 	}
 	$icon .= ' fa-fw"></i>';
 	return $icon;
+}
+
+function plaatprotect_ago($timestamp) {
+
+	$seconds = time()-strtotime($timestamp);
+	$minutes = round($seconds / 60);
+	$hours = round($seconds / (60*60));
+	$days = round($seconds / (60*60*24));
+	
+	if ($seconds<60) {
+		return $seconds.' '.t('SECONDS');
+	} else if (($minutes>0) && ($minutes==1)) {
+		return $minutes.' '.t('MINUTE');
+	} else if (($minutes>0) && ($minutes<60)) {
+		return $minutes.' '.t('MINUTES');
+	} else if (($hours>0) && ($hours==1)) {
+		return $hours.' '.t('HOUR');
+	} else if (($hours>0) && ($hours<24)) {
+		return $hours.' '.t('HOURS');
+	} else if (($days>0) && ($days==1)) {
+		return $days.' '.t('DAY');
+	} else {
+		return $days.' '.t('DAYS');
+	}
 }
 
 // ----------------------------

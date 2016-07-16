@@ -16,7 +16,6 @@
 **  All copyrights reserved (c) 2008-2016 PlaatSoft
 */
  
- 
 /**
  * @file
  * @brief contain dutch translation
@@ -42,6 +41,14 @@ $lang['DAY_3']           = 'Wo';
 $lang['DAY_4']           = 'Do';
 $lang['DAY_5']           = 'Vr';
 $lang['DAY_6']           = 'Za';
+
+$lang['SECONDS']         = 'Seconden';
+$lang['MINUTE']          = 'Minuut';
+$lang['MINUTES']         = 'Minuten';
+$lang['HOUR']            = 'Uur';
+$lang['HOURS']           = 'Uren';
+$lang['DAY']             = 'Dag';
+$lang['DAYS']            = 'Dagen';
 
 /*
 ** ------------------
@@ -103,6 +110,7 @@ $lang['LINK_OFF']            = 'UIT';
 ** ------------------
 */
 
+$lang['LABEL_USERNAME'] = 'Gebruikersnaam';
 $lang['LABEL_PASSWORD'] = 'Wachtwoord';
 
 $lang ['CONGIG_BAD' ] = 'Het volgende bestand "config.inc" mist in de installatie directory.<br/><br/>
@@ -113,7 +121,7 @@ $lang['DATABASE_CONNECTION_FAILED' ] = 'De verbinding naar de database is niet g
 
 $lang['SCENARIO_HOME']       = 'THUIS';  
 $lang['SCENARIO_SLEEP']      = 'SLAPEN';  
-$lang['SCENARIO_AWAY']       = 'BUITEN DE DEUR';  
+$lang['SCENARIO_AWAY']       = 'WEG';  
 
 /*
 ** ------------------
@@ -129,9 +137,7 @@ $lang['DISCLAIMER_CONTENT'] = 'Deze tool wordt zonder enige garantie geleverd.<b
 
 $lang['CREDITS_TITLE'] = 'Dankbetuiging';
 $lang['CREDITS_CONTENT'] = 'De volgende mensen hebben PlaatProtect mogelijk gemaakt:<br/><br/>
-wplaat (Architect / Ontwikkelaar)</br>
-bplaat (Grafisch Ontwerper / Ontwikkelaar)</br>
-lplaat (Tester)<br/>';
+wplaat (Architect / Ontwikkelaar)</br>';
 
 /*
 ** ------------------
@@ -163,6 +169,9 @@ $lang['LABEL_DESCRIPTION'] = 'Omschrijving';
 $lang['database_version'] = 'Huidige database versie';
 $lang['request_counter'] = 'Pagina request counter';
 
+$lang['email_present'] = 'Email presemt';
+$lang['email_address'] = 'Email notification address';
+
 $lang['zwave_present'] = 'Zwave presemt';
 
 $lang['home_password'] = 'Bescherm toegang met een wachtwoord.';
@@ -181,20 +190,24 @@ $lang['hue_ip_address'] = 'Philips HUE IP address of bridge';
 $lang['hue_key'] = 'Philips HUE access key';
 $lang['hue_present'] = 'Philips HUE aanwezig';
 
-$lang['notification_present'] = 'Notification aanwezig';
-$lang['notification_nma_key'] = 'Notify My Andriod Key';
+$lang['mobile_present'] = 'Android mobiele telefoon aanwezig';
+$lang['mobile_nma_key'] = 'Notify My Android (NMA) App key';
 
-$lang['CATEGORY0']  = 'Algemeen'; 
+$lang['device_offline_timeout'] = 'Device Offline timeout in seconds';
+$lang['alarm_duration'] = 'Alarm lengte in seconden';
+
+$lang['CATEGORY0']  = 'Algemeen';
 $lang['CATEGORY11'] = 'Z-Wave'; 
+$lang['CATEGORY21'] = 'Email';  
 $lang['CATEGORY51'] = 'Beveiliging'; 
 $lang['CATEGORY61'] = 'Webcam 1'; 
 $lang['CATEGORY62'] = 'Webcam 2'; 
 $lang['CATEGORY71'] = 'Zigbee'; 
-$lang['CATEGORY81'] = 'Android Notification'; 
+$lang['CATEGORY81'] = 'Mobile'; 
 
 /*
 ** ------------------
-** WEBCAM
+** WEBCAM PAGE
 ** ------------------
 */
 
@@ -203,19 +216,37 @@ $lang['TITLE_ARCHIVE' ] = 'Archief';
 
 /*
 ** ------------------
-** HUE
+** ZIGBEE PAGE
 ** ------------------
 */
 
 $lang['TITLE_ZIGBEE'] ='Zigbee Netwerk';
+$lang['ZIGBEE_ID'] = 'Id';
+$lang['ZIGBEE_VENDOR'] = 'Producent';
+$lang['ZIGBEE_TYPE'] = 'Type';
+$lang['ZIGBEE_LOCATION'] = 'Locatie';
+$lang['ZIGBEE_VERSION'] = 'Versie';
+$lang['ZIGBEE_STATE'] = 'Status';
+$lang['ZIGBEE_HOME'] = 'Thuis';
+$lang['ZIGBEE_SLEEP'] = 'Slapen';
+$lang['ZIGBEE_AWAY'] = 'Weg';
 
 /*
 ** ------------------
-** Z-WAVE
+** Z-WAVE PAGE
 ** ------------------
 */
 
 $lang['TITLE_ZWAVE'] ='Z-Wave Netwerk';
+$lang['ZWAVE_ID'] = 'Id';
+$lang['ZWAVE_VENDOR'] = 'Producent';
+$lang['ZWAVE_TYPE'] = 'Type';
+$lang['ZWAVE_LOCATION'] = 'Locatie';
+$lang['ZWAVE_VERSION'] = 'Versie';
+$lang['ZWAVE_STATE'] = 'Status';
+$lang['ZWAVE_HOME'] = 'Thuis';
+$lang['ZWAVE_SLEEP'] = 'Slapen';
+$lang['ZWAVE_AWAY'] = 'Weg';
 
 /*
 ** ------------------
@@ -231,11 +262,16 @@ $lang['NOTIFICATION_3'] = 'Drone';
 
 /*
 ** ------------------
-** LOGGING
+** EVENT VIEW PAGE
 ** ------------------
 */
 
-$lang['TITLE_LOGGING'] ='Alarm Logging';
+$lang['TITLE_EVENT'] ='Event Logging';
+
+$lang['EVENT_TIMESTAMP'] = 'Tijdstip';
+$lang['EVENT_AGO'] = 'Geleden';
+$lang['EVENT_CATEGORY'] = 'Categorie';
+$lang['EVENT_ACTION'] = 'Actie';
 
 /*
 ** ------------------

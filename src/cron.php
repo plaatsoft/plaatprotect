@@ -35,14 +35,15 @@ include "database.inc";
 
 plaatprotect_db_connect($dbhost, $dbuser, $dbpass, $dbname);
 
-#$zwave_present = plaatprotect_db_get_config_item('zwave_present', ZWAVE);
+#$zwave_present = plaatprotect_db_config_value('zwave_present', CATEGORY_ZWAVE);
 #if ($zwave_present=="true") {
 #   exec('php '.BASE_DIR.'/interfaces/zwave.php > /dev/null 2>&1 &');
 #}
 
-$webcam_present_1 = plaatprotect_db_get_config_item('webcam_present', WEBCAM_1);
+$webcam_present_1 = plaatprotect_db_config_value('webcam_present', CATEGORY_WEBCAM_1);
 if ($webcam_present_1=="true") {
    exec('php '.BASE_DIR.'/interfaces/webcam.php 1 > /dev/null 2>&1 &');
+	exec('php '.BASE_DIR.'/event.php > /dev/null 2>&1 &');
 }
 
 $query  = 'select cid from cron where DATE(last_run)!="'.date("Y-m-d").'"'; 

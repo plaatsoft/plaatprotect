@@ -36,15 +36,15 @@ function plaatprotect_set_notification_state($id, $scenario) {
 	$value = 0;
 	switch ($scenario) {
 		
-		case HOME: 	
+		case SCENARIO_HOME: 	
 			$value= $row->home;
 			break;
 					
-		case SLEEP: 	
+		case SCENARIO_SLEEP: 	
 			$value= $row->sleep;
 			break;
 					
-		case AWAY: 	
+		case SCENARIO_AWAY: 	
 			$value= $row->away;
 			break;
 	}
@@ -58,15 +58,15 @@ function plaatprotect_set_notification_state($id, $scenario) {
 	$sql ="";
 	switch ($scenario) {
 		
-		case HOME: 	
+		case SCENARIO_HOME: 	
 			$sql = 'update notification set home='.$value.' where nid='.$id;
 			break;
 					
-		case SLEEP: 	
+		case SCENARIO_SLEEP: 	
 			$sql = 'update notification set sleep='.$value.' where nid='.$id;
 			break;
 					
-		case AWAY: 	
+		case SCENARIO_AWAY: 	
 			$sql = 'update notification set away='.$value.' where nid='.$id;
 			break;
 	}
@@ -135,19 +135,19 @@ function plaatprotect_notification_page() {
 		$page .= '<td>';
 		$page .= '<input type="checkbox" ';
 		if ($row->home==1) { $page .= "checked"; }
-		$page .= ' onchange="link(\'pid='.$pid.'&eid='.EVENT_UPDATE.'&sid='.HOME.'&id='.$row->nid.'\');">';
+		$page .= ' onchange="link(\'pid='.$pid.'&eid='.EVENT_UPDATE.'&sid='.SCENARIO_HOME.'&id='.$row->nid.'\');">';
 		$page .= '</td>';
 		
 		$page .= '<td>';
 		$page .= '<input type="checkbox" ';
 		if ($row->sleep==1) { $page .= "checked"; }
-		$page .= ' onchange="link(\'pid='.$pid.'&eid='.EVENT_UPDATE.'&sid='.SLEEP.'&id='.$row->nid.'\');">';
+		$page .= ' onchange="link(\'pid='.$pid.'&eid='.EVENT_UPDATE.'&sid='.SCENARIO_SLEEP.'&id='.$row->nid.'\');">';
 		$page .= '</td>';
 		
 		$page .= '<td>';
 		$page .= '<input type="checkbox" ';
 		if ($row->away==1) { $page .= "checked"; }
-		$page .= ' onchange="link(\'pid='.$pid.'&eid='.EVENT_UPDATE.'&sid='.AWAY.'&id='.$row->nid.'\');">';
+		$page .= ' onchange="link(\'pid='.$pid.'&eid='.EVENT_UPDATE.'&sid='.SCENARIO_AWAY.'&id='.$row->nid.'\');">';
 		$page .= '</td>';
 		
 		$page .= '</tr>';

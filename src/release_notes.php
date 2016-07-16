@@ -27,10 +27,20 @@
 ** ---------------------
 */
 
-$note[1] = '<div class="subparagraph">Version 0.1 (08-07-2016)</div>
+$note[2] = '<div class="subparagraph">Version 0.2 (16-07-2016)</div>
 <div class="large_text">
 <ul>
-<li>General: Automatic cleanup old webcam records.</li>
+<li>General: Web session expire after 15 minutes.</li>
+<li>General: Added email notification.</li>
+<li>General: Added event process with control inbound and outbound events.</li>
+<li>General: Location can be changed on zwave page now.</li>
+<li>General: Zwave device state is now showed correctly.</li>
+</ul>
+</div>';
+
+$note[1] = '<div class="subparagraph">Version 0.1 (03-07-2016)</div>
+<div class="large_text">
+<ul>
 <li>General: Added notification page.</li>
 <li>General: Added logging page.</li>
 <li>General: Added movement chart page.</li>

@@ -49,16 +49,14 @@ function plaatprotect_chart_page() {
 		$timestamp1 = date("Y-m-d H:i:s", $current_date+($step*$i));
 		$timestamp2 = date("Y-m-d H:i:s", $current_date+($step*($i+1)));
 			
-		$sql  = 'select timestamp, value from event where value>0 and ';
+		$sql  = 'select timestamp from event where category='.CATEGORY_ZWAVE.' and ';
 		$sql .= 'timestamp>="'.$timestamp1.'" and timestamp<="'.$timestamp2.'"';
 	
 		$result = plaatprotect_db_query($sql);
 		$row = plaatprotect_db_fetch_object($result);
 		
-		$value =0;
-		if (isset($row->value)) {	
-			$value=$row->value;
-		} 
+		$value = 255;
+		
 		if (strlen($data)>0) {
 			$data .= ',';
 		}

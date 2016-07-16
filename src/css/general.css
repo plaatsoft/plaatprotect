@@ -33,6 +33,7 @@ body {
 	background-color: transparent !important;
 	color: #222;
 }
+
 .normal_link:hover {
 	text-decoration: underline;
 }
@@ -49,6 +50,16 @@ body {
 	right: 15px;
 }
 
+.online {
+	font-weight: bold;
+	color: green;
+}
+
+.offline {
+   font-weight: bold;
+	color:red;
+}
+	
 label {
 	display: block;
 }

@@ -18,59 +18,70 @@
 
 /**
  * @file
- * @brief contain hue page
+ * @brief contain zwave page
  */
+
+$location = plaatprotect_post("location", "");
 
 /*
 ** ---------------------
-** DATABASE
+** ACTION
 ** ---------------------
 */
 
-function plaatprotect_set_zwave_state($id, $scenario) {
+function plaatprotect_zwave_save_action($id) {
 
-	$sql = 'select zid, home, sleep, away from zwave where zid='.$id;
-	$result = plaatprotect_db_query($sql);
-	$row = plaatprotect_db_fetch_object($result);
+	global $location;
 	
-	$value = 0;
-	switch ($scenario) {
-		
-		case HOME: 	
-			$value= $row->home;
-			break;
-					
-		case SLEEP: 	
-			$value= $row->sleep;
-			break;
-					
-		case AWAY: 	
-			$value= $row->away;
-			break;
-	}
-		
-	if ($value==1) {
-		$value=0;
-	} else {
-		$value=1;
+	$zwave = plaatprotect_db_zwave($id);
+	if (!isset($zwave->zid)) {
+		return false;
 	}
 	
-	$sql ="";
+	$zwave->location = $location;
+	
+	plaatprotect_db_zwave_update($zwave);
+	
+	return true;
+}
+
+function plaatprotect_zwave_update_action($id, $scenario) {
+
+	$zwave = plaatprotect_db_zwave($id);
+	if (!isset($zwave->zid)) {
+		return false;
+	}
+	
 	switch ($scenario) {
 		
-		case HOME: 	
-			$sql = 'update zwave set home='.$value.' where zid='.$id;
+		case SCENARIO_HOME: 	
+			if ($zwave->home==0) {
+				$zwave->home=1;
+			} else {
+				$zwave->home=0;
+			}
 			break;
 					
-		case SLEEP: 	
-			$sql = 'update zwave set sleep='.$value.' where zid='.$id;
+		case SCENARIO_SLEEP: 	
+			if ($zwave->sleep==0) {
+				$zwave->sleep=1;
+			} else {
+				$zwave->sleep=0;
+			}
 			break;
 					
-		case AWAY: 	
-			$sql = 'update zwave set away='.$value.' where zid='.$id;
+		case SCENARIO_AWAY: 	
+			if ($zwave->away==0) {
+				$zwave->away=1;
+			} else {
+				$zwave->away=0;
+			}
 			break;
 	}
-	plaatprotect_db_query($sql);
+		
+   plaatprotect_db_zwave_update($zwave);
+	
+	return true;
 }
 
 /*
@@ -79,13 +90,31 @@ function plaatprotect_set_zwave_state($id, $scenario) {
 ** ---------------------
 */
 
-/**
- * plaatprotect zwave overview page
- * @return HTML block which page contain.
- */
+function plaatprotect_zwave_edit_page($id) {
+
+	$page = '<h1>'.t('TITLE_ZWAVE').'</h1>';
+
+	$row = plaatprotect_db_zwave($id);
+	
+	$page .= '<br/>';
+   $page .= '<label>'.t('ZWAVE_LOCATION').':</label>';
+   $page .= '<input type="input" name="location" size="30" value="'.$row->location.'" />';
+   $page .= '<br/>';
+	$page .= '<br/>';
+
+	$page .= '<div class="nav">';
+	$page .= plaatprotect_link('pid='.PAGE_ZWAVE, t('LINK_CANCEL'));
+	$page .= plaatprotect_link('pid='.PAGE_ZWAVE.'&eid='.EVENT_SAVE.'&id='.$id, t('LINK_SAVE'));
+	$page .=  '</div>';
+	
+	return $page;
+}
+
 function plaatprotect_zwave_page() {
 
 	global $pid;
+
+	$device_offline_timeout = plaatprotect_db_config_value('device_offline_timeout',CATEGORY_GENERAL);
 
    $page ="<style>input[type='checkbox']{width:24px;height:24px}</style>";
 	$page .= '<h1>'.t('TITLE_ZWAVE').'</h1>';
@@ -97,51 +126,59 @@ function plaatprotect_zwave_page() {
 	$page .= '<tr>';
 	
 	$page .= '<th width="10%">';
-	$page .= 'ID';
+	$page .= t('ZWAVE_ID');
 	$page .= '</th>';
 	
 	$page .= '<th width="10%">';
-	$page .= 'Description';
+	$page .= t('ZWAVE_LOCATION');
 	$page .= '</th>';
 	
 	$page .= '<th width="10%">';
-	$page .= 'Vendor';
+	$page .= t('ZWAVE_TYPE');
 	$page .= '</th>';
 	
 	$page .= '<th width="10%">';
-	$page .= 'Location';
-	$page .= '</th>';
-		
-	$page .= '<th width="10%">';
-	$page .= 'State';
+	$page .= t('ZWAVE_VENDOR');
 	$page .= '</th>';
 	
 	$page .= '<th width="10%">';
-	$page .= 'Home';
+	$page .= t('ZWAVE_VERSION');
 	$page .= '</th>';
 	
 	$page .= '<th width="10%">';
-	$page .= 'Sleep';
+	$page .= t('ZWAVE_STATE');
 	$page .= '</th>';
 	
 	$page .= '<th width="10%">';
-	$page .= 'Away';
+	$page .= t('ZWAVE_HOME');
+	$page .= '</th>';
+	
+	$page .= '<th width="10%">';
+	$page .= t('ZWAVE_SLEEP');
+	$page .= '</th>';
+	
+	$page .= '<th width="10%">';
+	$page .= t('ZWAVE_AWAY');
 	$page .= '</th>';
 			
 	$page .= '</tr>';
 		
-	$sql = 'select zid, nodeid, type, vendor, description, location, home, sleep, away from zwave';
+	$sql = 'select zid, vendor, version, type, location, home, sleep, away, last_update from zwave';
 	$result = plaatprotect_db_query($sql);
 	while ($row = plaatprotect_db_fetch_object($result)) {
 
 		$page .= '<tr>';
 		
 		$page .= '<td>';
-		$page .= $row->nodeid;
+		$page .= plaatprotect_normal_link('pid='.PAGE_ZWAVE_EDIT.'&id='.$row->zid, $row->zid);
 		$page .= '</td>';
 		
 		$page .= '<td>';
-		$page .= $row->description;
+		$page .= $row->location;
+		$page .= '</td>';
+		
+		$page .= '<td>';
+		$page .= $row->type;
 		$page .= '</td>';
 		
 		$page .= '<td>';
@@ -149,44 +186,50 @@ function plaatprotect_zwave_page() {
 		$page .= '</td>';
 		
 		$page .= '<td>';
-		$page .= $row->location;
+		$page .= $row->version;
 		$page .= '</td>';
-				
+		
 		$page .= '<td>';
-		if ($row->type==2) {
+		if ($row->type=="Sirene") {
 			$page .= "OFF";
 		} else {
-			$page .= "ONLINE";
+		
+			$value = time()-strtotime($row->last_update);
+			if ($value < $device_offline_timeout) {
+				$page .= '<div class="online">ONLINE</div>';
+			} else {
+				$page .= '<div class="offline">OFFLINE</div>';
+			}
 		}
 		$page .= '</td>';
 		
 		$page .= '<td>';
-		if ($row->type==2) {
+		if ($row->type=="Controller") {
+			$page .= '<input type="checkbox" disabled checked readonly>';	
+		} else {
 			$page .= '<input type="checkbox" ';
 			if ($row->home==1) { $page .= "checked"; }
-			$page .= ' onchange="link(\'pid='.$pid.'&eid='.EVENT_UPDATE.'&sid='.HOME.'&id='.$row->zid.'\');">';
-		} else {
-			$page .= '<input type="checkbox" disabled readonly>';			
-		}
+			$page .= ' onchange="link(\'pid='.$pid.'&eid='.EVENT_UPDATE.'&sid='.SCENARIO_HOME.'&id='.$row->zid.'\');">';
+		} 
 		$page .= '</td>';
 		
 		$page .= '<td>';
-		if ($row->type==2) {
+		if ($row->type=="Controller") {
+			$page .= '<input type="checkbox" disabled checked readonly>';	
+		} else {
 			$page .= '<input type="checkbox" ';
 			if ($row->sleep==1) { $page .= "checked"; }
-			$page .= ' onchange="link(\'pid='.$pid.'&eid='.EVENT_UPDATE.'&sid='.SLEEP.'&id='.$row->zid.'\');">';
-		} else {
-			$page .= '<input type="checkbox" disabled readonly>';			
-		}
+			$page .= ' onchange="link(\'pid='.$pid.'&eid='.EVENT_UPDATE.'&sid='.SCENARIO_SLEEP.'&id='.$row->zid.'\');">';
+		} 
 		$page .= '</td>';
 		
-			$page .= '<td>';
-		if ($row->type==2) {
+		$page .= '<td>';
+		if ($row->type=="Controller") {
+			$page .= '<input type="checkbox" disabled checked readonly>';	
+		} else {
 			$page .= '<input type="checkbox" ';
 			if ($row->away==1) { $page .= "checked"; }
-			$page .= ' onchange="link(\'pid='.$pid.'&eid='.EVENT_UPDATE.'&sid='.AWAY.'&id='.$row->zid.'\');">';
-		} else {
-			$page .= '<input type="checkbox" disabled readonly>';			
+			$page .= ' onchange="link(\'pid='.$pid.'&eid='.EVENT_UPDATE.'&sid='.SCENARIO_AWAY.'&id='.$row->zid.'\');">';
 		}
 		$page .= '</td>';
 		
@@ -212,7 +255,7 @@ function plaatprotect_zwave_page() {
 
 /**
  * plaatprotect 
- * @return HTML block which page contain.
+ * @return HTML block which page content.
  */
 function plaatprotect_zwave() {
 
@@ -225,8 +268,12 @@ function plaatprotect_zwave() {
    /* Event handler */
   switch ($eid) {
   
+		case EVENT_SAVE: 
+			plaatprotect_zwave_save_action($id);
+			break;
+			
 		case EVENT_UPDATE: 
-			plaatprotect_set_zwave_state($id, $sid);
+			plaatprotect_zwave_update_action($id, $sid);
 			break;
 	}
     
@@ -236,6 +283,11 @@ function plaatprotect_zwave() {
      case PAGE_ZWAVE:
         return plaatprotect_zwave_page();
         break;
+		  
+	   case PAGE_ZWAVE_EDIT:
+        return plaatprotect_zwave_edit_page($id);
+        break;
+		  
   }
 }
 

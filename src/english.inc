@@ -16,7 +16,6 @@
 **  All copyrights reserved (c) 2008-2016 PlaatSoft
 */
 
-
 /**
  * @file
  * @brief contain english translation
@@ -42,6 +41,14 @@ $lang['DAY_3']           = 'Wed';
 $lang['DAY_4']           = 'Thu';
 $lang['DAY_5']           = 'Fri';
 $lang['DAY_6']           = 'Sat';
+
+$lang['SECONDS']         = 'Seconds';
+$lang['MINUTE']          = 'Minute';
+$lang['MINUTES']         = 'Minutes';
+$lang['HOUR']            = 'Hour';
+$lang['HOURS']           = 'Hours';
+$lang['DAY']             = 'Day';
+$lang['DAYS']            = 'Days';
 
 /*
 ** ------------------
@@ -96,6 +103,7 @@ $lang['LINK_OFF']            = 'OFF';
 ** ------------------
 */
 
+$lang['LABEL_USERNAME'] = 'Username';
 $lang['LABEL_PASSWORD'] = 'Password';
 
 $lang ['CONGIG_BAD' ] = 'The following file "config.inc" is missing in installation directory.<br/><br/>
@@ -155,6 +163,9 @@ $lang['request_counter'] = 'Page request counter';
 
 $lang['zwave_present'] = 'Zwave present';
 
+$lang['email_present'] = 'Email present';
+$lang['email_address'] = 'Email notification address';
+
 $lang['system_name'] = 'System name';
 
 $lang['home_password'] = 'Protect application with a password.';
@@ -173,17 +184,21 @@ $lang['hue_ip_address'] = 'Philips HUE IP address of bridge';
 $lang['hue_key'] = 'Philips HUE access key';
 $lang['hue_present'] = 'Philips HUE present';
 
-$lang['notification_present'] = 'Notification present';
-$lang['notification_nma_key'] = 'Notify My Android key';
+$lang['mobile_present'] = 'Android mobile present';
+$lang['mobile_nma_key'] = 'Notify My Android (NMA) App Key';
+
+$lang['device_offline_timeout'] = 'Device Offline timeout in seconds';
+$lang['alarm_duration'] = 'Alarm duration in seconds';
 
 $lang['CATEGORY0']  = 'General'; 
 $lang['CATEGORY11'] = 'Z-Wave'; 
+$lang['CATEGORY21'] = 'Email'; 
 $lang['CATEGORY51'] = 'Security'; 
 $lang['CATEGORY52'] = 'Look and Feel'; 
 $lang['CATEGORY61'] = 'Webcam 1'; 
 $lang['CATEGORY62'] = 'Webcam 2'; 
 $lang['CATEGORY71'] = 'Zigbee'; 
-$lang['CATEGORY81'] = 'Notification'; 
+$lang['CATEGORY81'] = 'Mobile'; 
 
 /*
 ** ------------------
@@ -196,23 +211,43 @@ $lang['TITLE_ARCHIVE' ] = 'Archive';
 
 /*
 ** ------------------
-** HUE
+** ZIGBEE
 ** ------------------
 */
 
 $lang['TITLE_ZIGBEE'] ='Zigbee Network';
 
+$lang['ZIGBEE_ID'] = 'Id';
+$lang['ZIGBEE_VENDOR'] = 'Vendor';
+$lang['ZIGBEE_TYPE'] = 'Type';
+$lang['ZIGBEE_LOCATION'] = 'Location';
+$lang['ZIGBEE_VERSION'] = 'Version';
+$lang['ZIGBEE_STATE'] = 'State';
+$lang['ZIGBEE_HOME'] = 'Home';
+$lang['ZIGBEE_SLEEP'] = 'Sleep';
+$lang['ZIGBEE_AWAY'] = 'Away';
+
 /*
 ** ------------------
-** Z-WAVE
+** Z-WAVE PAGE
 ** ------------------
 */
 
 $lang['TITLE_ZWAVE'] ='Z-Wave Network';
 
+$lang['ZWAVE_ID'] = 'Id';
+$lang['ZWAVE_VENDOR'] = 'Vendor';
+$lang['ZWAVE_TYPE'] = 'Type';
+$lang['ZWAVE_LOCATION'] = 'Location';
+$lang['ZWAVE_VERSION'] = 'Version';
+$lang['ZWAVE_STATE'] = 'State';
+$lang['ZWAVE_HOME'] = 'Home';
+$lang['ZWAVE_SLEEP'] = 'Sleep';
+$lang['ZWAVE_AWAY'] = 'Away';
+
 /*
 ** ------------------
-** NOTIFICATION
+** NOTIFICATION PAGE
 ** ------------------
 */
 
@@ -224,11 +259,16 @@ $lang['NOTIFICATION_3'] = 'Drone';
 
 /*
 ** ------------------
-** LOGGING
+** EVENT VIEW PAGE
 ** ------------------
 */
 
-$lang['TITLE_LOGGING'] ='Alarm Logging';
+$lang['TITLE_EVENT'] ='Event Logging';
+
+$lang['EVENT_TIMESTAMP'] = 'Timestamp';
+$lang['EVENT_AGO'] = 'Ago';
+$lang['EVENT_CATEGORY'] = 'Category';
+$lang['EVENT_ACTION'] = 'Action';
 
 /*
 ** ------------------
