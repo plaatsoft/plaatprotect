@@ -190,16 +190,11 @@ function plaatprotect_zwave_page() {
 		$page .= '</td>';
 		
 		$page .= '<td>';
-		if ($row->type=="Sirene") {
-			$page .= "OFF";
+		$value = time()-strtotime($row->last_update);
+		if ($value < $device_offline_timeout) {
+			$page .= '<div class="online">ONLINE</div>';
 		} else {
-		
-			$value = time()-strtotime($row->last_update);
-			if ($value < $device_offline_timeout) {
-				$page .= '<div class="online">ONLINE</div>';
-			} else {
-				$page .= '<div class="offline">OFFLINE</div>';
-			}
+			$page .= '<div class="offline">OFFLINE</div>';
 		}
 		$page .= '</td>';
 		

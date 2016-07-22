@@ -189,7 +189,7 @@ class nmaApi
         }
 
         $context = stream_context_create($cparams);
-        $fp = fopen($url, 'rb', false, $context);
+        @$fp = fopen($url, 'rb', false, $context);
         if (!$fp) {
             $res = false;
         } else {
@@ -237,7 +237,7 @@ class nmaApi
     private function error($message, $type = E_USER_NOTICE)
     {
         if (self::LIB_ERROR_TYPE == 'error') {
-            trigger_error($message, $type);
+            @trigger_error($message, $type);
             return false;
         } else {
             throw new Exception($message, $type);

@@ -39,17 +39,16 @@ function plaatprotect_mobile_notification($topic, $content, $severity=0) {
 
   if ($mobile_present=="true" ) {
   
-		plaatprotect_log("plaatprotect_mobile_notification: on");
-
 		$nma_key = plaatprotect_db_config_value('mobile_nma_key', CATEGORY_MOBILE);
 
 		require_once 'nmaApi.class.php';
 
 		$nma = new nmaApi(array('apikey' => $nma_key));
 		if($nma->verify()) {
-				$nma->notify('PlaatProtect', $topic, $content, $severity );
+			$nma->notify('PlaatProtect', $topic, $content, $severity );
+			plaatprotect_log("Android push message sent!");
 		} else {
-			plaatprotect_log("plaatprotect_mobile_notification: authenication failed!");
+			plaatprotect_log("Android push message failed!");
 		}
 	}	
 }

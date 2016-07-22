@@ -359,9 +359,7 @@ function plaatprotect_db_event_update($event) {
 */
 
 function plaatprotect_db_zwave($zid) {
- 
-   $timestamp = date('Y-m-d H:i:s');
-	
+ 	
    $query  = 'select zid, type, vendor, location, home, sleep, away from zwave where zid='.$zid;
    $result = plaatprotect_db_query($query); 
 	$row = plaatprotect_db_fetch_object($result);
@@ -372,6 +370,8 @@ function plaatprotect_db_zwave($zid) {
 function plaatprotect_db_zwave_update($zwave) {
  
    $query  = 'update zwave set '; 
+	$query .= 'vendor="'.$zwave->vendor.'", ';
+	$query .= 'type="'.$zwave->type.'", ';
 	$query .= 'location="'.$zwave->location.'", ';
 	$query .= 'home='.$zwave->home.', ';
 	$query .= 'sleep='.$zwave->sleep.', ';
@@ -379,6 +379,52 @@ function plaatprotect_db_zwave_update($zwave) {
 	$query .= 'where zid='.$zwave->zid; 
 	
 	return plaatprotect_db_query($query);
+}
+
+function plaatprotect_db_zwave_alive($zid) {
+
+	$timestamp = date('Y-m-d H:i:s');
+
+	$query = 'update zwave set last_update="'.$timestamp.'" where zid='.$zid;	
+	
+   plaatprotect_db_query($query);
+}
+
+/*
+** ---------------------
+** SENSOR
+** ---------------------
+*/
+
+function plaatprotect_db_sensor_last($zid, $timestamp) {
+ 	
+   $query  = 'select sid, zid, luminance, temperature, humidity, ultraviolet, battery from sensor where zid='.$zid.' and timestamp="'.$timestamp.'"';
+   $result = plaatprotect_db_query($query); 
+	$row = plaatprotect_db_fetch_object($result);
+ 
+	return $row;
+}
+
+function plaatprotect_db_sensor_insert($zid, $timestamp, $luminance, $temperature, $humidity, $ultraviolet, $battery) {
+ 	
+	$query  = 'insert into sensor (zid, timestamp, luminance, temperature, humidity, ultraviolet, battery) ';
+	$query .= 'values ('.$zid.',"'.$timestamp.'",'.$luminance.','.$temperature.','.$humidity.','.$ultraviolet.','.$battery.')';
+	
+	plaatprotect_db_query($query);
+}
+
+function plaatprotect_db_sensor_update($sensor) {
+	
+	$query  = 'update sensor set ';
+	$query .= 'zid='.$sensor->zid.',';
+	$query .= 'luminance='.$sensor->luminance.',';
+	$query .= 'temperature='.$sensor->temperature.',';
+	$query .= 'humidity='.$sensor->humidity.',';
+	$query .= 'ultraviolet='.$sensor->ultraviolet.',';
+	$query .= 'battery='.$sensor->battery.' ';
+	$query .= 'where sid='.$sensor->sid;	
+	
+	plaatprotect_db_query($query);
 }
 
 /*

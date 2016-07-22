@@ -36,7 +36,7 @@ function plaatprotect_event_view_page() {
 	$page .= '<h1>'.t('TITLE_EVENT').'</h1>';
 	$page .= '<br>';
 	
-	$sql  = 'select timestamp, category, action, processed from event order by timestamp desc limit '.($id*15).',15 ';
+	$sql  = 'select timestamp, category, action, processed from event order by timestamp desc limit '.($id*17).',17 ';
 	$result = plaatprotect_db_query($sql);
 
 	$page .= '<table>';
@@ -86,7 +86,7 @@ function plaatprotect_event_view_page() {
 				break;		
 			
 			case CATEGORY_ZWAVE_CONTROL: 
-				$page .= 'Zwave';
+				$page .= '[Zwave]';
 				break;	
 				
 			case CATEGORY_ZIGBEE: 

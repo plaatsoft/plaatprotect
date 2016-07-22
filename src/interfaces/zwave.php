@@ -52,60 +52,40 @@ $fp=fopen("/dev/ttyACM0","c+");
  
 plaatprotect_db_connect($dbhost, $dbuser, $dbpass, $dbname);
 
-function plaatprotect_node_alive($nodeId) {
-
-	$sql  = 'update zwave set last_update=SYSDATE() where zid='.hexdec($nodeId);	
-   plaatprotect_db_query($sql);
-}
-
-function plaatprotect_control_hue($hue_bulb_nr, $value) {
-	
- 	$hue_ip = plaatprotect_db_get_config_item('hue_ip_address',HUE);
- 	$hue_key = plaatprotect_db_get_config_item('hue_key',HUE);
-	
-   $hue_url = "http://".$hue_ip."/api/".$hue_key."/lights/".$hue_bulb_nr."/state";
-
-   $tmp = "Hue command: ";
-
-    $tmp .= file_get_contents($hue_url, false, stream_context_create(["http" => [
-      "method" => "PUT", "header" => "Content-type: application/json",
-      "content" => "{\"on\":". $value."}"
-    ]]));
-
-	LogText($tmp);
-}
-  
 /**
  ********************************
  * Device support library
  ********************************
  */
  
- function decodeManufacture($manufactureId, $deviceType, $deviceId) {
+ function decodeManufacture($nodeId, $manufactureId, $deviceType, $deviceId) {
  
-	$tmp = "";
+	$vendor = "";
+	$device = "";
 	
 	if ($manufactureId=="0x00 0x86") {
-		$tmp .= " Aeon ";
+		$vendor = "Aeon";
 	}
 	
 	if ($manufactureId=="0x00 0x50") {
-		$tmp .= " Aeotec ";
+		$vendor = "Aeotec";
 	}
 
 	if ($deviceId=="0x00 0x5a") {
-		$tmp .= "Z-Wave Controller ";
+		$device  = "Controller";
 	}
 	
 	if ($deviceId=="0x00 0x64") {
-		$tmp .= "Multi 6 Sensor ";
+		$device = "Sensor";
 	}
 		
 	if ($deviceId=="0x00 0x50") {
-		$tmp .= "Sirene ";
+		$device = "Sirene";
 	}
 	
-	return $tmp;
+	plaatprotect_event_insert(CATEGORY_ZWAVE, '{"zid":'.hexdec($nodeId).',"vendor":"'.$vendor.'", "device":"'.$device.'"}');
+	
+	return ' '.$vendor.' '.$device;
 }
   
 /**
@@ -642,15 +622,15 @@ function decodeAlarm($data) {
 	$action = ord(substr($data,14,1));
 	switch ($action) {
 		case 0x00: $tmp .= 'AlarmOff';
-					  plaatprotect_event_insert(CATEGORY_ZWAVE, '{"nodeid":'.hexdec($nodeId).',"type":"report", "alarm":"off"}');
+					  plaatprotect_event_insert(CATEGORY_ZWAVE, '{"zid":'.hexdec($nodeId).',"type":"set", "alarm":"off"}');
 					  break;
 					  
 		case 0x03: $tmp .= 'AlarmVibrationDetected';
-					  plaatprotect_event_insert(CATEGORY_ZWAVE, '{"nodeid":'.hexdec($nodeId).',"type":"report", "alarm":"vibration"}');
+					  plaatprotect_event_insert(CATEGORY_ZWAVE, '{"zid":'.hexdec($nodeId).',"type":"set", "alarm":"vibration"}');
 					  break;
 					  
 		case 0x08: $tmp .= 'AlarmMotionDetected';
-					  plaatprotect_event_insert(CATEGORY_ZWAVE, '{"nodeid":'.hexdec($nodeId).',"type":"report", "alarm":"motion"}');
+					  plaatprotect_event_insert(CATEGORY_ZWAVE, '{"zid":'.hexdec($nodeId).',"type":"set", "alarm":"motion"}');
 					  break;
 	}
 		
@@ -677,39 +657,39 @@ function decodeSensor($data) {
 		case 0x01: $tmp .= 'Temperature ';
 					  $value = (((ord(substr($data,11,1)))*100)+ord(substr($data,12,1)))/10;
 					  $tmp .= 'Value='.$value;
-					  plaatprotect_event_insert(CATEGORY_ZWAVE, '{"nodeid":'.hexdec($nodeId).',"type":"report", "temperature":'.$value.'}');
+					  plaatprotect_event_insert(CATEGORY_ZWAVE, '{"zid":'.hexdec($nodeId).',"type":"report", "temperature":'.$value.'}');
 					  break;
 		
 		case 0x03: $tmp .= 'Luminance ';
 					  $value = (((ord(substr($data,11,1)))*100)+ord(substr($data,12,1)))/10;
 					  $tmp .= 'Value='.$value;
-					  plaatprotect_event_insert(CATEGORY_ZWAVE, '{"nodeid":'.hexdec($nodeId).',"type":"report", "luminance":'.$value.'}');
+					  plaatprotect_event_insert(CATEGORY_ZWAVE, '{"zid":'.hexdec($nodeId).',"type":"report", "luminance":'.$value.'}');
 					  break;
 			  
 		case 0x05: $tmp .= 'Humidity ';
 					  $value = ord(substr($data,11,1));
 					  $tmp .= 'Value='.$value;
-					  plaatprotect_event_insert(CATEGORY_ZWAVE, '{"nodeid":'.hexdec($nodeId).',"type":"report", "humidity":'.$value.'}');
+					  plaatprotect_event_insert(CATEGORY_ZWAVE, '{"zid":'.hexdec($nodeId).',"type":"report", "humidity":'.$value.'}');
 					  break;
 					 
 		case 0x1b: $tmp .= 'Ultraviolet ';
 					  $value = ord(substr($data,11,1));
 					  $tmp .= 'Value='.$value;
-					  plaatprotect_event_insert(CATEGORY_ZWAVE, '{"nodeid":'.hexdec($nodeId).',"type":"report", "ultraviolet":'.$value.'}');
+					  plaatprotect_event_insert(CATEGORY_ZWAVE, '{"zid":'.hexdec($nodeId).',"type":"report", "ultraviolet":'.$value.'}');
 					  break;
 	}
 	
 	return $tmp;
 }
 
-function decodeManufacturer($data) {
+function decodeManufacturer($nodeId, $data) {
 
   $manufactureId = GetHexString(substr($data,9,2));
   $deviceType = GetHexString(substr($data,11,2));
   $deviceId = GetHexString(substr($data,13,2));
  
   $tmp = "manufactureId=[".$manufactureId."] DeviceType=[".$deviceType."] DeviceId=[".$deviceId."]";
-  $tmp .= decodeManufacture($manufactureId, $deviceType, $deviceId);
+  $tmp .= decodeManufacture($nodeId, $manufactureId, $deviceType, $deviceId);
   
   return $tmp;
 }
@@ -717,8 +697,7 @@ function decodeManufacturer($data) {
 function decodeApplicationCommandHandler($data) {
 
   $nodeId = bin2hex(substr($data,5,1));
-  plaatprotect_node_alive($nodeId);
-  
+ 
   $len = substr($data,6,1);
   $commandClass = ord(substr($data,7,1));
  
@@ -757,7 +736,7 @@ function decodeApplicationCommandHandler($data) {
 					break;
 					
 	 case 0x72: $tmp .= 'Manufacturer ';
-				   $tmp .= decodeManufacturer($data);
+				   $tmp .= decodeManufacturer($nodeId, $data);
 					break;
 
     case 0x80: $tmp .= 'Battery ';
@@ -768,16 +747,16 @@ function decodeApplicationCommandHandler($data) {
                               break;
 										
                    case 0x03: $tmp .= 'Report ';
-										$value= ord(substr($data,9,1));
+										$value = ord(substr($data,9,1));
 										$tmp .= 'BatteryValue='.$value.'%';
 
-										plaatprotect_event_insert(CATEGORY_ZWAVE, '{"nodeid":'.hexdec($nodeId).',"type":"report", "battery":'.$value.'}');
+										plaatprotect_event_insert(CATEGORY_ZWAVE, '{"zid":'.hexdec($nodeId).',"type":"report", "battery":'.$value.'}');
                               break;
                }
                break;
 					
 	case 0x84:  $tmp .=  'Received Wakeup Notification ';
-					plaatprotect_event_insert(CATEGORY_ZWAVE, '{"nodeid":'.hexdec($nodeId).',"type":"notification", "value":"wakeup"}');
+					plaatprotect_event_insert(CATEGORY_ZWAVE, '{"zid":'.hexdec($nodeId).',"type":"notification", "value":"wakeup"}');
 			      break;
 
     default:   $tmp .= 'Unknown';
@@ -800,7 +779,7 @@ function decodeSerialApiGetCapabilities($data) {
   $deviceId = GetHexString(substr($data,10,2));
  
   $tmp = "SerialApiGetCapabilities serialAPIVersion=[".$serialAPIVersion."] manufactureId=[".$manufactureId."] DeviceType=[".$deviceType."] DeviceId=[".$deviceId."]";
-  $tmp .= decodeManufacture($manufactureId, $deviceType, $deviceId);
+  $tmp .= decodeManufacture(1, $manufactureId, $deviceType, $deviceId);
   LogText($tmp);  
 }
 
@@ -936,8 +915,6 @@ function decodeMemoryId($data) {
   $nodeId = GetHexString(substr($data,8,1));
  
   LogText("SendGetMemoryId HomeId=[".$homeId."] NodeId=[".$nodeId."]");
-  
-  plaatprotect_node_alive($nodeId);
 }
 
 function decodeSentData($data) {

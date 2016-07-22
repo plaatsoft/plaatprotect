@@ -145,54 +145,58 @@ function plaatprotect_zigbee_page() {
 	$page .= '</tr>';
 	$page .= '</thead>';
 	$page .= '<tbody>';
-
-	foreach($data as $id => $bulb ) {
-		$page .= '<tr>';
-		$page .= '<td>' . $id . '</td>';
-		$page .= '<td>' . $bulb->name . '</td>';
-		$page .= '<td>' . $bulb->type . '</td>';
-		$page .= '<td>' . $bulb->manufacturername . '</td>';
-		$page .= '<td>' . $bulb->swversion . '</td>';
-							
-		if ($bulb->state->reachable==1) {
-			if ($bulb->state->on==1) {
-				$page .= '<td><div class="online">'.plaatprotect_normal_link('pid='.$pid.'&id='.$id.'&eid='.EVENT_OFF,t('LINK_ON')).'</div></td>';
-			} else {
-				$page .= '<td><div class="online">'.plaatprotect_normal_link('pid='.$pid.'&id='.$id.'&eid='.EVENT_ON,t('LINK_OFF')).'</div></td>';
-			} 
-		} else {
-			$page .= '<td><div class="offline">OFFLINE</div></td>';
-		}
-			
-		$sql = 'select hid, home, sleep, away from hue where hid='.$id;
-		$result = plaatprotect_db_query($sql);
-		$row = plaatprotect_db_fetch_object($result);
 	
-		$page .= '<td>';
-		$page .= '<input type="checkbox" ';		
-		if ((isset($row->hid)) && ($row->home==1)) { 
-			$page .= "checked"; 
-		}		
-		$page .= ' onchange="link(\'pid='.$pid.'&eid='.EVENT_UPDATE.'&sid='.SCENARIO_HOME.'&id='.$id.'\');">';			
-		$page .= '</td>';
-		
-		$page .= '<td>';
-		$page .= '<input type="checkbox" ';		
-		if ((isset($row->hid)) && ($row->sleep==1)) { 
-			$page .= "checked"; 
-		}		
-		$page .= ' onchange="link(\'pid='.$pid.'&eid='.EVENT_UPDATE.'&sid='.SCENARIO_SLEEP.'&id='.$id.'\');">';			
-		$page .= '</td>';
+	//if (strlen($data)>0) 
+	{
 
-		$page .= '<td>';
-		$page .= '<input type="checkbox" ';		
-		if ((isset($row->hid)) && ($row->away==1)) { 
-			$page .= "checked"; 
-		}		
-		$page .= ' onchange="link(\'pid='.$pid.'&eid='.EVENT_UPDATE.'&sid='.SCENARIO_AWAY.'&id='.$id.'\');">';			
-		$page .= '</td>';
+		foreach($data as $id => $bulb ) {
+			$page .= '<tr>';
+			$page .= '<td>' . $id . '</td>';
+			$page .= '<td>' . $bulb->name . '</td>';
+			$page .= '<td>' . $bulb->type . '</td>';
+			$page .= '<td>' . $bulb->manufacturername . '</td>';
+			$page .= '<td>' . $bulb->swversion . '</td>';
+							
+			if ($bulb->state->reachable==1) {
+				if ($bulb->state->on==1) {
+					$page .= '<td><div class="online">'.plaatprotect_normal_link('pid='.$pid.'&id='.$id.'&eid='.EVENT_OFF,t('LINK_ON')).'</div></td>';
+				} else {
+					$page .= '<td><div class="online">'.plaatprotect_normal_link('pid='.$pid.'&id='.$id.'&eid='.EVENT_ON,t('LINK_OFF')).'</div></td>';
+				} 
+			} else {
+				$page .= '<td><div class="offline">OFFLINE</div></td>';
+			}
+			
+			$sql = 'select hid, home, sleep, away from hue where hid='.$id;
+			$result = plaatprotect_db_query($sql);
+			$row = plaatprotect_db_fetch_object($result);
+	
+			$page .= '<td>';
+			$page .= '<input type="checkbox" ';		
+			if ((isset($row->hid)) && ($row->home==1)) { 
+				$page .= "checked"; 
+			}		
+			$page .= ' onchange="link(\'pid='.$pid.'&eid='.EVENT_UPDATE.'&sid='.SCENARIO_HOME.'&id='.$id.'\');">';			
+			$page .= '</td>';
 		
-		$page .= '</tr>';
+			$page .= '<td>';
+			$page .= '<input type="checkbox" ';		
+			if ((isset($row->hid)) && ($row->sleep==1)) { 
+				$page .= "checked"; 
+			}		
+			$page .= ' onchange="link(\'pid='.$pid.'&eid='.EVENT_UPDATE.'&sid='.SCENARIO_SLEEP.'&id='.$id.'\');">';			
+			$page .= '</td>';
+
+			$page .= '<td>';
+			$page .= '<input type="checkbox" ';		
+			if ((isset($row->hid)) && ($row->away==1)) { 
+				$page .= "checked"; 
+			}		
+			$page .= ' onchange="link(\'pid='.$pid.'&eid='.EVENT_UPDATE.'&sid='.SCENARIO_AWAY.'&id='.$id.'\');">';			
+			$page .= '</td>';
+			
+			$page .= '</tr>';
+		}
 	}
 	
 	$page .= '</table>';

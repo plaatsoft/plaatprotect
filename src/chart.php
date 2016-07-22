@@ -39,7 +39,7 @@ function plaatprotect_chart_page() {
 	$current_date = mktime(0, 0, 0, $month, $day, $year);  
 	
    $i=0;	
-	$offset = 360;
+	$offset = 12*24;
 	$step = (24*60*60)/$offset;
 		
 	$data="";
@@ -49,14 +49,15 @@ function plaatprotect_chart_page() {
 		$timestamp1 = date("Y-m-d H:i:s", $current_date+($step*$i));
 		$timestamp2 = date("Y-m-d H:i:s", $current_date+($step*($i+1)));
 			
-		$sql  = 'select timestamp from event where category='.CATEGORY_ZWAVE.' and ';
+		$sql  = 'select eid from event where category='.CATEGORY_ZWAVE.' and action like "%alarm%" and ';
 		$sql .= 'timestamp>="'.$timestamp1.'" and timestamp<="'.$timestamp2.'"';
-	
+		
+		$value = 0;
 		$result = plaatprotect_db_query($sql);
 		$row = plaatprotect_db_fetch_object($result);
-		
-		$value = 255;
-		
+		if (isset($row->eid)) {
+			$value = 1;
+		}
 		if (strlen($data)>0) {
 			$data .= ',';
 		}

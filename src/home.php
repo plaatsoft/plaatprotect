@@ -54,7 +54,7 @@ function check_zwave_network() {
 	
 	if ($zwave_present=="true") {
 	
-	   $sql = 'select zid, last_update from zwave where type=3';			
+	   $sql = 'select zid, last_update from zwave where type="Sensor"';			
 		$result = plaatprotect_db_query($sql);
 		
 			
