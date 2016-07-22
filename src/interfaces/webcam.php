@@ -164,11 +164,11 @@ if ($index==2) {
 	$instance=62;
 }
 	
-$name = plaatprotect_db_get_config_item('webcam_name', $instance);
-$resolution = plaatprotect_db_get_config_item('webcam_resolution', $instance);
-$device = plaatprotect_db_get_config_item('webcam_device', $instance);  
-$webcam_fps = plaatprotect_db_get_config_item('webcam_fps', $instance);
-$webcam_no_motion_area = plaatprotect_db_get_config_item('webcam_no_motion_area', $instance);
+$name = plaatprotect_db_config_value('webcam_name', $instance);
+$resolution = plaatprotect_db_config_value('webcam_resolution', $instance);
+$device = plaatprotect_db_config_value('webcam_device', $instance);  
+$webcam_fps = plaatprotect_db_config_value('webcam_fps', $instance);
+$webcam_no_motion_area = plaatprotect_db_config_value('webcam_no_motion_area', $instance);
 	
 while (true) {
 

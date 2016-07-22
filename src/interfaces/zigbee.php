@@ -16,7 +16,7 @@ function plaatprotect_set_hue($hue_bulb_nr, $value) {
 	
    $hue_url = "http://".$hue_ip."/api/".$hue_key."/lights/".$hue_bulb_nr."/state";
 	
-	plaatprotect_log($hue_url.' '.$value);
+	//plaatprotect_log($hue_url.' '.$value);
 
    @file_get_contents($hue_url, false, stream_context_create(["http" => [
       "method" => "PUT", "header" => "Content-type: application/json",
@@ -33,7 +33,7 @@ function plaatprotect_get_inventory_hue() {
 	
    @$json = file_get_contents($hue_url);
 	
-	$json= '{ "1": { "name": "Livingroom",
+	/*$json= '{ "1": { "name": "Livingroom",
 				         "type": "Dimmable light",
 		               "manufacturername": "Philips",
 						   "swversion" : "5.38.15095",
@@ -96,7 +96,7 @@ function plaatprotect_get_inventory_hue() {
 											"on": "0"
 										}						
 						}
-				}';
+				}';*/
 
 	$data = json_decode($json);
 	

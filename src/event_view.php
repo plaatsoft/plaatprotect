@@ -31,12 +31,20 @@ function plaatprotect_event_view_page() {
 
 	global $pid;
 	global $id;
+	global $eid;
+	global $eid2;
 
    $page ="<style>input[type='checkbox']{width:24px;height:24px}</style>";
 	$page .= '<h1>'.t('TITLE_EVENT').'</h1>';
 	$page .= '<br>';
 	
-	$sql  = 'select timestamp, category, action, processed from event order by timestamp desc limit '.($id*17).',17 ';
+	$sql  = 'select timestamp, category, action, processed from event ';
+	if ($eid2 == EVENT_FILTER) {
+		$sql .= 'where action like "%alarm%" ';
+	}
+	$sql .= 'order by timestamp desc ';
+	$sql .= 'limit '.($id*17).',17 ';
+	
 	$result = plaatprotect_db_query($sql);
 
 	$page .= '<table>';
@@ -126,9 +134,15 @@ function plaatprotect_event_view_page() {
 	$page .= '<br/>';
 
 	$page .= '<div class="nav">';
-	$page .= plaatprotect_link('pid='.$pid.'&eid='.EVENT_PREV.'&id='.$id, t('LINK_PREV'));
+	$page .= plaatprotect_link('pid='.$pid.'&eid='.EVENT_PREV.'&eid2='.$eid2.'&id='.$id, t('LINK_PREV'));
 	$page .= plaatprotect_link('pid='.PAGE_HOME, t('LINK_HOME'));
-	$page .= plaatprotect_link('pid='.$pid.'&eid='.EVENT_NEXT.'&id='.$id, t('LINK_NEXT'));
+	$page .= plaatprotect_link('pid='.$pid.'&eid='.EVENT_NEXT.'&eid2='.$eid2.'&id='.$id, t('LINK_NEXT'));
+	
+	if ($eid2 == EVENT_FILTER) {
+		$page .= plaatprotect_link('pid='.$pid, t('LINK_FILTER_OFF'));
+	} else {
+		$page .= plaatprotect_link('pid='.$pid.'&eid2='.EVENT_FILTER, t('LINK_FILTER_ON'));
+	} 
 	$page .=  '</div>';
 	
 	return $page;
@@ -150,10 +164,6 @@ function plaatprotect_event_view() {
 	global $pid;
 	global $eid;
 	global $id;
-
-	//$nodeId=3;
-	//$value=100;
-	//plaatprotect_event_insert(CATEGORY_ZWAVE, '{"nodeid":'.$nodeId.',"type":"report", "battery":'.$value.'}');
   
 	/* Event handler */
 	switch ($eid) {

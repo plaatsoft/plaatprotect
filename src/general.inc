@@ -84,6 +84,7 @@ define('EVENT_SWITCH_SCENARIO',     129);
 define('EVENT_ON',                  130);
 define('EVENT_OFF',                 131);
 define('EVENT_EDIT',                132);
+define('EVENT_FILTER',              133);
 
 /*
 ** -----------

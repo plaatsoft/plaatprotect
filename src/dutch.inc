@@ -104,6 +104,9 @@ $lang['LINK_CHART']          = i('area-chart') . 'Chart';
 $lang['LINK_ON']             = 'AAN'; 
 $lang['LINK_OFF']            = 'UIT'; 
 
+$lang['LINK_FILTER_OFF']     = 'Filter Off'; 
+$lang['LINK_FILTER_ON']      = 'Filter On'; 
+
 /*
 ** ------------------
 ** HOME
