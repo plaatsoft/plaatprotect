@@ -370,7 +370,7 @@ function plaatprotect_db_event_update($event) {
 
 function plaatprotect_db_zwave($zid) {
  	
-   $query  = 'select zid, type, vendor, location, home, sleep, away from zwave where zid='.$zid;
+   $query  = 'select zid, type, vendor, location, home, sleep, away, panic from zwave where zid='.$zid;
    $result = plaatprotect_db_query($query); 
 	$row = plaatprotect_db_fetch_object($result);
  
@@ -399,7 +399,8 @@ function plaatprotect_db_zwave_update($zwave) {
 	$query .= 'location="'.plaatprotect_db_escape($zwave->location).'", ';
 	$query .= 'home='.$zwave->home.', ';
 	$query .= 'sleep='.$zwave->sleep.', ';
-	$query .= 'away='.$zwave->away.' ';
+	$query .= 'away='.$zwave->away.', ';
+	$query .= 'panic='.$zwave->panic.' ';
 	$query .= 'where zid='.$zwave->zid; 
 	
 	return plaatprotect_db_query($query);
@@ -470,7 +471,7 @@ define('HUE_STATE_OFFLINE',  2);
 
 function plaatprotect_db_hue($hid) {
  	
-   $query  = 'select hid, vendor, type, version, location, state, home, sleep, away from hue where hid='.$hid;
+   $query  = 'select hid, vendor, type, version, location, state, home, sleep, away, panic from hue where hid='.$hid;
    $result = plaatprotect_db_query($query); 
 	$row = plaatprotect_db_fetch_object($result);
  
@@ -487,7 +488,8 @@ function plaatprotect_db_hue_update($data) {
 	$query .= 'state='.$data->state.', ';
 	$query .= 'home='.$data->home.', ';
 	$query .= 'sleep='.$data->sleep.', ';
-	$query .= 'away='.$data->away.' ';
+	$query .= 'away='.$data->away.', ';
+	$query .= 'panic='.$data->panic.' ';
 	$query .= 'where hid='.$data->hid; 
 	
 	return plaatprotect_db_query($query);

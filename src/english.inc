@@ -99,6 +99,9 @@ $lang['LINK_OFF']            = 'OFF';
 $lang['LINK_FILTER_OFF']     = 'Filter Off'; 
 $lang['LINK_FILTER_ON']      = 'Filter On'; 
 
+$lang['LINK_PANIC_ON']       = 'PANIC ON'; 
+$lang['LINK_PANIC_OFF']      = 'PANIC OFF'; 
+
 /*
 ** ------------------
 ** HOME
@@ -228,6 +231,7 @@ $lang['ZIGBEE_STATE'] = 'State';
 $lang['ZIGBEE_HOME'] = 'Home';
 $lang['ZIGBEE_SLEEP'] = 'Sleep';
 $lang['ZIGBEE_AWAY'] = 'Away';
+$lang['ZIGBEE_PANIC'] = 'Panic';
 
 /*
 ** ------------------
@@ -246,6 +250,7 @@ $lang['ZWAVE_STATE'] = 'State';
 $lang['ZWAVE_HOME'] = 'Home';
 $lang['ZWAVE_SLEEP'] = 'Sleep';
 $lang['ZWAVE_AWAY'] = 'Away';
+$lang['ZWAVE_PANIC'] = 'Panic';
 
 /*
 ** ------------------

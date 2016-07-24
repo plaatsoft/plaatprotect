@@ -28,14 +28,6 @@
 ** ---------------------
 */
 
-function plaatprotect_flip($data) {
-	if($data==1) {
-		return 0;
-	} else {
-		return 1;
-	}
-}
-
 function plaatprotect_set_hue_state($hid, $scenario) {
 
 	$row = plaatprotect_db_hue($hid);
@@ -53,6 +45,11 @@ function plaatprotect_set_hue_state($hid, $scenario) {
 		case SCENARIO_AWAY: 	
 			$row->away = plaatprotect_flip($row->away);
 			break;
+			
+		case SCENARIO_PANIC: 	
+			$row->panic = plaatprotect_flip($row->panic);
+			break;
+			
 	}
 	plaatprotect_db_hue_update($row);
 }
@@ -117,11 +114,15 @@ function plaatprotect_zigbee_page() {
 	$page .= t('ZIGBEE_AWAY');
 	$page .= '</th>';
 	
+	$page .= '<th width="10%">';
+	$page .= t('ZIGBEE_PANIC');
+	$page .= '</th>';
+	
 	$page .= '</tr>';
 	$page .= '</thead>';
 	$page .= '<tbody>';
 	
-	$sql = 'select hid, vendor, type, version, location, state, home, sleep, away from hue order by hid';
+	$sql = 'select hid, vendor, type, version, location, state, home, sleep, away, panic from hue order by hid';
 	$result = plaatprotect_db_query($sql);
 	while ($row = plaatprotect_db_fetch_object($result)) {
 	
@@ -133,11 +134,11 @@ function plaatprotect_zigbee_page() {
 		$page .= '<td>' . $row->version . '</td>';
 						
 		if ($row->state==HUE_STATE_ON) {
-			$page .= '<td><div class="online">'.plaatprotect_normal_link('pid='.$pid.'&hid='.$row->hid.'&eid='.EVENT_OFF,t('LINK_ON')).'</div></td>';
+			$page .= '<td><div id="hid'.$row->hid.'" class="online">'.plaatprotect_normal_link('pid='.$pid.'&hid='.$row->hid.'&eid='.EVENT_OFF,t('LINK_ON')).'</div></td>';
 		} else if ($row->state==HUE_STATE_OFF) {
-			$page .= '<td><div class="online">'.plaatprotect_normal_link('pid='.$pid.'&hid='.$row->hid.'&eid='.EVENT_ON,t('LINK_OFF')).'</div></td>';
+			$page .= '<td><div id="hid'.$row->hid.'" class="online">'.plaatprotect_normal_link('pid='.$pid.'&hid='.$row->hid.'&eid='.EVENT_ON,t('LINK_OFF')).'</div></td>';
 		} else {
-			$page .= '<td><div class="offline">OFFLINE</div></td>';
+			$page .= '<td><div id="hid'.$row->hid.'" class="offline">OFFLINE</div></td>';
 		}
 		
 		$page .= '<td>';
@@ -162,6 +163,14 @@ function plaatprotect_zigbee_page() {
 			$page .= "checked"; 
 		}		
 		$page .= ' onchange="link(\'pid='.$pid.'&eid='.EVENT_UPDATE.'&sid='.SCENARIO_AWAY.'&hid='.$row->hid.'\');">';			
+		$page .= '</td>';
+		
+		$page .= '<td>';
+		$page .= '<input type="checkbox" ';		
+		if ($row->panic==1) { 
+			$page .= "checked"; 
+		}		
+		$page .= ' onchange="link(\'pid='.$pid.'&eid='.EVENT_UPDATE.'&sid='.SCENARIO_PANIC.'&hid='.$row->hid.'\');">';			
 		$page .= '</td>';
 		
 		$page .= '</tr>';

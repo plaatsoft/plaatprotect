@@ -47,39 +47,28 @@ function plaatprotect_zwave_save_action($id) {
 
 function plaatprotect_zwave_update_action($id, $scenario) {
 
-	$zwave = plaatprotect_db_zwave($id);
-	if (!isset($zwave->zid)) {
-		return false;
-	}
+	$row = plaatprotect_db_zwave($id);
 	
 	switch ($scenario) {
 		
 		case SCENARIO_HOME: 	
-			if ($zwave->home==0) {
-				$zwave->home=1;
-			} else {
-				$zwave->home=0;
-			}
+			$row->home = plaatprotect_flip($row->home);
 			break;
 					
 		case SCENARIO_SLEEP: 	
-			if ($zwave->sleep==0) {
-				$zwave->sleep=1;
-			} else {
-				$zwave->sleep=0;
-			}
+			$row->sleep = plaatprotect_flip($row->sleep);
 			break;
 					
 		case SCENARIO_AWAY: 	
-			if ($zwave->away==0) {
-				$zwave->away=1;
-			} else {
-				$zwave->away=0;
-			}
+			$row->away = plaatprotect_flip($row->away);
+			break;
+			
+		case SCENARIO_PANIC: 	
+			$row->panic = plaatprotect_flip($row->panic);
 			break;
 	}
-		
-   plaatprotect_db_zwave_update($zwave);
+	
+   plaatprotect_db_zwave_update($row);
 	
 	return true;
 }
@@ -160,10 +149,14 @@ function plaatprotect_zwave_page() {
 	$page .= '<th width="10%">';
 	$page .= t('ZWAVE_AWAY');
 	$page .= '</th>';
-			
+
+	$page .= '<th width="10%">';
+	$page .= t('ZWAVE_PANIC');
+	$page .= '</th>';
+	
 	$page .= '</tr>';
 		
-	$sql = 'select zid, vendor, version, type, location, home, sleep, away, last_update from zwave';
+	$sql = 'select zid, vendor, version, type, location, home, sleep, away, panic, last_update from zwave';
 	$result = plaatprotect_db_query($sql);
 	while ($row = plaatprotect_db_fetch_object($result)) {
 
@@ -225,6 +218,16 @@ function plaatprotect_zwave_page() {
 			$page .= '<input type="checkbox" ';
 			if ($row->away==1) { $page .= "checked"; }
 			$page .= ' onchange="link(\'pid='.$pid.'&eid='.EVENT_UPDATE.'&sid='.SCENARIO_AWAY.'&id='.$row->zid.'\');">';
+		}
+		$page .= '</td>';
+		
+		$page .= '<td>';
+		if ($row->type=="Controller") {
+			$page .= '<input type="checkbox" disabled checked readonly>';	
+		} else {
+			$page .= '<input type="checkbox" ';
+			if ($row->panic==1) { $page .= "checked"; }
+			$page .= ' onchange="link(\'pid='.$pid.'&eid='.EVENT_UPDATE.'&sid='.SCENARIO_PANIC.'&id='.$row->zid.'\');">';
 		}
 		$page .= '</td>';
 		

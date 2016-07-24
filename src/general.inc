@@ -95,6 +95,10 @@ define('EVENT_FILTER',              133);
 define('SCENARIO_HOME',   1);
 define('SCENARIO_SLEEP',  2);
 define('SCENARIO_AWAY',   3);
+define('SCENARIO_PANIC',  4);
+
+define('PANIC_ON',        1);
+define('PANIC_OFF',       0);
 
 /*
 ** -----------
@@ -357,6 +361,14 @@ function plaatprotect_ago($timestamp) {
 		return $days.' '.t('DAY');
 	} else {
 		return $days.' '.t('DAYS');
+	}
+}
+
+function plaatprotect_flip($value) {
+	if($value==1) {
+		return 0;
+	} else {
+		return 1;
 	}
 }
 

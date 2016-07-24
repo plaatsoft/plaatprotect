@@ -271,7 +271,7 @@ function plaatprotect_home_page() {
 		$page .= '<table>';
 				
 		$page .= '<tr>';	
-		$page .= '<td width="30%">';		
+		$page .= '<td width="20%">';		
 		switch (plaatprotect_db_config_value('alarm_scenario',CATEGORY_GENERAL)) {
 	
 			case SCENARIO_SLEEP: 
@@ -287,6 +287,20 @@ function plaatprotect_home_page() {
 				break;
 		}
 		$page .= '</td>';
+		
+		$page .= '<td width="20%">';		
+		switch (plaatprotect_db_config_value('panic_on',CATEGORY_GENERAL)) {
+	
+			case PANIC_OFF: 
+				$page .= plaatprotect_link('pid='.$pid.'&eid='.EVENT_ON, t('LINK_PANIC_ON'));
+				break;
+						
+			case PANIC_ON: 
+				$page .= plaatprotect_link('pid='.$pid.'&eid='.EVENT_OFF, t('LINK_PANIC_OFF'));
+			   break;
+		}
+		$page .= '</td>';
+		
 		$page .= '<tr>';
 
 		$page .= '</table>';
@@ -329,6 +343,22 @@ function plaatprotect_home() {
 		case EVENT_LOGIN:
 			plaatprotect_home_login_event();
 			break;		
+			
+		case EVENT_ON:
+			$config = plaatprotect_db_config('panic_on');
+			$config->value = PANIC_ON;
+			plaatprotect_db_config_update($config);
+			$event = '{"action":"panic", "value":"on"}';
+			plaatprotect_event_insert(CATEGORY_GENERAL, $event);
+			break;
+			
+		case EVENT_OFF:
+			$config = plaatprotect_db_config('panic_on');
+			$config->value = PANIC_OFF;
+			plaatprotect_db_config_update($config);
+			$event = '{"action":"panic", "value":"off"}';
+			plaatprotect_event_insert(CATEGORY_GENERAL, $event);
+			break;
 			
 		case EVENT_SWITCH_SCENARIO:
 			$config = plaatprotect_db_config('alarm_scenario');

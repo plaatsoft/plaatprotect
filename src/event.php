@@ -12,6 +12,7 @@ define('EVENT_ALARM_OFF', 	  		12);
 define('STATE_INIT',        		20);
 define('STATE_IDLE',        		21);
 define('STATE_ALARM',      		22);
+define('STATE_PANIC',      		23);
 
 $stop = false;
 $state = STATE_INIT;
@@ -439,6 +440,10 @@ function plaatprotect_event_state_machine() {
 				break;
 				
 		case STATE_ALARM:
+				plaatprotect_event_alarm();
+				break;
+				
+		case STATE_PANIC:
 				plaatprotect_event_alarm();
 				break;
 				
