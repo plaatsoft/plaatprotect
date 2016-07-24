@@ -43,7 +43,7 @@ function plaatprotect_event_view_page() {
 		$sql .= 'where action like "%alarm%" ';
 	}
 	$sql .= 'order by timestamp desc ';
-	$sql .= 'limit '.($id*17).',17 ';
+	$sql .= 'limit '.($id*17).',15 ';
 	
 	$result = plaatprotect_db_query($sql);
 

@@ -209,7 +209,6 @@ switch ($pid) {
 		break;
 		
 	case PAGE_ZIGBEE: 
-		include "interfaces/zigbee.php";
 		include "zigbee_view.php";
 		$page = plaatprotect_zigbee();
 		break;

@@ -21,6 +21,12 @@ INSERT INTO config (category, token, value, options, date, readonly, rebuild, en
 INSERT INTO config (category, token, value, options, date, readonly, rebuild, encrypt) VALUES (0, 'device_offline_timeout', '900', '', '0000-00-00', '0', '0', '0');
 INSERT INTO config (category, token, value, options, date, readonly, rebuild, encrypt) VALUES (21, 'email_present', 'no', 'yes,no', '0000-00-00', '0', '0', '0');
 INSERT INTO config (category, token, value, options, date, readonly, rebuild, encrypt) VALUES (21, 'email_address', '', '', '0000-00-00', '0', '0', '0');
+
 UPDATE config SET token='mobile_present' WHERE token="notification_present";
 UPDATE config SET token='mobile_nma_key' WHERE token="notification_nma_key";
 
+ALTER TABLE `hue` ADD `vendor` VARCHAR(32) NOT NULL AFTER `hid`;
+ALTER TABLE `hue` ADD `type` VARCHAR(32) NOT NULL AFTER `vender`;
+ALTER TABLE `hue` ADD `version` VARCHAR(32) NOT NULL AFTER `type`;
+ALTER TABLE `hue` ADD `location` VARCHAR(32) NOT NULL AFTER `version`;
+ALTER TABLE `hue` ADD `state` INT NOT NULL AFTER `location`;

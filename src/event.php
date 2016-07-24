@@ -3,7 +3,6 @@
 include "general.inc";
 include "database.inc";
 include "config.inc";
-include "interfaces/zigbee.php";
 include "interfaces/android.php";
 
 define('EVENT_IDLE',        		10);
@@ -51,10 +50,11 @@ function plaatprotect_hue_alarm_group($event) {
 	$result = plaatprotect_db_query($sql);
 	while ($row = plaatprotect_db_fetch_object($result)) {	
 		if ($event==EVENT_ALARM_ON) {
-			plaatprotect_set_hue($row->hid, "true");
+			$event = '{"hid":'.$row->hid.', "action":"set", "value":"on"}';
 		} else {
-			plaatprotect_set_hue($row->hid, "false");
+			$event = '{"hid":'.$row->hid.', "action":"set", "value":"off"}';
 		}
+		plaatprotect_event_insert(CATEGORY_HUE, $event);		
 	}
 }
 
@@ -142,7 +142,17 @@ function plaatprotect_event_init() {
 	
 	plaatprotect_log("StateMachine = Init");
 	
-	plaatprotect_hue_all_off();
+	// Hue
+	$event = '{"hid":"all", "action":"get", "value":"init"}';
+	plaatprotect_event_insert(CATEGORY_ZIGBEE, $event);		
+
+	$sql = 'select hid from hue ';
+	$result = plaatprotect_db_query($sql);
+	while ($row = plaatprotect_db_fetch_object($result)) {	
+		$event = '{"hid":'.$row->hid.', "action":"set", "value":"off"}';
+		plaatprotect_event_insert(CATEGORY_ZIGBEE, $event);		
+	}
+		
 	plaatprotect_zwave_alarm_group(EVENT_ALARM_OFF);
 	
 	$subject =  "INFO";

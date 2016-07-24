@@ -132,6 +132,18 @@ function plaatprotect_db_query($query) {
 }
 
 /**
+ * escap database string
+ * @param $data  input.
+ * @return $data escaped
+ */
+function plaatprotect_db_escape($data) {
+
+	global $db;
+	
+	return mysqli_real_escape_string($db, $data);
+}
+
+/**
  * Fetch query result 
  * @return mysql data set if any
  */
@@ -333,12 +345,10 @@ function plaatprotect_db_event($category=0) {
 
 function plaatprotect_event_insert($category, $action) {
  
-	global $db;
-	
    $timestamp = date('Y-m-d H:i:s');
 	
    $query  = 'insert into event (timestamp, category, action) ';
-	$query .= 'values ("'.$timestamp.'",'.$category.',"'.mysqli_real_escape_string($db, $action).'")';
+	$query .= 'values ("'.$timestamp.'",'.$category.',"'.plaatprotect_db_escape($action).'")';
 	
 	return plaatprotect_db_query($query);
 }
@@ -367,17 +377,38 @@ function plaatprotect_db_zwave($zid) {
 	return $row;
 }
 
+function plaatprotect_db_zwave_insert($zid, $vendor, $type, $version, $location, $state) {
+ 
+	global $db;
+	
+   $query  = 'insert into zwave (zid, vendor, type, version, location) ';
+	$query .= 'values ('.$zid.',';
+	$query .= '"'.plaatprotect_db_escape($vendor).'",';
+	$query .= '"'.plaatprotect_db_escape($type).'",';
+	$query .= '"'.plaatprotect_db_escape($version).'",';
+	$query .= '"'.plaatprotect_db_escape($location).'")';
+	
+	return plaatprotect_db_query($query);
+}
+
 function plaatprotect_db_zwave_update($zwave) {
  
    $query  = 'update zwave set '; 
-	$query .= 'vendor="'.$zwave->vendor.'", ';
-	$query .= 'type="'.$zwave->type.'", ';
-	$query .= 'location="'.$zwave->location.'", ';
+	$query .= 'vendor="'.plaatprotect_db_escape($zwave->vendor).'", ';
+	$query .= 'type="'.plaatprotect_db_escape($zwave->type).'", ';
+	$query .= 'location="'.plaatprotect_db_escape($zwave->location).'", ';
 	$query .= 'home='.$zwave->home.', ';
 	$query .= 'sleep='.$zwave->sleep.', ';
 	$query .= 'away='.$zwave->away.' ';
 	$query .= 'where zid='.$zwave->zid; 
 	
+	return plaatprotect_db_query($query);
+}
+
+function plaatprotect_db_zwave_delete($zid) {
+ 
+	$query = 'delete from zwave where zid='.$zid;
+	 
 	return plaatprotect_db_query($query);
 }
 
@@ -425,6 +456,61 @@ function plaatprotect_db_sensor_update($sensor) {
 	$query .= 'where sid='.$sensor->sid;	
 	
 	plaatprotect_db_query($query);
+}
+
+/*
+** ---------------------
+** HUE
+** ---------------------
+*/
+
+define('HUE_STATE_OFF',      0);
+define('HUE_STATE_ON',       1);
+define('HUE_STATE_OFFLINE',  2);
+
+function plaatprotect_db_hue($hid) {
+ 	
+   $query  = 'select hid, vendor, type, version, location, state, home, sleep, away from hue where hid='.$hid;
+   $result = plaatprotect_db_query($query); 
+	$row = plaatprotect_db_fetch_object($result);
+ 
+	return $row;
+}
+
+function plaatprotect_db_hue_update($data) {
+ 
+   $query  = 'update hue set '; 
+	$query .= 'vendor="'.plaatprotect_db_escape($data->vendor).'", ';
+	$query .= 'type="'.plaatprotect_db_escape($data->type).'", ';
+	$query .= 'version="'.plaatprotect_db_escape($data->version).'", ';
+	$query .= 'location="'.plaatprotect_db_escape($data->location).'", ';
+	$query .= 'state='.$data->state.', ';
+	$query .= 'home='.$data->home.', ';
+	$query .= 'sleep='.$data->sleep.', ';
+	$query .= 'away='.$data->away.' ';
+	$query .= 'where hid='.$data->hid; 
+	
+	return plaatprotect_db_query($query);
+}
+
+function plaatprotect_db_hue_insert($hid, $vendor, $type, $version, $location, $state) {
+ 	
+   $query  = 'insert into hue (hid, vendor, type, version, location, state) ';
+	$query .= 'values ('.$hid.',';
+	$query .= '"'.plaatprotect_db_escape($vendor).'",';
+	$query .= '"'.plaatprotect_db_escape($type).'",';
+	$query .= '"'.plaatprotect_db_escape($version).'",';
+	$query .= '"'.plaatprotect_db_escape($location).'",';
+	$query .= $state.')';
+	
+	return plaatprotect_db_query($query);
+}
+
+function plaatprotect_db_hue_delete($hid) {
+ 
+	$query = 'delete from hue where hid='.$hid;
+	 
+	return plaatprotect_db_query($query);
 }
 
 /*

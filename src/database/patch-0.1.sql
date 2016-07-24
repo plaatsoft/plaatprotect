@@ -51,8 +51,8 @@ ALTER TABLE `event` CHANGE `eid` `eid` INT(11) NOT NULL AUTO_INCREMENT;
 CREATE TABLE IF NOT EXISTS `zwave` (
   `zid` int(11) NOT NULL,
   `vendor` varchar(32) NOT NULL,
-  `type` varchar(128) NOT NULL,
-  `location` varchar(128) NOT NULL,
+  `type` varchar(32) NOT NULL,
+  `location` varchar(32) NOT NULL,
   `version` varchar(32) NOT NULL,
   `home` int(11) NOT NULL,
   `sleep` int(11) NOT NULL,

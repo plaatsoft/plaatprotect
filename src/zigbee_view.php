@@ -28,59 +28,33 @@
 ** ---------------------
 */
 
-function plaatprotect_set_hue_state($id, $scenario) {
-
-	$sql = 'select hid, home, sleep, away from hue where hid='.$id;
-	$result = plaatprotect_db_query($sql);
-	$row = plaatprotect_db_fetch_object($result);
-	
-	if (!isset($row->hid)) {
-		$sql = 'insert into hue (hid, home, sleep, away) value ('.$id.',0,0,0)';
-		plaatprotect_db_query($sql);
-	}
-	
-	$sql = 'select hid, home, sleep, away from hue where hid='.$id;
-	$result = plaatprotect_db_query($sql);
-	$row = plaatprotect_db_fetch_object($result);
-	
-	$value = 0;
-	switch ($scenario) {
-		
-		case SCENARIO_HOME: 	
-			$value= $row->home;
-			break;
-					
-		case SCENARIO_SLEEP: 	
-			$value= $row->sleep;
-			break;
-					
-		case SCENARIO_AWAY: 	
-			$value= $row->away;
-			break;
-	}
-		
-	if ($value==1) {
-		$value=0;
+function plaatprotect_flip($data) {
+	if($data==1) {
+		return 0;
 	} else {
-		$value=1;
+		return 1;
 	}
-	
-	$sql ="";
+}
+
+function plaatprotect_set_hue_state($hid, $scenario) {
+
+	$row = plaatprotect_db_hue($hid);
+
 	switch ($scenario) {
 		
 		case SCENARIO_HOME: 	
-			$sql = 'update hue set home='.$value.' where hid='.$id;
+			$row->home = plaatprotect_flip($row->home);
 			break;
 					
 		case SCENARIO_SLEEP: 	
-			$sql = 'update hue set sleep='.$value.' where hid='.$id;
+			$row->sleep = plaatprotect_flip($row->sleep);
 			break;
 					
 		case SCENARIO_AWAY: 	
-			$sql = 'update hue set away='.$value.' where hid='.$id;
+			$row->away = plaatprotect_flip($row->away);
 			break;
 	}
-	plaatprotect_db_query($sql);
+	plaatprotect_db_hue_update($row);
 }
 
 /*
@@ -96,11 +70,12 @@ function plaatprotect_set_hue_state($id, $scenario) {
 function plaatprotect_zigbee_page() {
 
 	global $pid;
-
+	
+	$event = '{"hid":"all", "action":"get"}';
+	plaatprotect_event_insert(CATEGORY_ZIGBEE, $event);
+		
    $page ="<style>input[type='checkbox']{width:24px;height:24px}</style>";
 	$page .= '<h1>'.t('TITLE_ZIGBEE').'</h1>';
-
-	$data  = plaatprotect_get_inventory_hue();
 
 	$page .= '<table>';
 	$page .= '<thead>';
@@ -146,57 +121,50 @@ function plaatprotect_zigbee_page() {
 	$page .= '</thead>';
 	$page .= '<tbody>';
 	
-	//if (strlen($data)>0) 
-	{
-
-		foreach($data as $id => $bulb ) {
-			$page .= '<tr>';
-			$page .= '<td>' . $id . '</td>';
-			$page .= '<td>' . $bulb->name . '</td>';
-			$page .= '<td>' . $bulb->type . '</td>';
-			$page .= '<td>' . $bulb->manufacturername . '</td>';
-			$page .= '<td>' . $bulb->swversion . '</td>';
-							
-			if ($bulb->state->reachable==1) {
-				if ($bulb->state->on==1) {
-					$page .= '<td><div class="online">'.plaatprotect_normal_link('pid='.$pid.'&id='.$id.'&eid='.EVENT_OFF,t('LINK_ON')).'</div></td>';
-				} else {
-					$page .= '<td><div class="online">'.plaatprotect_normal_link('pid='.$pid.'&id='.$id.'&eid='.EVENT_ON,t('LINK_OFF')).'</div></td>';
-				} 
-			} else {
-				$page .= '<td><div class="offline">OFFLINE</div></td>';
-			}
-			
-			$sql = 'select hid, home, sleep, away from hue where hid='.$id;
-			$result = plaatprotect_db_query($sql);
-			$row = plaatprotect_db_fetch_object($result);
+	$sql = 'select hid, vendor, type, version, location, state, home, sleep, away from hue order by hid';
+	$result = plaatprotect_db_query($sql);
+	while ($row = plaatprotect_db_fetch_object($result)) {
 	
-			$page .= '<td>';
-			$page .= '<input type="checkbox" ';		
-			if ((isset($row->hid)) && ($row->home==1)) { 
-				$page .= "checked"; 
-			}		
-			$page .= ' onchange="link(\'pid='.$pid.'&eid='.EVENT_UPDATE.'&sid='.SCENARIO_HOME.'&id='.$id.'\');">';			
-			$page .= '</td>';
-		
-			$page .= '<td>';
-			$page .= '<input type="checkbox" ';		
-			if ((isset($row->hid)) && ($row->sleep==1)) { 
-				$page .= "checked"; 
-			}		
-			$page .= ' onchange="link(\'pid='.$pid.'&eid='.EVENT_UPDATE.'&sid='.SCENARIO_SLEEP.'&id='.$id.'\');">';			
-			$page .= '</td>';
-
-			$page .= '<td>';
-			$page .= '<input type="checkbox" ';		
-			if ((isset($row->hid)) && ($row->away==1)) { 
-				$page .= "checked"; 
-			}		
-			$page .= ' onchange="link(\'pid='.$pid.'&eid='.EVENT_UPDATE.'&sid='.SCENARIO_AWAY.'&id='.$id.'\');">';			
-			$page .= '</td>';
-			
-			$page .= '</tr>';
+		$page .= '<tr>';
+		$page .= '<td>' . $row->hid . '</td>';
+		$page .= '<td>' . $row->location . '</td>';
+		$page .= '<td>' . $row->type . '</td>';
+		$page .= '<td>' . $row->vendor . '</td>';
+		$page .= '<td>' . $row->version . '</td>';
+						
+		if ($row->state==HUE_STATE_ON) {
+			$page .= '<td><div class="online">'.plaatprotect_normal_link('pid='.$pid.'&hid='.$row->hid.'&eid='.EVENT_OFF,t('LINK_ON')).'</div></td>';
+		} else if ($row->state==HUE_STATE_OFF) {
+			$page .= '<td><div class="online">'.plaatprotect_normal_link('pid='.$pid.'&hid='.$row->hid.'&eid='.EVENT_ON,t('LINK_OFF')).'</div></td>';
+		} else {
+			$page .= '<td><div class="offline">OFFLINE</div></td>';
 		}
+		
+		$page .= '<td>';
+		$page .= '<input type="checkbox" ';		
+		if ($row->home==1) { 
+			$page .= "checked"; 
+		}		
+		$page .= ' onchange="link(\'pid='.$pid.'&eid='.EVENT_UPDATE.'&sid='.SCENARIO_HOME.'&hid='.$row->hid.'\');">';			
+		$page .= '</td>';
+	
+		$page .= '<td>';
+		$page .= '<input type="checkbox" ';		
+		if ($row->sleep==1) { 
+			$page .= "checked"; 
+		}		
+		$page .= ' onchange="link(\'pid='.$pid.'&eid='.EVENT_UPDATE.'&sid='.SCENARIO_SLEEP.'&hid='.$row->hid.'\');">';			
+		$page .= '</td>';
+		
+		$page .= '<td>';
+		$page .= '<input type="checkbox" ';		
+		if ($row->away==1) { 
+			$page .= "checked"; 
+		}		
+		$page .= ' onchange="link(\'pid='.$pid.'&eid='.EVENT_UPDATE.'&sid='.SCENARIO_AWAY.'&hid='.$row->hid.'\');">';			
+		$page .= '</td>';
+		
+		$page .= '</tr>';
 	}
 	
 	$page .= '</table>';
@@ -225,22 +193,24 @@ function plaatprotect_zigbee() {
 	/* input */
   global $pid;
   global $eid;
-  global $id;
+  global $hid;
   global $sid;
       
    /* Event handler */
   switch ($eid) {
   
 		case EVENT_ON: 
-			plaatprotect_set_hue($id, "true");
+			$event = '{"hid":'.$hid.', "action":"set", "value":"on"}';
+			plaatprotect_event_insert(CATEGORY_ZIGBEE, $event);
 			break;
 			
 		case EVENT_OFF: 
-			plaatprotect_set_hue($id, "false");
+			$event = '{"hid":'.$hid.', "action":"set", "value":"off"}';
+			plaatprotect_event_insert(CATEGORY_ZIGBEE, $event);	
 			break;
 						
 		case EVENT_UPDATE: 
-			plaatprotect_set_hue_state($id, $sid);
+			plaatprotect_set_hue_state($hid, $sid);
 			break;
 	}
 	
