@@ -182,7 +182,7 @@ function plaatprotect_zigbee_page() {
 	$page .= plaatprotect_link('pid='.PAGE_HOME, t('LINK_HOME'));
 	$page .=  '</div>';
 	
-	//$page .= '<script>setTimeout(link,5000,\'pid='.$pid.'\');</script>';
+	$page .= '<script>setTimeout(link,2500,\'pid='.$pid.'\');</script>';
 		
 	return $page;
 }
@@ -209,12 +209,12 @@ function plaatprotect_zigbee() {
   switch ($eid) {
   
 		case EVENT_ON: 
-			$event = '{"hid":'.$hid.', "action":"set", "value":"on"}';
+			$event = '{"hid":'.$hid.', "action":"set", "value":"true"}';
 			plaatprotect_event_insert(CATEGORY_ZIGBEE, $event);
 			break;
 			
 		case EVENT_OFF: 
-			$event = '{"hid":'.$hid.', "action":"set", "value":"off"}';
+			$event = '{"hid":'.$hid.', "action":"set", "value":"false"}';
 			plaatprotect_event_insert(CATEGORY_ZIGBEE, $event);	
 			break;
 						

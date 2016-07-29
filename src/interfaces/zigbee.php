@@ -10,7 +10,7 @@ include "../config.inc";
 ** ---------------------
 */
 
-define('DEMO', 1);
+define('DEMO', 0);
 
 /*
 ** ---------------------
@@ -49,11 +49,13 @@ function plaatprotect_set_hue_state($hid, $value) {
  	$hue_key = plaatprotect_db_config_value('hue_key',CATEGORY_ZIGBEE);
 	
    $hue_url = "http://".$hue_ip."/api/".$hue_key."/lights/".$hid."/state";
-	
-   @file_get_contents($hue_url, false, stream_context_create(["http" => [
+
+   $json = @file_get_contents($hue_url, false, stream_context_create(["http" => [
       "method" => "PUT", "header" => "Content-type: application/json",
       "content" => "{\"on\":". $value."}"
     ]]));
+	 
+	echo $json;
 }
     
 function plaatprotect_get_hue_state() {
@@ -65,6 +67,8 @@ function plaatprotect_get_hue_state() {
 	
 	@$json = file_get_contents($hue_url);
 
+	echo $json;
+	
 	if (DEMO==1) {
 	
 		$json= '{ "1": { "name": "Livingroom",
@@ -134,7 +138,7 @@ function plaatprotect_get_hue_state() {
 	}
 	
 	$data = json_decode($json);
-	
+		
 	foreach($data as $hid => $bulb ) {
 
 		$row = plaatprotect_db_hue($hid);

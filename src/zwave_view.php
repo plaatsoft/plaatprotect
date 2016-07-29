@@ -103,6 +103,9 @@ function plaatprotect_zwave_page() {
 
 	global $pid;
 
+	$event = '{"zid":"all", "action":"init"}';
+	plaatprotect_event_insert(CATEGORY_ZWAVE_CONTROL, $event);
+	
 	$device_offline_timeout = plaatprotect_db_config_value('device_offline_timeout',CATEGORY_GENERAL);
 
    $page ="<style>input[type='checkbox']{width:24px;height:24px}</style>";
@@ -240,7 +243,7 @@ function plaatprotect_zwave_page() {
 	$page .= plaatprotect_link('pid='.PAGE_HOME, t('LINK_HOME'));
 	$page .=  '</div>';
 	
-	//$page .= '<script>setTimeout(link,5000,\'pid='.$pid.'\');</script>';
+	//$page .= '<script>setTimeout(link,2500,\'pid='.$pid.'\');</script>';
 		
 	return $page;
 }

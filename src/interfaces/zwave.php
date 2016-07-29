@@ -1009,7 +1009,7 @@ function Receive() {
     if($c == false){
       $timer++;
       usleep(10000);
-      if ($timer>500) {
+      if ($timer>100) {
         break;
       } else {
         continue;
@@ -1068,7 +1068,7 @@ function plaatprotect_zwave_state_machine() {
 		$row->processed=1;
 		plaatprotect_db_event_update($row);
 			
-		$data = decode_json($row->action);
+		$data = json_decode($row->action);
 		if ($data->action=="init") {
 
 			/* Init ZWave layer */
