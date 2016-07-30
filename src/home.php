@@ -348,16 +348,16 @@ function plaatprotect_home() {
 			$config = plaatprotect_db_config('panic_on');
 			$config->value = PANIC_ON;
 			plaatprotect_db_config_update($config);
-			$event = '{"action":"panic", "value":"on"}';
-			plaatprotect_event_insert(CATEGORY_GENERAL, $event);
+			$event = '{"zid":"0", "action":"panic", "value":"on"}';
+			plaatprotect_event_insert(CATEGORY_ZWAVE, $event);
 			break;
 			
 		case EVENT_OFF:
 			$config = plaatprotect_db_config('panic_on');
 			$config->value = PANIC_OFF;
 			plaatprotect_db_config_update($config);
-			$event = '{"action":"panic", "value":"off"}';
-			plaatprotect_event_insert(CATEGORY_GENERAL, $event);
+			$event = '{"zid":"0", "action":"panic", "value":"off"}';
+			plaatprotect_event_insert(CATEGORY_ZWAVE, $event);
 			break;
 			
 		case EVENT_SWITCH_SCENARIO:

@@ -1,18 +1,37 @@
 <?php
 
+/* 
+**  ============
+**  PlaatProtect
+**  ============
+**
+**  Created by wplaat
+**
+**  For more information visit the following website.
+**  Website : www.plaatsoft.nl 
+**
+**  Or send an email to the following address.
+**  Email   : info@plaatsoft.nl
+**
+**  All copyrights reserved (c) 2008-2016 PlaatSoft
+*/
+
+/**
+ * @file
+ * @brief contain event engine
+ */
+ 
 include "general.inc";
 include "database.inc";
 include "config.inc";
 include "interfaces/android.php";
 
-define('EVENT_IDLE',        		10);
-define('EVENT_ALARM_ON',   		11);
-define('EVENT_ALARM_OFF', 	  		12);
+define('EVENT_ALARM_ON',         10);
+define('EVENT_ALARM_OFF',        11);
 
 define('STATE_INIT',        		20);
 define('STATE_IDLE',        		21);
 define('STATE_ALARM',      		22);
-define('STATE_PANIC',      		23);
 
 $stop = false;
 $state = STATE_INIT;
@@ -23,59 +42,73 @@ $expire= 0;
 define( 'LOCK_FILE', "/tmp/".basename( $argv[0], ".php" ).".lock" ); 
 if( plaatprotect_islocked() ) die( "Already running.\n" ); 
 
-/**
- ********************************
- * Counter measures
- ********************************
- */
+/*
+** ---------------------
+** Counter measures
+** ---------------------
+*/
 
 function plaatprotect_hue_alarm_group($event) {
 
 	$scenario = plaatprotect_db_config_value('alarm_scenario', CATEGORY_GENERAL);
+	$panic_on = plaatprotect_db_config_value('panic_on', CATEGORY_GENERAL);
+
+	$sql = 'select hid from hue ';
 
 	switch ($scenario) {
 	
 		case SCENARIO_HOME: 
-			$sql = 'select hid from hue where home=1';
+			$sql .= 'where home=1 ';
 			break;
 			
 		case SCENARIO_SLEEP: 
-			$sql = 'select hid from hue where sleep=1';
+			$sql .= 'where sleep=1 ';
 			break;		
 			
 		case SCENARIO_AWAY: 
-			$sql = 'select hid from hue where away=1';
+			$sql .= 'where away=1 ';
 			break;
+	}
+	
+	if  ($panic_on==1) {
+		$sql .= 'or panic=1';
 	}
 
 	$result = plaatprotect_db_query($sql);
 	while ($row = plaatprotect_db_fetch_object($result)) {	
 		if ($event==EVENT_ALARM_ON) {
-			$event = '{"hid":'.$row->hid.', "action":"set", "value":"on"}';
+			$event = '{"hid":'.$row->hid.', "action":"set", "value":"true"}';
 		} else {
-			$event = '{"hid":'.$row->hid.', "action":"set", "value":"off"}';
+			$event = '{"hid":'.$row->hid.', "action":"set", "value":"false"}';
 		}
-		plaatprotect_event_insert(CATEGORY_HUE, $event);		
+		plaatprotect_event_insert(CATEGORY_ZIGBEE, $event);		
 	}
 }
 
 function plaatprotect_mobile_alarm_group($event, $zid=0) {
 
 	$scenario = plaatprotect_db_config_value('alarm_scenario', CATEGORY_GENERAL);
+	$panic_on = plaatprotect_db_config_value('panic_on', CATEGORY_GENERAL);
+
+	$sql = 'select nid from notification ';
 
 	switch ($scenario) {
 	
 		case SCENARIO_HOME: 
-			$sql = 'select nid from notification where home=1 and type=1';
+			$sql .= 'where (home=1 and type=1) ';
 			break;
 			
 		case SCENARIO_SLEEP: 
-			$sql = 'select nid from notification where sleep=1 and type=1';
+			$sql .= 'where (sleep=1 and type=1) ';
 			break;		
 			
 		case SCENARIO_AWAY: 
-			$sql = 'select nid from notification where away=1 and type=1';
+			$sql .= 'where (away=1 and type=1) ';
 			break;
+	}
+	
+	if  ($panic_on==1) {
+		$sql .= 'or (panic=1 and type=1)';
 	}
 	
 	$result = plaatprotect_db_query($sql);
@@ -104,22 +137,29 @@ function plaatprotect_mobile_alarm_group($event, $zid=0) {
 function plaatprotect_zwave_alarm_group($event,$zid=0) {
 
 	$scenario = plaatprotect_db_config_value('alarm_scenario', CATEGORY_GENERAL);
+	$panic_on = plaatprotect_db_config_value('panic_on', CATEGORY_GENERAL);
+
+	$sql = 'select zid from zwave where ';
 
 	switch ($scenario) {
 	
 		case SCENARIO_HOME: 
-			$sql = 'select zid from zwave where home=1 and type="Sirene"';
+			$sql .= '(home=1 and type="Sirene") ';
 			break;
 			
 		case SCENARIO_SLEEP: 
-			$sql = 'select zid from zwave where sleep=1 and type="Sirene"';
+			$sql = '(sleep=1 and type="Sirene") ';
 			break;		
 			
 		case SCENARIO_AWAY: 
-			$sql = 'select zid from zwave where away=1 and type="Sirene"';
+			$sql = '(away=1 and type="Sirene")';
 			break;
 	}
 
+	if  ($panic_on==1) {
+		$sql .= 'or (panic=1 and type="Sirene")';
+	}
+	
 	$result = plaatprotect_db_query($sql);
 	while ($row = plaatprotect_db_fetch_object($result)) {	
 		if ($event==EVENT_ALARM_ON) {
@@ -131,11 +171,132 @@ function plaatprotect_zwave_alarm_group($event,$zid=0) {
 	}
 }
 
-/**
- ********************************
- * State machine
- ********************************
- */
+/*
+** ---------------------
+** Actions
+** ---------------------
+*/
+
+function plaatprotect_zwave_alive($data) {
+
+	if (isset($data->zid)) {
+		plaatprotect_db_zwave_alive($data->zid);
+	}
+}
+
+function plaatprotect_zwave_vendor($data) {
+		
+	if (isset($data->zid) && isset($data->vendor) && isset($data->device)) {
+			
+		$zwave = plaatprotect_db_zwave($data->zid);
+		$zwave->vendor = $data->vendor;
+		$zwave->type = $data->device;
+		
+		plaatprotect_db_zwave_update($zwave);
+	}
+}	
+	
+function plaatprotect_zwave_sensor($data) {
+	
+	if (isset($data->type) && ($data->type=="report")) {
+			
+		$timestamp = date('Y-m-d H:i:00');
+			
+		$sensor = plaatprotect_db_sensor_last($data->zid, $timestamp);
+		if (isset($sensor->sid)) {
+			
+			if (isset($data->luminance)) {
+				$sensor->luminance = $data->luminance;
+			}
+			
+			if (isset($data->temperature)) {
+				$sensor->temperature = $data->temperature;
+			}
+			
+			if (isset($data->humidity)) {
+				$sensor->humidity = $data->humidity;
+			}
+			
+			if (isset($data->ultraviolet)) {
+				$sensor->ultraviolet = $data->ultraviolet;
+			}
+			
+			if (isset($data->battery)) {
+				$sensor->battery = $data->battery;
+			}
+				
+			plaatprotect_db_sensor_update($sensor);
+			
+		} else {
+			
+			$luminance=0;
+			$temperature=0;
+			$humidity=0;
+			$ultraviolet=0;
+			$battery=0;
+			
+			if (isset($data->luminance)) {
+				$luminance = $data->luminance;
+			}
+			
+			if (isset($data->temperature)) {
+				$temperature = $data->temperature;
+			}
+			
+			if (isset($data->humidity)) {
+				$humidity = $data->humidity;
+			}
+			
+			if (isset($data->ultraviolet)) {
+				$ultraviolet = $data->ultraviolet;
+			}
+			
+			if (isset($data->battery)) {
+				$battery = $data->battery;
+			}
+			
+			plaatprotect_db_sensor_insert($data->zid, $timestamp, $luminance, $temperature, $humidity, $ultraviolet, $battery);	
+		}
+	}
+}
+	
+function plaatprotect_zwave_alarm($data) {
+
+	global $expire;
+	
+	if (isset($data->type) && ($data->type=="set")) {
+		if (($data->alarm=="motion" || $data->alarm=="vibration")) {
+							
+			$duration = plaatprotect_db_config_value("alarm_duration", CATEGORY_GENERAL);
+			$expire = time() + $duration;
+		}
+	}
+}
+
+function plaatprotect_manual_panic($data) {
+
+	global $expire;
+	
+	if ( (isset($data->action)) && ($data->action=="panic")) {
+	
+		if ($data->value=="on") {
+				
+			$duration = plaatprotect_db_config_value("alarm_duration", CATEGORY_GENERAL);
+			$expire = time() + $duration;
+			
+		} else {
+		
+			// Swith alarm off
+			$expire = time();
+		}
+	}
+}
+		
+/*
+** ---------------------
+** State machine
+** ---------------------
+*/
 
 function plaatprotect_event_init() {
 	
@@ -150,7 +311,7 @@ function plaatprotect_event_init() {
 	$sql = 'select hid from hue ';
 	$result = plaatprotect_db_query($sql);
 	while ($row = plaatprotect_db_fetch_object($result)) {	
-		$event = '{"hid":'.$row->hid.', "action":"set", "value":"off"}';
+		$event = '{"hid":'.$row->hid.', "action":"set", "value":"false"}';
 		plaatprotect_event_insert(CATEGORY_ZIGBEE, $event);		
 	}
 		
@@ -178,111 +339,26 @@ function plaatprotect_event_idle() {
 	
 		$data = json_decode($row->action);
 		
-		if (isset($data->zid)) {
-			plaatprotect_db_zwave_alive($data->zid);
-		}
-		
-		if (isset($data->vendor)) {
-			
-			$zwave = plaatprotect_db_zwave($data->zid);
-			$zwave->vendor = $data->vendor;
-			$zwave->type = $data->device;
-			plaatprotect_db_zwave_update($zwave);
-		}
-		
-		if (isset($data->type) && ($data->type=="report")) {
-			
-			$timestamp = date('Y-m-d H:i:00');
-			
-			$sensor = plaatprotect_db_sensor_last($data->zid, $timestamp);
-			if (isset($sensor->sid)) {
-			
-				if (isset($data->luminance)) {
-					$sensor->luminance = $data->luminance;
-				}
-			
-				if (isset($data->temperature)) {
-					$sensor->temperature = $data->temperature;
-				}
-			
-				if (isset($data->humidity)) {
-					$sensor->humidity = $data->humidity;
-				}
-			
-				if (isset($data->ultraviolet)) {
-					$sensor->ultraviolet = $data->ultraviolet;
-				}
-			
-				if (isset($data->battery)) {
-					$sensor->battery = $data->battery;
-				}
-				
-				plaatprotect_db_sensor_update($sensor);
-			} else {
-			
-				$luminance=0;
-				$temperature=0;
-				$humidity=0;
-				$ultraviolet=0;
-				$battery=0;
-			
-				if (isset($data->luminance)) {
-					$luminance = $data->luminance;
-				}
-			
-				if (isset($data->temperature)) {
-					$temperature = $data->temperature;
-				}
-			
-				if (isset($data->humidity)) {
-					$humidity = $data->humidity;
-				}
-			
-				if (isset($data->ultraviolet)) {
-					$ultraviolet = $data->ultraviolet;
-				}
-			
-				if (isset($data->battery)) {
-					$battery = $data->battery;
-				}
-			
-				plaatprotect_db_sensor_insert($data->zid, $timestamp, $luminance, $temperature, $humidity, $ultraviolet, $battery);	
-			}
-		}	
-		 
-		if (isset($data->type) && ($data->type=="set")) {
-			if (($data->alarm=="motion" || $data->alarm=="vibration")) {
-			
-				$scenario = plaatprotect_db_config_value('alarm_scenario', CATEGORY_GENERAL);
-
-				switch ($scenario) {
+		plaatprotect_zwave_alive($data);		
+		plaatprotect_zwave_vendor($data);		
+		plaatprotect_zwave_sensor($data);		
+		plaatprotect_zwave_alarm($data);
+		plaatprotect_manual_panic($data);
 	
-					case SCENARIO_HOME: 
-						$sql2 = 'select zid from zwave where home=1 and zid='.$data->zid;
-						break;
-			
-					case SCENARIO_SLEEP: 
-						$sql2 = 'select zid from zwave where sleep=1 and type="Sirene"';
-						break;		
-			
-					case SCENARIO_AWAY: 
-						$sql2 = 'select zid from zwave where away=1 and type="Sirene"';
-						break;
-				}
-				$result2 = plaatprotect_db_query($sql2);
-				$row2 = plaatprotect_db_fetch_object($result2);
-				if (isset($row2->zid)) {
-					$state = STATE_ALARM;
-					$duration = plaatprotect_db_config_value("alarm_duration", CATEGORY_GENERAL);
-					$expire = time() + $duration;
-				
-					plaatprotect_hue_alarm_group(EVENT_ALARM_ON);
-					plaatprotect_mobile_alarm_group(EVENT_ALARM_ON, $data->zid);
-					plaatprotect_zwave_alarm_group(EVENT_ALARM_ON, $data->zid);
-				}
-			}
-		}
+		if (($expire-time())>0) {
+	
+			$state = STATE_ALARM;
 		
+			$zid = 0;
+			if (isset($data->zid)) {
+				$zid = $data->zid;
+			}
+			
+			plaatprotect_hue_alarm_group(EVENT_ALARM_ON);
+			plaatprotect_mobile_alarm_group(EVENT_ALARM_ON, $zid);
+			plaatprotect_zwave_alarm_group(EVENT_ALARM_ON, $zid);
+		}
+	
 		$row->processed=1;
 		plaatprotect_db_event_update($row);
 	
@@ -306,107 +382,12 @@ function plaatprotect_event_alarm() {
 		
 		$data = json_decode($row->action);
 		
-		if (isset($data->zid)) {
-			plaatprotect_db_zwave_alive($data->zid);
-		}
-		
-		if (isset($data->vendor)) {
-			
-			$zwave = plaatprotect_db_zwave($data->zid);
-			$zwave->vendor = $data->vendor;
-			$zwave->type = $data->device;
-			plaatprotect_db_zwave_update($zwave);
-		}
-
-		if (isset($data->type) && ($data->type=="report")) {
-			
-			$timestamp = date('Y-m-d H:i:00');
-			
-			$sensor = plaatprotect_db_sensor_last($data->zid, $timestamp);
-			if (isset($sensor->sid)) {
-			
-				if (isset($data->luminance)) {
-					$sensor->luminance = $data->luminance;
-				}
-			
-				if (isset($data->temperature)) {
-					$sensor->temperature = $data->temperature;
-				}
-			
-				if (isset($data->humidity)) {
-					$sensor->humidity = $data->humidity;
-				}
-			
-				if (isset($data->ultraviolet)) {
-					$sensor->ultraviolet = $data->ultraviolet;
-				}
-			
-				if (isset($data->battery)) {
-					$sensor->battery = $data->battery;
-				}
+		plaatprotect_zwave_alive($data);
+		plaatprotect_zwave_vendor($data);
+		plaatprotect_zwave_sensor($data);
+		plaatprotect_zwave_alarm($data);
+		plaatprotect_manual_panic($data);
 				
-				plaatprotect_db_sensor_update($sensor);
-			} else {
-			
-				$luminance=0;
-				$temperature=0;
-				$humidity=0;
-				$ultraviolet=0;
-				$battery=0;
-			
-				if (isset($data->luminance)) {
-					$luminance = $data->luminance;
-				}
-			
-				if (isset($data->temperature)) {
-					$temperature = $data->temperature;
-				}
-			
-				if (isset($data->humidity)) {
-					$humidity = $data->humidity;
-				}
-			
-				if (isset($data->ultraviolet)) {
-					$ultraviolet = $data->ultraviolet;
-				}
-			
-				if (isset($data->battery)) {
-					$battery = $data->battery;
-				}
-			
-				plaatprotect_db_sensor_insert($data->zid, $timestamp, $luminance, $temperature, $humidity, $ultraviolet, $battery);	
-			}
-		}
-		
-		if (isset($data->type) && ($data->type=="set")) {
-			if (($data->alarm=="motion" || $data->alarm=="vibration")) {
-			
-			$scenario = plaatprotect_db_config_value('alarm_scenario', CATEGORY_GENERAL);
-
-				switch ($scenario) {
-	
-					case SCENARIO_HOME: 
-						$sql2 = 'select zid from zwave where home=1 and zid='.$data->zid;
-						break;
-			
-					case SCENARIO_SLEEP: 
-						$sql2 = 'select zid from zwave where sleep=1 and type="Sirene"';
-						break;		
-			
-					case SCENARIO_AWAY: 
-						$sql2 = 'select zid from zwave where away=1 and type="Sirene"';
-						break;
-				}
-				$result2 = plaatprotect_db_query($sql2);
-				$row2 = plaatprotect_db_fetch_object($result2);
-				if (isset($row2->zid)) {
-				
-					$duration = plaatprotect_db_config_value("alarm_duration", CATEGORY_GENERAL);
-					$expire = time() + $duration;
-				}
-			}
-		}
-		
 		$row->processed=1;
 		plaatprotect_db_event_update($row);
 		
@@ -443,10 +424,6 @@ function plaatprotect_event_state_machine() {
 				plaatprotect_event_alarm();
 				break;
 				
-		case STATE_PANIC:
-				plaatprotect_event_alarm();
-				break;
-				
 		default: 
 				plaatprotect_log("Error: unknown state");
 				$stop = true;
@@ -456,12 +433,12 @@ function plaatprotect_event_state_machine() {
 	return $stop;
 }
 
-/**
- ********************************
- * Database
- ********************************
- */
- 
+/*
+** ---------------------
+** Main
+** ---------------------
+*/
+
 plaatprotect_db_connect($dbhost, $dbuser, $dbpass, $dbname);
 
 plaatprotect_log("Event engine starting.....");
@@ -475,5 +452,11 @@ plaatprotect_log("Event engine stopping.....");
 
 unlink( LOCK_FILE ); 
 exit(0); 
+
+/*
+** ---------------------
+** The End
+** ---------------------
+*/
 
 ?>

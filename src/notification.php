@@ -29,7 +29,7 @@
 
 function plaatprotect_set_notification_state($id, $scenario) {
 
-	$sql = 'select nid, type, home, sleep, away from notification where nid='.$id;
+	$sql = 'select nid, type, home, sleep, away, panic from notification where nid='.$id;
 	$result = plaatprotect_db_query($sql);
 	$row = plaatprotect_db_fetch_object($result);
 	
@@ -46,6 +46,10 @@ function plaatprotect_set_notification_state($id, $scenario) {
 					
 		case SCENARIO_AWAY: 	
 			$value= $row->away;
+			break;
+			
+		case SCENARIO_PANIC: 	
+			$value= $row->panic;
 			break;
 	}
 		
@@ -68,6 +72,10 @@ function plaatprotect_set_notification_state($id, $scenario) {
 					
 		case SCENARIO_AWAY: 	
 			$sql = 'update notification set away='.$value.' where nid='.$id;
+			break;
+			
+		case SCENARIO_PANIC: 	
+			$sql = 'update notification set panic='.$value.' where nid='.$id;
 			break;
 	}
 	plaatprotect_db_query($sql);
@@ -116,9 +124,13 @@ function plaatprotect_notification_page() {
 	$page .= 'Away';
 	$page .= '</th>';
 			
+	$page .= '<th width="15%">';
+	$page .= 'Panic';
+	$page .= '</th>';
+	
 	$page .= '</tr>';
 		
-	$sql = 'select nid, type, home, sleep, away from notification';
+	$sql = 'select nid, type, home, sleep, away, panic from notification';
 	$result = plaatprotect_db_query($sql);
 	while ($row = plaatprotect_db_fetch_object($result)) {
 
@@ -148,6 +160,12 @@ function plaatprotect_notification_page() {
 		$page .= '<input type="checkbox" ';
 		if ($row->away==1) { $page .= "checked"; }
 		$page .= ' onchange="link(\'pid='.$pid.'&eid='.EVENT_UPDATE.'&sid='.SCENARIO_AWAY.'&id='.$row->nid.'\');">';
+		$page .= '</td>';
+		
+		$page .= '<td>';
+		$page .= '<input type="checkbox" ';
+		if ($row->panic==1) { $page .= "checked"; }
+		$page .= ' onchange="link(\'pid='.$pid.'&eid='.EVENT_UPDATE.'&sid='.SCENARIO_PANIC.'&id='.$row->nid.'\');">';
 		$page .= '</td>';
 		
 		$page .= '</tr>';

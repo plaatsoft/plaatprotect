@@ -35,3 +35,4 @@ ALTER TABLE `hue` ADD `state` INT NOT NULL AFTER `location`;
 
 ALTER TABLE `zwave` ADD `panic` INT NOT NULL AFTER `away`;
 ALTER TABLE `hue` ADD `panic` INT NOT NULL AFTER `away`;
+ALTER TABLE `notification` ADD `panic` INT NOT NULL AFTER `away`;
