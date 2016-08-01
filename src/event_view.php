@@ -63,7 +63,7 @@ function plaatprotect_event_view_page() {
 	$page .= t('EVENT_CATEGORY');
 	$page .= '</th>';
 
-	$page .= '<th width="400px">';
+	$page .= '<th width="450px">';
 	$page .= t('EVENT_ACTION');
 	$page .= '</th>';
 	

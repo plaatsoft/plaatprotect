@@ -57,7 +57,6 @@ function check_zwave_network() {
 	   $sql = 'select zid, last_update from zwave where type="Sensor"';			
 		$result = plaatprotect_db_query($sql);
 		
-			
 		while ($row = plaatprotect_db_fetch_object($result)) {
 		  
 		   $sql2 = 'select temperature from sensor where zid='.$row->zid.' and temperature>0 order by sid desc limit 0,1';
@@ -110,15 +109,21 @@ function plaatprotect_home_login_event() {
 	global $ip;
 		
 	$home_password = plaatprotect_db_config_value('home_password',CATEGORY_SECURITY);
+	$home_username = plaatprotect_db_config_value('home_username',CATEGORY_SECURITY);
 	
-	if ($home_password==md5($password)) {
+	if ($home_password==md5($password) && ($home_username==$username)) {
 	
 		$session = plaatprotect_db_get_session($ip, true);
 		$pid = PAGE_HOME;
 		
-		$event = '{"action":"login", "user":"'.$username.'", "ip":"'.$ip.'"}';
-		plaatprotect_event_insert(CATEGORY_GENERAL, $event);
+		$event = '{"login":"succesfull", "user":"'.$username.'", "ip":"'.$ip.'" }';
+				
+	} else {
+	
+		$event = '{"login":"failed", "user":"'.$username.'", "ip":"'.$ip.'" }';
 	}
+	
+	plaatprotect_event_insert(CATEGORY_GENERAL, $event);
 }
 
 /*
@@ -144,6 +149,8 @@ function plaatprotect_home_login_page() {
 	} 	
 	$page .= '</h1>';
 
+	$page .= '<fieldset>';
+	
 	$page .= '<br/>';
    $page .= '<label>'.t('LABEL_USERNAME').'</label>';
    $page .= '<input type="text" name="username" size="20" maxlength="20"/>';
@@ -158,6 +165,8 @@ function plaatprotect_home_login_page() {
    $page .= '<input type="hidden" name="token" value="pid='.PAGE_HOME_LOGIN.'&eid='.EVENT_LOGIN.'"/>';
    $page .= '<input type="submit" name="Submit" id="normal_link" value="'.t('LINK_LOGIN').'"/>';
    $page .= '</div>';
+	
+	$page .= '</fieldset>';
 	
    $page .= '<script type="text/javascript">var ip="'.$_SERVER['SERVER_ADDR'].'";var name="'.$name.'";var version="'.$version.'";</script>';
    $page .= '<script type="text/javascript" src="js/version.js"></script>';

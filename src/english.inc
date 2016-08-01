@@ -174,6 +174,7 @@ $lang['email_address'] = 'Email notification address';
 $lang['system_name'] = 'System name';
 
 $lang['home_password'] = 'Protect application with a password.';
+$lang['home_username'] = 'Protect application with a username.';
 $lang['settings_password'] = 'Protect settings with a password.';
 
 $lang['webcam_name'] = 'Webcam name';

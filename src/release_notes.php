@@ -27,12 +27,13 @@
 ** ---------------------
 */
 
-$note[2] = '<div class="subparagraph">Version 0.2 (16-07-2016)</div>
+$note[2] = '<div class="subparagraph">Version 0.2 (01-08-2016)</div>
 <div class="large_text">
 <ul>
+<li>General: Protect application with password and username combination.</li>
 <li>General: Web session expire after 15 minutes.</li>
 <li>General: Added email notification.</li>
-<li>General: Added event process with control inbound and outbound events.</li>
+<li>General: Added event process manager which control all zwave and zigbee events.</li>
 <li>General: Location can be changed on zwave page now.</li>
 <li>General: Zwave device state is now showed correctly.</li>
 </ul>

@@ -178,6 +178,7 @@ $lang['email_address'] = 'Email notification address';
 $lang['zwave_present'] = 'Zwave presemt';
 
 $lang['home_password'] = 'Bescherm toegang met een wachtwoord.';
+$lang['home_username'] = 'Bescherm toegang met gebruikersnaam.';
 $lang['settings_password'] = 'Bescherm configuratie met een wachtwoord.';
 
 $lang['webcam_name'] = 'Webcam naam';

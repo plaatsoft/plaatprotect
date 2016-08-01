@@ -36,3 +36,5 @@ ALTER TABLE `hue` ADD `state` INT NOT NULL AFTER `location`;
 ALTER TABLE `zwave` ADD `panic` INT NOT NULL AFTER `away`;
 ALTER TABLE `hue` ADD `panic` INT NOT NULL AFTER `away`;
 ALTER TABLE `notification` ADD `panic` INT NOT NULL AFTER `away`;
+
+INSERT INTO config (category, token, value, options, date, readonly, rebuild, encrypt) VALUES (51, 'home_username', '', '', '0000-00-00', '0', '0', '0');
