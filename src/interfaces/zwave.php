@@ -1117,18 +1117,18 @@ function plaatprotect_zwave_state_machine() {
 				#Receive();
 				
 				/* Enable Sirene */
-				SendDataActiveHorn($data->nodeid, 1, $data->nodeid);
+				SendDataActiveHorn($data->zid, 1, $data->zid);
 				Receive();
 			}
 			
 			if ($data->value=="off") {
 			
 				/* Disable Sirene */
-				SendDataActiveHorn($data->nodeid, 0, $data->nodeid);
+				SendDataActiveHorn($data->zid, 0, $data->zid);
 				Receive();
 				
 				/* Get Manufacturer of sirene */
-				GetManufacturer($row->nodeid, $row->nodeid);
+				GetManufacturer($data->zid, $data->zid);
 				Receive();
 				Receive();
 			}
