@@ -275,7 +275,6 @@ function plaatprotect_db_get_session($ip, $new=false) {
 
 /**
  * Update Cron
- * @unitTest
  */
 function plaatprotect_db_cron_update($cid) {
 		
@@ -343,7 +342,7 @@ function plaatprotect_db_event($category=0) {
 	return $row;
 }
 
-function plaatprotect_event_insert($category, $action) {
+function plaatprotect_db_event_insert($category, $action) {
  
    $timestamp = date('Y-m-d H:i:s');
 	

@@ -19,7 +19,7 @@
   <td id="projectlogo"><img alt="Logo" src="64.png"/></td>
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">PlaatProtect
-   &#160;<span id="projectnumber">v0.1</span>
+   &#160;<span id="projectnumber">v0.2</span>
    </div>
   </td>
  </tr>
@@ -78,15 +78,15 @@ Functions</h2></td></tr>
 <tr class="memitem:a1edcb9d9e48b9f58147b6dbe61071e8b"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="database_8inc.html#a1edcb9d9e48b9f58147b6dbe61071e8b">plaatprotect_db_query</a> ($query)</td></tr>
 <tr class="memdesc:a1edcb9d9e48b9f58147b6dbe61071e8b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Execute database query.  <a href="#a1edcb9d9e48b9f58147b6dbe61071e8b">More...</a><br /></td></tr>
 <tr class="separator:a1edcb9d9e48b9f58147b6dbe61071e8b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aae3174cc68294d5b63ab306d807d7e68"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="database_8inc.html#aae3174cc68294d5b63ab306d807d7e68">plaatprotect_db_escape</a> ($data)</td></tr>
+<tr class="memdesc:aae3174cc68294d5b63ab306d807d7e68"><td class="mdescLeft">&#160;</td><td class="mdescRight">escap database string  <a href="#aae3174cc68294d5b63ab306d807d7e68">More...</a><br /></td></tr>
+<tr class="separator:aae3174cc68294d5b63ab306d807d7e68"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a5b6bf7f752641155bab7c86c3b91dc20"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="database_8inc.html#a5b6bf7f752641155bab7c86c3b91dc20">plaatprotect_db_fetch_object</a> ($result)</td></tr>
 <tr class="memdesc:a5b6bf7f752641155bab7c86c3b91dc20"><td class="mdescLeft">&#160;</td><td class="mdescRight">Fetch query result.  <a href="#a5b6bf7f752641155bab7c86c3b91dc20">More...</a><br /></td></tr>
 <tr class="separator:a5b6bf7f752641155bab7c86c3b91dc20"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a95c4c98cfb95a26690d03ecc919082c5"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="database_8inc.html#a95c4c98cfb95a26690d03ecc919082c5">plaatprotect_db_escape</a> ($value)</td></tr>
-<tr class="memdesc:a95c4c98cfb95a26690d03ecc919082c5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Escape SQL value.  <a href="#a95c4c98cfb95a26690d03ecc919082c5">More...</a><br /></td></tr>
-<tr class="separator:a95c4c98cfb95a26690d03ecc919082c5"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a7ff3ac0e20db5ca2ef7c24b0ea1e58d0"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="database_8inc.html#a7ff3ac0e20db5ca2ef7c24b0ea1e58d0">plaatprotect_db_num_rows</a> ($value)</td></tr>
-<tr class="memdesc:a7ff3ac0e20db5ca2ef7c24b0ea1e58d0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return number of rows.  <a href="#a7ff3ac0e20db5ca2ef7c24b0ea1e58d0">More...</a><br /></td></tr>
-<tr class="separator:a7ff3ac0e20db5ca2ef7c24b0ea1e58d0"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a15bc35493538273d0ed63612664db601"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="database_8inc.html#a15bc35493538273d0ed63612664db601">plaatprotect_db_num_rows</a> ($result)</td></tr>
+<tr class="memdesc:a15bc35493538273d0ed63612664db601"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return number of rows.  <a href="#a15bc35493538273d0ed63612664db601">More...</a><br /></td></tr>
+<tr class="separator:a15bc35493538273d0ed63612664db601"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a2295d72ed4b3d123948281a5dc40e1f1"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="database_8inc.html#a2295d72ed4b3d123948281a5dc40e1f1">startsWith</a> ($haystack, $needle)</td></tr>
 <tr class="separator:a2295d72ed4b3d123948281a5dc40e1f1"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aff3d5714a41d1f28274517ce490febb8"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="database_8inc.html#aff3d5714a41d1f28274517ce490febb8">plaatprotect_db_execute_sql_file</a> ($version)</td></tr>
@@ -95,19 +95,63 @@ Functions</h2></td></tr>
 <tr class="memitem:a01ca0bc2aa79e22ea4054c893a32137c"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="database_8inc.html#a01ca0bc2aa79e22ea4054c893a32137c">plaatprotect_db_check_version</a> ()</td></tr>
 <tr class="memdesc:a01ca0bc2aa79e22ea4054c893a32137c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Check db version and upgrade if needed!  <a href="#a01ca0bc2aa79e22ea4054c893a32137c">More...</a><br /></td></tr>
 <tr class="separator:a01ca0bc2aa79e22ea4054c893a32137c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ade971184d3919e6944f46af45260d23b"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="database_8inc.html#ade971184d3919e6944f46af45260d23b">plaatprotect_db_get_config_item</a> ($key, $category=0)</td></tr>
-<tr class="memdesc:ade971184d3919e6944f46af45260d23b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Fetch config item from database.  <a href="#ade971184d3919e6944f46af45260d23b">More...</a><br /></td></tr>
-<tr class="separator:ade971184d3919e6944f46af45260d23b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a2a0b441e8f2821722cf4b8765389e29a"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="database_8inc.html#a2a0b441e8f2821722cf4b8765389e29a">plaatprotect_db_get_session</a> ($ip, $new=false)</td></tr>
 <tr class="separator:a2a0b441e8f2821722cf4b8765389e29a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a22e55bab6e5e748af6b1b65b1ff98815"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="database_8inc.html#a22e55bab6e5e748af6b1b65b1ff98815">plaatprotect_db_cron_update</a> ($cid)</td></tr>
+<tr class="memdesc:a22e55bab6e5e748af6b1b65b1ff98815"><td class="mdescLeft">&#160;</td><td class="mdescRight">Update Cron.  <a href="#a22e55bab6e5e748af6b1b65b1ff98815">More...</a><br /></td></tr>
+<tr class="separator:a22e55bab6e5e748af6b1b65b1ff98815"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a386c032412d77a094b8dd16eb69cbaeb"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="database_8inc.html#a386c032412d77a094b8dd16eb69cbaeb">plaatprotect_db_config_value</a> ($key, $category=<a class="el" href="general_8inc.html#a40ffbf6c524d0c67e3bafa5f26f65724">CATEGORY_GENERAL</a>)</td></tr>
+<tr class="separator:a386c032412d77a094b8dd16eb69cbaeb"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a522f6394946b58ac0fce520404f73957"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="database_8inc.html#a522f6394946b58ac0fce520404f73957">plaatprotect_db_config</a> ($key, $category=0)</td></tr>
+<tr class="separator:a522f6394946b58ac0fce520404f73957"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a07838133c5f5d3c4d67ff4b625d575f5"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="database_8inc.html#a07838133c5f5d3c4d67ff4b625d575f5">plaatprotect_db_config_update</a> ($config)</td></tr>
+<tr class="separator:a07838133c5f5d3c4d67ff4b625d575f5"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1fd15aad4b4862414154156f279ec2fd"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="database_8inc.html#a1fd15aad4b4862414154156f279ec2fd">plaatprotect_db_event</a> ($category=0)</td></tr>
+<tr class="separator:a1fd15aad4b4862414154156f279ec2fd"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a839ad9aaa16b8c999c8dfb8c943ab122"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="database_8inc.html#a839ad9aaa16b8c999c8dfb8c943ab122">plaatprotect_db_event_insert</a> ($category, $action)</td></tr>
+<tr class="separator:a839ad9aaa16b8c999c8dfb8c943ab122"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0386561fe843213c5989ba00a503932e"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="database_8inc.html#a0386561fe843213c5989ba00a503932e">plaatprotect_db_event_update</a> ($event)</td></tr>
+<tr class="separator:a0386561fe843213c5989ba00a503932e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3e18e652330722dbc91ffb61321dae53"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="database_8inc.html#a3e18e652330722dbc91ffb61321dae53">plaatprotect_db_zwave</a> ($zid)</td></tr>
+<tr class="separator:a3e18e652330722dbc91ffb61321dae53"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:acaa904dc76ea26aa0240ef74281d84a5"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="database_8inc.html#acaa904dc76ea26aa0240ef74281d84a5">plaatprotect_db_zwave_insert</a> ($zid, $vendor, $type, $version, $location, $state)</td></tr>
+<tr class="separator:acaa904dc76ea26aa0240ef74281d84a5"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:abbca853a4e3435f81df6a58f246ed3b0"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="database_8inc.html#abbca853a4e3435f81df6a58f246ed3b0">plaatprotect_db_zwave_update</a> ($zwave)</td></tr>
+<tr class="separator:abbca853a4e3435f81df6a58f246ed3b0"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9f3642f05f52fc4f873a8214c6ae60b6"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="database_8inc.html#a9f3642f05f52fc4f873a8214c6ae60b6">plaatprotect_db_zwave_delete</a> ($zid)</td></tr>
+<tr class="separator:a9f3642f05f52fc4f873a8214c6ae60b6"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a95113f1240796879d27367f5421ea6e7"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="database_8inc.html#a95113f1240796879d27367f5421ea6e7">plaatprotect_db_zwave_alive</a> ($zid)</td></tr>
+<tr class="separator:a95113f1240796879d27367f5421ea6e7"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a78c4d4a979508d9f73283be0ec453035"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="database_8inc.html#a78c4d4a979508d9f73283be0ec453035">plaatprotect_db_sensor_last</a> ($zid, $timestamp)</td></tr>
+<tr class="separator:a78c4d4a979508d9f73283be0ec453035"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4bec264abf72936ca28781985853ccbc"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="database_8inc.html#a4bec264abf72936ca28781985853ccbc">plaatprotect_db_sensor_insert</a> ($zid, $timestamp, $luminance, $temperature, $humidity, $ultraviolet, $battery)</td></tr>
+<tr class="separator:a4bec264abf72936ca28781985853ccbc"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a71d12c2e7a84176f4680fb7f6b1023d4"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="database_8inc.html#a71d12c2e7a84176f4680fb7f6b1023d4">plaatprotect_db_sensor_update</a> ($sensor)</td></tr>
+<tr class="separator:a71d12c2e7a84176f4680fb7f6b1023d4"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8836810249ba33e2651a7c2e7a44c43f"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="database_8inc.html#a8836810249ba33e2651a7c2e7a44c43f">plaatprotect_db_hue</a> ($hid)</td></tr>
+<tr class="separator:a8836810249ba33e2651a7c2e7a44c43f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae53b67707b8c918de98259b170a00ec5"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="database_8inc.html#ae53b67707b8c918de98259b170a00ec5">plaatprotect_db_hue_update</a> ($data)</td></tr>
+<tr class="separator:ae53b67707b8c918de98259b170a00ec5"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a07f7eacddead46f10802a132eb268840"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="database_8inc.html#a07f7eacddead46f10802a132eb268840">plaatprotect_db_hue_insert</a> ($hid, $vendor, $type, $version, $location, $state)</td></tr>
+<tr class="separator:a07f7eacddead46f10802a132eb268840"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a82a4b117894c26bb02e9cce4fd7c7210"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="database_8inc.html#a82a4b117894c26bb02e9cce4fd7c7210">plaatprotect_db_hue_delete</a> ($hid)</td></tr>
+<tr class="separator:a82a4b117894c26bb02e9cce4fd7c7210"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="var-members"></a>
 Variables</h2></td></tr>
 <tr class="memitem:a758c150b67e476ecf77478f16b387c61"><td class="memItemLeft" align="right" valign="top">const&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="database_8inc.html#a758c150b67e476ecf77478f16b387c61">DEBUG</a> 0</td></tr>
 <tr class="separator:a758c150b67e476ecf77478f16b387c61"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1fa3127fc82f96b1436d871ef02be319"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="database_8inc.html#a1fa3127fc82f96b1436d871ef02be319">$db</a> = &quot;&quot;</td></tr>
+<tr class="separator:a1fa3127fc82f96b1436d871ef02be319"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa7f7fc5b08bc2c3626ea7065d50c8847"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="database_8inc.html#aa7f7fc5b08bc2c3626ea7065d50c8847">$query_count</a> =0</td></tr>
 <tr class="memdesc:aa7f7fc5b08bc2c3626ea7065d50c8847"><td class="mdescLeft">&#160;</td><td class="mdescRight">Count queries.  <a href="#aa7f7fc5b08bc2c3626ea7065d50c8847">More...</a><br /></td></tr>
 <tr class="separator:aa7f7fc5b08bc2c3626ea7065d50c8847"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8e41660829f9d2adcba04ad3a19ebcc3"><td class="memItemLeft" align="right" valign="top">const&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="database_8inc.html#a8e41660829f9d2adcba04ad3a19ebcc3">HUE_STATE_OFF</a> 0</td></tr>
+<tr class="separator:a8e41660829f9d2adcba04ad3a19ebcc3"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a73462dd652c1fb1b275a0eff5c81a68f"><td class="memItemLeft" align="right" valign="top">const&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="database_8inc.html#a73462dd652c1fb1b275a0eff5c81a68f">HUE_STATE_ON</a> 1</td></tr>
+<tr class="separator:a73462dd652c1fb1b275a0eff5c81a68f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5f4ef6eacc9de0c34fde6e6af00ee236"><td class="memItemLeft" align="right" valign="top">const&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="database_8inc.html#a5f4ef6eacc9de0c34fde6e6af00ee236">HUE_STATE_OFFLINE</a> 2</td></tr>
+<tr class="separator:a5f4ef6eacc9de0c34fde6e6af00ee236"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>contain database logic </p>
@@ -144,6 +188,74 @@ Variables</h2></td></tr>
 
 <p>Disconnect from database. </p>
 <dl class="section return"><dt>Returns</dt><dd>disconnect result </dd></dl>
+
+</div>
+</div>
+<a class="anchor" id="a522f6394946b58ac0fce520404f73957"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">plaatprotect_db_config </td>
+          <td>(</td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname"><em>$key</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname"><em>$category</em> = <code>0</code>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a class="anchor" id="a07838133c5f5d3c4d67ff4b625d575f5"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">plaatprotect_db_config_update </td>
+          <td>(</td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname"><em>$config</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a class="anchor" id="a386c032412d77a094b8dd16eb69cbaeb"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">plaatprotect_db_config_value </td>
+          <td>(</td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname"><em>$key</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname"><em>$category</em> = <code><a class="el" href="general_8inc.html#a40ffbf6c524d0c67e3bafa5f26f65724">CATEGORY_GENERAL</a></code>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
 
 </div>
 </div>
@@ -212,6 +324,24 @@ Variables</h2></td></tr>
 
 </div>
 </div>
+<a class="anchor" id="a22e55bab6e5e748af6b1b65b1ff98815"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">plaatprotect_db_cron_update </td>
+          <td>(</td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname"><em>$cid</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Update Cron. </p>
+
+</div>
+</div>
 <a class="anchor" id="a50b279118dc72a583d4f820ec24c2b7a"></a>
 <div class="memitem">
 <div class="memproto">
@@ -230,7 +360,7 @@ Variables</h2></td></tr>
 
 </div>
 </div>
-<a class="anchor" id="a95c4c98cfb95a26690d03ecc919082c5"></a>
+<a class="anchor" id="aae3174cc68294d5b63ab306d807d7e68"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
@@ -238,14 +368,78 @@ Variables</h2></td></tr>
           <td class="memname">plaatprotect_db_escape </td>
           <td>(</td>
           <td class="paramtype">&#160;</td>
-          <td class="paramname"><em>$value</em></td><td>)</td>
+          <td class="paramname"><em>$data</em></td><td>)</td>
           <td></td>
         </tr>
       </table>
 </div><div class="memdoc">
 
-<p>Escape SQL value. </p>
-<dl class="section return"><dt>Returns</dt><dd>escaped mysql query </dd></dl>
+<p>escap database string </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">$data</td><td>input. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>$data escaped </dd></dl>
+
+</div>
+</div>
+<a class="anchor" id="a1fd15aad4b4862414154156f279ec2fd"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">plaatprotect_db_event </td>
+          <td>(</td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname"><em>$category</em> = <code>0</code></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a class="anchor" id="a839ad9aaa16b8c999c8dfb8c943ab122"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">plaatprotect_db_event_insert </td>
+          <td>(</td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname"><em>$category</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname"><em>$action</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a class="anchor" id="a0386561fe843213c5989ba00a503932e"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">plaatprotect_db_event_update </td>
+          <td>(</td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname"><em>$event</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
 
 </div>
 </div>
@@ -292,41 +486,6 @@ Variables</h2></td></tr>
 
 </div>
 </div>
-<a class="anchor" id="ade971184d3919e6944f46af45260d23b"></a>
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">plaatprotect_db_get_config_item </td>
-          <td>(</td>
-          <td class="paramtype">&#160;</td>
-          <td class="paramname"><em>$key</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">&#160;</td>
-          <td class="paramname"><em>$category</em> = <code>0</code>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>Fetch config item from database. </p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">$key</td><td>key name of setting stored in database </td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section return"><dt>Returns</dt><dd>$value of key </dd></dl>
-
-</div>
-</div>
 <a class="anchor" id="a2a0b441e8f2821722cf4b8765389e29a"></a>
 <div class="memitem">
 <div class="memproto">
@@ -353,6 +512,104 @@ Variables</h2></td></tr>
 
 </div>
 </div>
+<a class="anchor" id="a8836810249ba33e2651a7c2e7a44c43f"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">plaatprotect_db_hue </td>
+          <td>(</td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname"><em>$hid</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a class="anchor" id="a82a4b117894c26bb02e9cce4fd7c7210"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">plaatprotect_db_hue_delete </td>
+          <td>(</td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname"><em>$hid</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a class="anchor" id="a07f7eacddead46f10802a132eb268840"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">plaatprotect_db_hue_insert </td>
+          <td>(</td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname"><em>$hid</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname"><em>$vendor</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname"><em>$type</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname"><em>$version</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname"><em>$location</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname"><em>$state</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a class="anchor" id="ae53b67707b8c918de98259b170a00ec5"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">plaatprotect_db_hue_update </td>
+          <td>(</td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname"><em>$data</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
 <a class="anchor" id="aeeb9605b08fd04966822824107cbd869"></a>
 <div class="memitem">
 <div class="memproto">
@@ -371,7 +628,7 @@ Variables</h2></td></tr>
 
 </div>
 </div>
-<a class="anchor" id="a7ff3ac0e20db5ca2ef7c24b0ea1e58d0"></a>
+<a class="anchor" id="a15bc35493538273d0ed63612664db601"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
@@ -379,7 +636,7 @@ Variables</h2></td></tr>
           <td class="memname">plaatprotect_db_num_rows </td>
           <td>(</td>
           <td class="paramtype">&#160;</td>
-          <td class="paramname"><em>$value</em></td><td>)</td>
+          <td class="paramname"><em>$result</em></td><td>)</td>
           <td></td>
         </tr>
       </table>
@@ -415,6 +672,218 @@ Variables</h2></td></tr>
 
 </div>
 </div>
+<a class="anchor" id="a4bec264abf72936ca28781985853ccbc"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">plaatprotect_db_sensor_insert </td>
+          <td>(</td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname"><em>$zid</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname"><em>$timestamp</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname"><em>$luminance</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname"><em>$temperature</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname"><em>$humidity</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname"><em>$ultraviolet</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname"><em>$battery</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a class="anchor" id="a78c4d4a979508d9f73283be0ec453035"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">plaatprotect_db_sensor_last </td>
+          <td>(</td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname"><em>$zid</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname"><em>$timestamp</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a class="anchor" id="a71d12c2e7a84176f4680fb7f6b1023d4"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">plaatprotect_db_sensor_update </td>
+          <td>(</td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname"><em>$sensor</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a class="anchor" id="a3e18e652330722dbc91ffb61321dae53"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">plaatprotect_db_zwave </td>
+          <td>(</td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname"><em>$zid</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a class="anchor" id="a95113f1240796879d27367f5421ea6e7"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">plaatprotect_db_zwave_alive </td>
+          <td>(</td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname"><em>$zid</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a class="anchor" id="a9f3642f05f52fc4f873a8214c6ae60b6"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">plaatprotect_db_zwave_delete </td>
+          <td>(</td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname"><em>$zid</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a class="anchor" id="acaa904dc76ea26aa0240ef74281d84a5"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">plaatprotect_db_zwave_insert </td>
+          <td>(</td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname"><em>$zid</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname"><em>$vendor</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname"><em>$type</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname"><em>$version</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname"><em>$location</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname"><em>$state</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a class="anchor" id="abbca853a4e3435f81df6a58f246ed3b0"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">plaatprotect_db_zwave_update </td>
+          <td>(</td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname"><em>$zwave</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
 <a class="anchor" id="a2295d72ed4b3d123948281a5dc40e1f1"></a>
 <div class="memitem">
 <div class="memproto">
@@ -442,6 +911,18 @@ Variables</h2></td></tr>
 </div>
 </div>
 <h2 class="groupheader">Variable Documentation</h2>
+<a class="anchor" id="a1fa3127fc82f96b1436d871ef02be319"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">$db = &quot;&quot;</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
 <a class="anchor" id="aa7f7fc5b08bc2c3626ea7065d50c8847"></a>
 <div class="memitem">
 <div class="memproto">
@@ -463,6 +944,42 @@ Variables</h2></td></tr>
       <table class="memname">
         <tr>
           <td class="memname">const DEBUG 0</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a class="anchor" id="a8e41660829f9d2adcba04ad3a19ebcc3"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">const HUE_STATE_OFF 0</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a class="anchor" id="a5f4ef6eacc9de0c34fde6e6af00ee236"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">const HUE_STATE_OFFLINE 2</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a class="anchor" id="a73462dd652c1fb1b275a0eff5c81a68f"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">const HUE_STATE_ON 1</td>
         </tr>
       </table>
 </div><div class="memdoc">

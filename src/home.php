@@ -78,8 +78,6 @@ function check_zwave_network() {
 				if (isset($row3->humidity)) {
 					$page .= ' '.$row3->humidity.'% ';
 				}
-				//$page .= ' ';
-				//$page .= $row->last_update;
 				$page .= '</div> ';
 				
 			} else {
@@ -115,6 +113,7 @@ function plaatprotect_home_login_event() {
 	
 		$session = plaatprotect_db_get_session($ip, true);
 		$pid = PAGE_HOME;
+		$eid = EVENT_HOME;
 		
 		$event = '{"login":"succesfull", "user":"'.$username.'", "ip":"'.$ip.'" }';
 				
@@ -123,7 +122,7 @@ function plaatprotect_home_login_event() {
 		$event = '{"login":"failed", "user":"'.$username.'", "ip":"'.$ip.'" }';
 	}
 	
-	plaatprotect_event_insert(CATEGORY_GENERAL, $event);
+	plaatprotect_db_event_insert(CATEGORY_GENERAL, $event);
 }
 
 /*
@@ -358,7 +357,7 @@ function plaatprotect_home() {
 			$config->value = PANIC_ON;
 			plaatprotect_db_config_update($config);
 			$event = '{"zid":"0", "action":"panic", "value":"on"}';
-			plaatprotect_event_insert(CATEGORY_ZWAVE, $event);
+			plaatprotect_db_event_insert(CATEGORY_ZWAVE, $event);
 			break;
 			
 		case EVENT_OFF:
@@ -366,7 +365,7 @@ function plaatprotect_home() {
 			$config->value = PANIC_OFF;
 			plaatprotect_db_config_update($config);
 			$event = '{"zid":"0", "action":"panic", "value":"off"}';
-			plaatprotect_event_insert(CATEGORY_ZWAVE, $event);
+			plaatprotect_db_event_insert(CATEGORY_ZWAVE, $event);
 			break;
 			
 		case EVENT_SWITCH_SCENARIO:

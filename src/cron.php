@@ -45,7 +45,7 @@ if ($webcam_present_1=="true") {
    exec('cd '.BASE_DIR.'/interfaces; php webcam.php 1 > /dev/null 2>&1 &');	
 }
 
-exec('cd '.BASE_DIR.'; php event.php > /dev/null 2>&1 &');
+exec('cd '.BASE_DIR.'/interfaces; php event.php > /dev/null 2>&1 &');
 
 exec('cd '.BASE_DIR.'/interfaces; php zigbee.php > /dev/null 2>&1 &');	
 

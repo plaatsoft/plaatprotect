@@ -83,7 +83,7 @@ plaatprotect_db_connect($dbhost, $dbuser, $dbpass, $dbname);
 		$device = "Sirene";
 	}
 	
-	plaatprotect_event_insert(CATEGORY_ZWAVE, '{"zid":'.hexdec($nodeId).',"vendor":"'.$vendor.'", "device":"'.$device.'"}');
+	plaatprotect_db_event_insert(CATEGORY_ZWAVE, '{"zid":'.hexdec($nodeId).',"vendor":"'.$vendor.'", "device":"'.$device.'"}');
 	
 	return ' '.$vendor.' '.$device;
 }
@@ -145,16 +145,6 @@ function LogTxCommand($data) {
   print $d->format("Y-m-d H:i:s.u");
     
   echo ' Tx: '.GetHexString($data)."\r\n";
-}
-
-function LogText($text) {
-
-  $t = microtime(true);
-  $micro = sprintf("%06d",($t - floor($t)) * 1000000);
-  $d = new DateTime( date('Y-m-d H:i:s.'.$micro, $t) );
-
-  print $d->format("Y-m-d H:i:s.u");
-  echo " ".$text."\r\n";
 }
 
 /**
@@ -219,7 +209,7 @@ function SendSerialApiGetCapabilities() {
    */
  
    $tmp = "SendSerialApiGetCapabilities"; 
-	LogText($tmp);
+	plaatprotect_log($tmp);
 	 
    $command = hex2bin("01030007");
    $command .= GenerateChecksum($command);
@@ -242,7 +232,7 @@ function SendGetVersion() {
    */
  
    $tmp = "SendGetVersion"; 
-	LogText($tmp);
+	plaatprotect_log($tmp);
 	 
    $command = hex2bin("01030015");
    $command .= GenerateChecksum($command);
@@ -266,7 +256,7 @@ function SendRequestNodeNeighborUpdate($node) {
    */
  
    $tmp = "SendRequestNodeNeighborUpdate"; 
-	LogText($tmp);
+	plaatprotect_log($tmp);
 	 
    $command = hex2bin("01040048".int2hex($node));
    $command .= GenerateChecksum($command);
@@ -287,7 +277,7 @@ function SendGetMemoryId() {
    */
  
    $tmp = "SendGetMemoryId"; 
-	LogText($tmp);
+	plaatprotect_log($tmp);
 	 
    $command = hex2bin("01030020");
    $command .= GenerateChecksum($command);
@@ -311,7 +301,7 @@ function SendGetRouteInfo($node) {
    * Byte 8 : Last byte is checksum
    */
    $tmp = "SendGetRouteInfo NodeId=".int2hex($node);
-	LogText($tmp);
+	plaatprotect_log($tmp);
 	
    $command = hex2bin("01070080".int2hex($node)."000003");
    $command .= GenerateChecksum($command);
@@ -332,7 +322,7 @@ function SendGetIdentifyNode($node) {
    */
   
    $tmp= "GetIndentifyNode NodeId=[".int2hex($node)."]";
-   LogText($tmp);
+   plaatprotect_log($tmp);
 	
   $command = hex2bin("01040041".int2hex($node));
   $command .= GenerateChecksum($command);
@@ -352,7 +342,7 @@ function SendGetProtocolStatus() {
    */
  
    $tmp= 'SendGetProtocolStatus';
-   LogText($tmp);
+   plaatprotect_log($tmp);
 	
    $command = hex2bin("010300bf");
    $command .= GenerateChecksum($command);
@@ -373,7 +363,7 @@ function SendGetControllerCapabilities() {
    */
  
    $tmp= 'SendGetControllerCapabilities';
-   LogText($tmp);
+   plaatprotect_log($tmp);
   
    $command = hex2bin("01030005");
    $command .= GenerateChecksum($command);
@@ -394,7 +384,7 @@ function SendGetInitData() {
    */
 
   $tmp= 'SendGetInitData';
-  LogText($tmp);
+  plaatprotect_log($tmp);
 
   $command = hex2bin("01030002");
   $command .= GenerateChecksum($command);
@@ -455,7 +445,7 @@ function SendDataInitHorn($node, $sound, $volume, $callbackId) {
                break;	
    }
 
-   LogText($tmp);
+   plaatprotect_log($tmp);
 	
    $command = hex2bin("010a0013".int2hex($node)."0570".int2hex($sound).int2hex($volume)."25".$callbackId);
    $command .= GenerateChecksum($command);
@@ -483,7 +473,7 @@ function SendDataActiveHorn($node,$value,$callbackId) {
    */
    
    $tmp = "SendDataActiveHorn NodeId=".int2hex($node)." value=".int2hex($value)." callbackId=".int2hex($callbackId);
-	LogText($tmp);
+	plaatprotect_log($tmp);
 
    $command = hex2bin("01090013".int2hex($node)."032001".int2hex($value).int2hex($callbackId));
    $command .= GenerateChecksum($command);
@@ -510,7 +500,7 @@ function GetHornState($node,$value,$callbackId) {
    * Byte 10: Last byte is checksum
    */
    $tmp = "GetHornState NodeId=".int2hex($node)." value=".int2hex($value)." callbackId=".int2hex($callbackId);
-	LogText($tmp);
+	plaatprotect_log($tmp);
 
    $command = hex2bin("01090013".int2hex($node)."022001".int2hex($value).int2hex($callbackId));
    $command .= GenerateChecksum($command);
@@ -539,7 +529,7 @@ function GetManufacturer($node, $callbackId) {
 		
    $tmp = "GetManufacturer " ; 
 	
-   LogText($tmp);
+   plaatprotect_log($tmp);
 	
    $command = hex2bin("01090013".int2hex($node)."02720425".int2hex($callbackId));
    $command .= GenerateChecksum($command);
@@ -622,15 +612,15 @@ function decodeAlarm($data) {
 	$action = ord(substr($data,14,1));
 	switch ($action) {
 		case 0x00: $tmp .= 'AlarmOff';
-					  plaatprotect_event_insert(CATEGORY_ZWAVE, '{"zid":'.hexdec($nodeId).',"type":"set", "alarm":"off"}');
+					  plaatprotect_db_event_insert(CATEGORY_ZWAVE, '{"zid":'.hexdec($nodeId).',"type":"set", "alarm":"off"}');
 					  break;
 					  
 		case 0x03: $tmp .= 'AlarmVibrationDetected';
-					  plaatprotect_event_insert(CATEGORY_ZWAVE, '{"zid":'.hexdec($nodeId).',"type":"set", "alarm":"vibration"}');
+					  plaatprotect_db_event_insert(CATEGORY_ZWAVE, '{"zid":'.hexdec($nodeId).',"type":"set", "alarm":"vibration"}');
 					  break;
 					  
 		case 0x08: $tmp .= 'AlarmMotionDetected';
-					  plaatprotect_event_insert(CATEGORY_ZWAVE, '{"zid":'.hexdec($nodeId).',"type":"set", "alarm":"motion"}');
+					  plaatprotect_db_event_insert(CATEGORY_ZWAVE, '{"zid":'.hexdec($nodeId).',"type":"set", "alarm":"motion"}');
 					  break;
 	}
 		
@@ -657,25 +647,25 @@ function decodeSensor($data) {
 		case 0x01: $tmp .= 'Temperature ';
 					  $value = (((ord(substr($data,11,1)))*100)+ord(substr($data,12,1)))/10;
 					  $tmp .= 'Value='.$value;
-					  plaatprotect_event_insert(CATEGORY_ZWAVE, '{"zid":'.hexdec($nodeId).',"type":"report", "temperature":'.$value.'}');
+					  plaatprotect_db_event_insert(CATEGORY_ZWAVE, '{"zid":'.hexdec($nodeId).',"type":"report", "temperature":'.$value.'}');
 					  break;
 		
 		case 0x03: $tmp .= 'Luminance ';
 					  $value = (((ord(substr($data,11,1)))*100)+ord(substr($data,12,1)))/10;
 					  $tmp .= 'Value='.$value;
-					  plaatprotect_event_insert(CATEGORY_ZWAVE, '{"zid":'.hexdec($nodeId).',"type":"report", "luminance":'.$value.'}');
+					  plaatprotect_db_event_insert(CATEGORY_ZWAVE, '{"zid":'.hexdec($nodeId).',"type":"report", "luminance":'.$value.'}');
 					  break;
 			  
 		case 0x05: $tmp .= 'Humidity ';
 					  $value = ord(substr($data,11,1));
 					  $tmp .= 'Value='.$value;
-					  plaatprotect_event_insert(CATEGORY_ZWAVE, '{"zid":'.hexdec($nodeId).',"type":"report", "humidity":'.$value.'}');
+					  plaatprotect_db_event_insert(CATEGORY_ZWAVE, '{"zid":'.hexdec($nodeId).',"type":"report", "humidity":'.$value.'}');
 					  break;
 					 
 		case 0x1b: $tmp .= 'Ultraviolet ';
 					  $value = ord(substr($data,11,1));
 					  $tmp .= 'Value='.$value;
-					  plaatprotect_event_insert(CATEGORY_ZWAVE, '{"zid":'.hexdec($nodeId).',"type":"report", "ultraviolet":'.$value.'}');
+					  plaatprotect_db_event_insert(CATEGORY_ZWAVE, '{"zid":'.hexdec($nodeId).',"type":"report", "ultraviolet":'.$value.'}');
 					  break;
 	}
 	
@@ -750,19 +740,19 @@ function decodeApplicationCommandHandler($data) {
 										$value = ord(substr($data,9,1));
 										$tmp .= 'BatteryValue='.$value.'%';
 
-										plaatprotect_event_insert(CATEGORY_ZWAVE, '{"zid":'.hexdec($nodeId).',"type":"report", "battery":'.$value.'}');
+										plaatprotect_db_event_insert(CATEGORY_ZWAVE, '{"zid":'.hexdec($nodeId).',"type":"report", "battery":'.$value.'}');
                               break;
                }
                break;
 					
 	case 0x84:  $tmp .=  'Received Wakeup Notification ';
-					plaatprotect_event_insert(CATEGORY_ZWAVE, '{"zid":'.hexdec($nodeId).',"type":"notification", "value":"wakeup"}');
+					plaatprotect_db_event_insert(CATEGORY_ZWAVE, '{"zid":'.hexdec($nodeId).',"type":"notification", "value":"wakeup"}');
 			      break;
 
     default:   $tmp .= 'Unknown';
                break;
   }
-  LogText($tmp);
+  plaatprotect_log($tmp);
   
    if ($commandClass==0x84) {
 	
@@ -780,7 +770,7 @@ function decodeSerialApiGetCapabilities($data) {
  
   $tmp = "SerialApiGetCapabilities serialAPIVersion=[".$serialAPIVersion."] manufactureId=[".$manufactureId."] DeviceType=[".$deviceType."] DeviceId=[".$deviceId."]";
   $tmp .= decodeManufacture(1, $manufactureId, $deviceType, $deviceId);
-  LogText($tmp);  
+  plaatprotect_log($tmp);  
 }
 
 function decodeSerialInit($data) {
@@ -799,7 +789,7 @@ function decodeSerialInit($data) {
       $count++;
    }
 
-  LogText($tmp);  
+  plaatprotect_log($tmp);  
 }
 	
 function decodeRouteInfo($data) {
@@ -818,7 +808,7 @@ function decodeRouteInfo($data) {
       $count++;
    }
 
-  LogText($tmp);
+  plaatprotect_log($tmp);
 }
 
 function decodeRequestNodeNeighborUpdate($data) {
@@ -898,7 +888,7 @@ function decodeIdentifyNode($data) {
                }
                break;
   }
-  LogText($tmp);
+  plaatprotect_log($tmp);
 }
 
 function decodeSendGetVersion($data) {
@@ -906,7 +896,7 @@ function decodeSendGetVersion($data) {
   $zWaveLibraryType = $data[16];
   $zWaveVersion = substr($data,4,15);
  
-  LogText("SendGetVersion WaveVersion=[".$zWaveVersion."] LibraryType=[0x".bin2hex($zWaveLibraryType)."]");
+  plaatprotect_log("SendGetVersion WaveVersion=[".$zWaveVersion."] LibraryType=[0x".bin2hex($zWaveLibraryType)."]");
 }
 
 function decodeMemoryId($data) {
@@ -914,7 +904,7 @@ function decodeMemoryId($data) {
   $homeId = GetHexString(substr($data,4,4));
   $nodeId = GetHexString(substr($data,8,1));
  
-  LogText("SendGetMemoryId HomeId=[".$homeId."] NodeId=[".$nodeId."]");
+  plaatprotect_log("SendGetMemoryId HomeId=[".$homeId."] NodeId=[".$nodeId."]");
 }
 
 function decodeSentData($data) {
@@ -946,7 +936,7 @@ function decodeSentData($data) {
 	       break;
     }
   }
-  LogText($tmp);
+  plaatprotect_log($tmp);
 }
 
 function DecodeMessage($data) {
@@ -988,7 +978,7 @@ function DecodeMessage($data) {
 		case 0x80:	decodeRouteInfo($data);
 						break;
 						
-      default:		LogText("Unknown message");
+      default:		plaatprotect_log("Unknown message");
 						break;
    }
 }
@@ -1060,15 +1050,15 @@ function Receive() {
 
 function plaatprotect_zwave_state_machine() {
 	
-	LogText("Idle");
+	plaatprotect_log("Idle");
 	
 	$row = plaatprotect_db_event(CATEGORY_ZWAVE_CONTROL);			
 	if (isset($row->eid)) {
 	
-		$row->processed=1;
-		plaatprotect_db_event_update($row);
-			
+		plaatprotect_log("Inbound zwave event: ".$row->action);
+	
 		$data = json_decode($row->action);
+				
 		if ($data->action=="init") {
 
 			/* Init ZWave layer */
@@ -1091,18 +1081,23 @@ function plaatprotect_zwave_state_machine() {
 		if ($data->action=="reset") {
 
 			/* Get for all zWave node information */
-			$sql  = 'select zid from zwave';	
-			$result = plaatprotect_db_query($sql);
+			$sql2  = 'select zid from zwave';	
+			$result2 = plaatprotect_db_query($sql2);
 	
-			while ($row = plaatprotect_db_fetch_object($result)) {
+			while ($row2 = plaatprotect_db_fetch_object($result2)) {
 
-				SendGetIdentifyNode($row->zid);
+				SendGetIdentifyNode($row2->zid);
 				Receive();
    
 				//SendRequestNodeNeighborUpdate($row->nodeid);
 				//Receive();
  
-				SendGetRouteInfo($row->zid);
+				SendGetRouteInfo($row2->zid);
+				Receive();
+				
+				/* Get Manufacturer of sirene */
+				GetManufacturer($row2->zid, $row2->zid);
+				Receive();
 				Receive();
 			}
 		}	
@@ -1133,10 +1128,13 @@ function plaatprotect_zwave_state_machine() {
 				Receive();
 			}
 		}
+		
+		$row->processed=1;
+		plaatprotect_db_event_update($row);
 	}
 }
 	
-LogText("ZWave Interface - starting...");
+plaatprotect_log("ZWave Interface - starting...");
 	
 /* Read Zwave incoming events endless */
 while (true) {	
@@ -1147,7 +1145,7 @@ while (true) {
 	plaatprotect_zwave_state_machine(); 
 }
 
-LogText("ZWave Interface - ending...");
+plaatprotect_log("ZWave Interface - ending...");
 
 unlink( LOCK_FILE ); 
 exit(0); 

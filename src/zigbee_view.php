@@ -69,7 +69,7 @@ function plaatprotect_zigbee_page() {
 	global $pid;
 	
 	$event = '{"hid":"all", "action":"get"}';
-	plaatprotect_event_insert(CATEGORY_ZIGBEE, $event);
+	plaatprotect_db_event_insert(CATEGORY_ZIGBEE, $event);
 		
    $page ="<style>input[type='checkbox']{width:24px;height:24px}</style>";
 	$page .= '<h1>'.t('TITLE_ZIGBEE').'</h1>';
@@ -210,12 +210,12 @@ function plaatprotect_zigbee() {
   
 		case EVENT_ON: 
 			$event = '{"hid":'.$hid.', "action":"set", "value":"true"}';
-			plaatprotect_event_insert(CATEGORY_ZIGBEE, $event);
+			plaatprotect_db_event_insert(CATEGORY_ZIGBEE, $event);
 			break;
 			
 		case EVENT_OFF: 
 			$event = '{"hid":'.$hid.', "action":"set", "value":"false"}';
-			plaatprotect_event_insert(CATEGORY_ZIGBEE, $event);	
+			plaatprotect_db_event_insert(CATEGORY_ZIGBEE, $event);	
 			break;
 						
 		case EVENT_UPDATE: 

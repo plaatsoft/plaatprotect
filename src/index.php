@@ -100,6 +100,7 @@ if (strlen($home_password)>0) {
 	if ((strlen($session_id)==0) || ($session!=$session_id)) {
 		// User not login, Redirect to login page
 		$pid = PAGE_HOME_LOGIN;
+		$eid = EVENT_NONE;
 	}
 }
 

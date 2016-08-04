@@ -104,7 +104,7 @@ function plaatprotect_zwave_page() {
 	global $pid;
 
 	$event = '{"zid":"all", "action":"init"}';
-	plaatprotect_event_insert(CATEGORY_ZWAVE_CONTROL, $event);
+	plaatprotect_db_event_insert(CATEGORY_ZWAVE_CONTROL, $event);
 	
 	$device_offline_timeout = plaatprotect_db_config_value('device_offline_timeout',CATEGORY_GENERAL);
 
