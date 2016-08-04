@@ -113,7 +113,6 @@ function plaatprotect_home_login_event() {
 	
 		$session = plaatprotect_db_get_session($ip, true);
 		$pid = PAGE_HOME;
-		$eid = EVENT_HOME;
 		
 		$event = '{"login":"succesfull", "user":"'.$username.'", "ip":"'.$ip.'" }';
 				
