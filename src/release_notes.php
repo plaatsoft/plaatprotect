@@ -27,7 +27,7 @@
 ** ---------------------
 */
 
-$note[2] = '<div class="subparagraph">Version 0.2 (01-08-2016)</div>
+$note[2] = '<div class="subparagraph">Version 0.2 (27-08-2016)</div>
 <div class="large_text">
 <ul>
 <li>General: Protect application with password and username combination.</li>
