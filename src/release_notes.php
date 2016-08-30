@@ -27,6 +27,14 @@
 ** ---------------------
 */
 
+$note[3] = '<div class="subparagraph">Version 0.3 (30-08-2016)</div>
+<div class="large_text">
+<ul>
+<li>Bugfix: Temperature above 25.5c is now correctly measured.</li>
+</ul>
+</div>';
+
+
 $note[2] = '<div class="subparagraph">Version 0.2 (27-08-2016)</div>
 <div class="large_text">
 <ul>
