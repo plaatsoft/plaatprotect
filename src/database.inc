@@ -231,6 +231,12 @@ function plaatprotect_db_check_version() {
    if ($value=="0.1")  { 
 		plaatprotect_db_execute_sql_file("0.2");
    }
+	
+	// Execute SQL path script v0.3 if needed
+	$value = plaatprotect_db_config_value('database_version', CATEGORY_GENERAL);
+   if ($value=="0.2")  { 
+		plaatprotect_db_execute_sql_file("0.3");
+   }
 }
 
 /*

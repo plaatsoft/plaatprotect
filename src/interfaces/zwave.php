@@ -645,13 +645,13 @@ function decodeSensor($data) {
 	$value = 0;
 	switch ($type) {
 		case 0x01: $tmp .= 'Temperature ';
-					  $value = (((ord(substr($data,11,1)))*100)+ord(substr($data,12,1)))/10;
+					  $value = (((ord(substr($data,11,1)))*256)+ord(substr($data,12,1)))/10;
 					  $tmp .= 'Value='.$value;
 					  plaatprotect_db_event_insert(CATEGORY_ZWAVE, '{"zid":'.hexdec($nodeId).',"type":"report", "temperature":'.$value.'}');
 					  break;
 		
 		case 0x03: $tmp .= 'Luminance ';
-					  $value = (((ord(substr($data,11,1)))*100)+ord(substr($data,12,1)))/10;
+					  $value = (((ord(substr($data,11,1)))*256)+ord(substr($data,12,1)));
 					  $tmp .= 'Value='.$value;
 					  plaatprotect_db_event_insert(CATEGORY_ZWAVE, '{"zid":'.hexdec($nodeId).',"type":"report", "luminance":'.$value.'}');
 					  break;
