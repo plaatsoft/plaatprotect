@@ -32,7 +32,7 @@ cp config.inc.sample config.inc
 	 
 ### Step 5. Add the following cron job:
 crontab -e
-* * * * * php /var/www/html/plaatprotect/cron.php
+* * * * * cd /var/www/html/plaatprotect/cron.php; php cron.php
 
 ### Step 6. Go to http://[raspberry-ip]/plaatprotect.
 Select setting page and customize plaatprotect to your personal needs!
