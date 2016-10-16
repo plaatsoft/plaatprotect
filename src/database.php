@@ -122,7 +122,7 @@ function plaatprotect_db_query($query) {
 		echo $query."<br/>\r\n";
 	}
 
-	$result = mysqli_query($db, $query);
+	$result = @mysqli_query($db, $query);
 
 	if (!$result) {
 		plaatprotect_db_error();		
@@ -149,7 +149,11 @@ function plaatprotect_db_escape($data) {
  */
 function plaatprotect_db_fetch_object($result) {
 	
-	$row = $result->fetch_object();
+	$row="";
+	
+	if (isset($result)) {	
+		$row = $result->fetch_object();
+	}
 	return $row;
 }
 

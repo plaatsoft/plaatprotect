@@ -23,10 +23,28 @@
 
 $time_start = microtime(true);
 
-include "config.inc";
-include "general.inc";
-include "database.inc";
-include "english.inc";
+include "general.php";
+include "database.php";
+include "english.php";
+
+if (!file_exists( "config.php" )) {
+
+	echo general_header();
+
+	echo '<h1>ERROR</h1>';
+	echo '<br/>';
+   echo t('CONGIG_BAD');
+	echo '<br/>';
+	
+	$time_end = microtime(true);
+	$time = $time_end - $time_start;
+	
+	echo general_footer($time);
+	
+   exit;
+}
+
+include "config.php";
 
 /*
 ** --------------------
@@ -175,7 +193,7 @@ $row = plaatprotect_db_fetch_object($result);
 
 if ($row->language=="nl") {
 
-	include("dutch.inc");
+	include("dutch.php");
 }	
 
 /*

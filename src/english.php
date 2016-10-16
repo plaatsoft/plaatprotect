@@ -111,11 +111,11 @@ $lang['LINK_PANIC_OFF']      = 'PANIC OFF';
 $lang['LABEL_USERNAME'] = 'Username';
 $lang['LABEL_PASSWORD'] = 'Password';
 
-$lang ['CONGIG_BAD' ] = 'The following file "config.inc" is missing in installation directory.<br/><br/>
+$lang ['CONGIG_BAD' ] = 'The following file "config.php" is missing in installation directory.<br/><br/>
 PlaatProtect can not  work without!<br/><br/>
-Rename config.inc.sample to config.inc, update the database settings en press F5 in your browser!';
+Rename config.php.sample to config.inc, update the database settings en press F5 in your browser!';
 
-$lang['DATABASE_CONNECTION_FAILED' ] = 'The connection to the database failed. Please check if config.inc settings are right!';
+$lang['DATABASE_CONNECTION_FAILED' ] = 'The connection to the database failed. Please check if config.php settings are right!';
 
 $lang['SCENARIO_HOME']       = 'HOME';  
 $lang['SCENARIO_SLEEP']      = 'SLEEP';  

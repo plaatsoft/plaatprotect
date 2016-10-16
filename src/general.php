@@ -242,24 +242,28 @@ function loadJS($url) {
  */
 function general_header() {
 
-  // input
-  global $ip;
-  global $pid;
-  global $eid;
-  global $sid;
-  global $date;
-  global $session;
+	// input
+	global $ip;
+	global $pid;
+	global $eid;
+	global $sid;
+	global $date;
+	global $session;
 
-  $sql  = 'select theme,language from session where ip="'.$ip.'"';
-  $result = plaatprotect_db_query($sql);
-  $row = plaatprotect_db_fetch_object($result);
-
-  $lang = $row->language;
-  $theme = $row->theme;
+	$sql  = 'select theme,language from session where ip="'.$ip.'"';
+	$result = plaatprotect_db_query($sql);
+	$row = plaatprotect_db_fetch_object($result);
+		
+	$theme="light";
+	$lang="en";
+	if (isset($row->language)) {
+		$lang = $row->language;
+		$theme = $row->theme;
+	}
     
-  $page  = '<!DOCTYPE html>';
-  $page .= '<html>';
-  $page .= '<head>'; 
+	$page  = '<!DOCTYPE html>';	
+	$page .= '<html>';
+	$page .= '<head>'; 
 
   $page .= add_icons();
 
