@@ -138,10 +138,8 @@ function plaatprotect_home_login_page() {
 	global $version;
 			
 	$page = '<h1>';
-   $page .= t('TITLE');
-	$page .= ' <div id="version" style="display: inline">';
-	$page .= $version;
-	$page .= "</div>";
+   $page .= t('TITLE').' ' ;
+	$page .= '<span id="version">'.$version."</span>";
 	if (strlen($name)>0) {
 		$page .= ' ('.$name.') ';
 	} 	
@@ -166,8 +164,9 @@ function plaatprotect_home_login_page() {
 	
 	$page .= '</fieldset>';
 	
-   $page .= '<script type="text/javascript">var ip="'.$_SERVER['SERVER_ADDR'].'";var name="'.$name.'";var version="'.$version.'";</script>';
-   $page .= '<script type="text/javascript" src="js/version.js"></script>';
+	$page .= '<br/>';
+	$page .= '<div class="upgrade" id="upgrade"></div>';
+	$page .= '<script type="text/javascript" src="js/version1.js"></script>';
 	
    return $page;
 }
@@ -312,8 +311,8 @@ function plaatprotect_home_page() {
 	
 	$page .= '<br/>';
 	$page .= '<div class="upgrade" id="upgrade"></div>';
-			
-	$page .= '<script type="text/javascript" src="js/version.js"></script>';
+	$page .= '<script type="text/javascript" src="js/version1.js"></script>';
+	
 	return $page;
 }
 
