@@ -1,6 +1,6 @@
 /* 
 **  ===========
-**  plaatprotect
+**  PlaatProtect
 **  ===========
 **
 **  Created by wplaat
@@ -26,17 +26,19 @@ xmlhttp.onreadystatechange=function() {
    if (xmlhttp.readyState==4 && xmlhttp.status==200) 
    {		
 		var obj = JSON.parse(xmlhttp.responseText);
-		var latest = parseFloat(obj.plaatprotect)
+		var latest = parseFloat(obj.PlaatProtect)
+		console.log("latest version = ["+latest+"]");
 		var current = parseFloat(document.getElementById("version").innerHTML);
+		console.log("current version = ["+current+"]");
 		if (current<latest) {
-			document.getElementById("version").innerHTML = current + ' <div id="new" style="display:inline;color:#e0440e">('+obj.plaatprotect+' available)</div>'; 
+			document.getElementById("upgrade").innerHTML = 'PlaatProtect v'+latest+' available!'; 
 		}
    }
 }
 	
-xmlhttp.open('POST',  'http://www.plaatsoft.nl/service/version.php', true);
+xmlhttp.open('POST',  'https://service.plaatsoft.nl', true);
 xmlhttp.setRequestHeader('Content-type','application/x-www-form-urlencoded' );
-xmlhttp.send("ip="+ip+"&name="+name+"&product=plaatprotect&version="+version);
+xmlhttp.send('{"PlaatProtect":"'+parseFloat(document.getElementById("version").innerHTML)+'"}');
 
 /*
 ** ---------------------

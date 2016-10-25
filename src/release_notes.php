@@ -27,9 +27,10 @@
 ** ---------------------
 */
 
-$note[3] = '<div class="subparagraph">Version 0.3 (30-09-2016)</div>
+$note[3] = '<div class="subparagraph">Version 0.3 (25-10-2016)</div>
 <div class="large_text">
 <ul>
+<li>Improve new version detection script.</li>
 <li>Improve php cron job. Now no output is created anymore.</li>
 <li>Bugfix: Temperature above 25.5c is now correctly measured.</li>
 </ul>
