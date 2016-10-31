@@ -24,9 +24,9 @@
 // instance=61 [Webcam 1]
 // instance=62 [Webcam 2]
 
-include '/var/www/html/plaatprotect/config.inc';
-include '/var/www/html/plaatprotect/database.inc';
-include '/var/www/html/plaatprotect/general.inc';
+include '/var/www/html/plaatprotect/config.php';
+include '/var/www/html/plaatprotect/database.php';
+include '/var/www/html/plaatprotect/general.php';
 
 define( 'LOCK_FILE', "/tmp/".basename( $argv[0], ".php" ).".lock" ); 
 if( plaatprotect_islocked() ) die( "Already running.\n" ); 

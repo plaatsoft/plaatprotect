@@ -1,8 +1,8 @@
 <?php
 
-include "../general.inc";
-include "../database.inc";
-include "../config.inc";
+include "../general.php";
+include "../database.php";
+include "../config.php";
 
 /*
 ** ---------------------

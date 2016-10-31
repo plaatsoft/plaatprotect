@@ -21,9 +21,9 @@
  * @brief contain event engine
  */
  
-include "../general.inc";
-include "../database.inc";
-include "../config.inc";
+include "../general.php";
+include "../database.php";
+include "../config.php";
 include "android.php";
 include "email.php";
 

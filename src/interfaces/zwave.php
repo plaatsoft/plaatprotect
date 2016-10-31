@@ -21,9 +21,9 @@
  * @brief contain zwave interface 
  */
  
-include "../general.inc";
-include "../database.inc";
-include "../config.inc";
+include "../general.php";
+include "../database.php";
+include "../config.php";
 
 define('EVENT_IDLE',        		10);
 define('EVENT_ALARM_ON',   		11);
