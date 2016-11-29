@@ -54,6 +54,8 @@ define('PAGE_SETTING_LOGIN',        24);
 define('PAGE_SETTING_CATEGORY',     25);
 define('PAGE_SETTING_LIST',         26);
 define('PAGE_SETTING_EDIT',         27);
+define('PAGE_BATTERY',              28);
+define('PAGE_TEMPERATURE',          29);
 
 /*
 ** -----------

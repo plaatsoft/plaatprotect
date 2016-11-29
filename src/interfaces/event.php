@@ -102,11 +102,11 @@ function plaatprotect_zwave_alarm_group($event, $zid=0) {
 			break;
 			
 		case SCENARIO_SLEEP: 
-			$sql = '(sleep=1 and type="Sirene") ';
+			$sql .= '(sleep=1 and type="Sirene") ';
 			break;		
 			
 		case SCENARIO_AWAY: 
-			$sql = '(away=1 and type="Sirene")';
+			$sql .= '(away=1 and type="Sirene")';
 			break;
 	}
 

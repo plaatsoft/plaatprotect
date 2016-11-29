@@ -27,15 +27,18 @@
 ** ---------------------
 */
 
-$note[3] = '<div class="subparagraph">Version 0.3 (25-10-2016)</div>
+$note[3] = '<div class="subparagraph">Version 0.3 (29-11-2016)</div>
 <div class="large_text">
 <ul>
 <li>Improve new version detection script.</li>
 <li>Improve php cron job. Now no output is created anymore.</li>
+<li>Added battery chart for all zwave devices.</li>
+<li>Added temperature chart for all zwave devices.</li>
+<li>Added location of zwave sensors on home page.</li>
+<li>Bugfix: Fix critical bug in event.php in sleep and away mode.</li>
 <li>Bugfix: Temperature above 25.5c is now correctly measured.</li>
 </ul>
 </div>';
-
 
 $note[2] = '<div class="subparagraph">Version 0.2 (27-08-2016)</div>
 <div class="large_text">

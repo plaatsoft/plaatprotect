@@ -83,7 +83,8 @@ $lang['LINK_SETTINGS']      = i('cog') . 'Settings';
 $lang['LINK_RELEASE_NOTES'] = i('calendar') . 'Release Notes';
 $lang['LINK_ABOUT']         = i('book') . 'About';
 $lang['LINK_DONATE']        = i('money') . 'Donate';
-
+$lang['LINK_BATTERY']       = i('area-chart') . 'Battery';
+$lang['LINK_TEMPERATURE']   = i('area-chart') . 'Temperature';
 $lang['LINK_DELETE']        = i('remove').'Delete'; 
 $lang['LINK_WEBCAM']        = i('camera') . 'Webcams'; 
 $lang['LINK_ZIGBEE']        = i('wifi') . 'Zigbee';

@@ -71,7 +71,7 @@ function check_zwave_network() {
 			if ($value<(60*20)) {
 			
 				$page .= '<div class="checker good">';
-				$page .= 'Sensor '.$row->zid.': ';
+				$page .= plaatprotect_db_zwave($row->zid)->location.': ';
 				if (isset($row2->temperature)) {
 					$page .= ' '.$row2->temperature.'&deg;C ';
 				}
@@ -83,7 +83,7 @@ function check_zwave_network() {
 			} else {
 			
 				$page .= '<div class="checker bad" >';
-				$page .= 'Sensor '.$row->zid.' ';
+				$page .= plaatprotect_db_zwave($row->zid)->location.' ';
 				$page .= $row->last_update;
 				$page .= '</div> ';
 			}
@@ -227,16 +227,16 @@ function plaatprotect_home_page() {
 	
 	$page .= '<tr>';	
 	$page .= '<td>';
+	$page .= plaatprotect_link('pid='.PAGE_BATTERY, t('LINK_BATTERY'));
 	$page .= '</td>';		
 	$page .= '<td>';		
 	$page .= plaatprotect_link('pid='.PAGE_CHART, t('LINK_CHART'));
 	$page .= '</td>';
 	$page .= '<td>';
-	if ($zwave_present=="true") {
-		$page .= plaatprotect_link('pid='.PAGE_EVENT_VIEW.'&id=0', t('LINK_LOGGING'));
-	}
+	$page .= plaatprotect_link('pid='.PAGE_EVENT_VIEW.'&id=0', t('LINK_LOGGING'));
 	$page .= '</td>';		
 	$page .= '<td>';
+	$page .= plaatprotect_link('pid='.PAGE_TEMPERATURE, t('LINK_TEMPERATURE'));
 	$page .= '</td>';
 	$page .= '</tr>';
 			

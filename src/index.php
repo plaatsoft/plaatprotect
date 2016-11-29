@@ -246,6 +246,16 @@ switch ($pid) {
 		include "chart.php";
 		$page = plaatprotect_chart();
 		break;
+		
+	case PAGE_BATTERY: 
+		include "battery.php";
+		$page = plaatprotect_battery();
+		break;
+		
+	case PAGE_TEMPERATURE: 
+		include "temperature.php";
+		$page = plaatprotect_temperature();
+		break;
 
 	case PAGE_DONATE: 
 		include "donate.php";
