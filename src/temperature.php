@@ -38,32 +38,46 @@ function plaatprotect_temperature_page() {
 	$month = ltrim($month ,'0');
 	$current_date = mktime(0, 0, 0, $month, $day, $year);  
 	
-	$timestamp1 = date("Y-m-d 00:00:00", $current_date);
-	$timestamp2 = date("Y-m-d 23:59:59", $current_date);
-			
-	$sql  = 'select timestamp, zid, temperature from sensor where temperature>0 and ';
-	$sql .= 'timestamp>="'.$timestamp1.'" and timestamp<="'.$timestamp2.'" order by timestamp';
+	$i=0;	
+	$offset = 24;
+	$step = (24*60*60)/$offset;
 		
-	$data = "";
+	$data="";
 	
-	$result = plaatprotect_db_query($sql);
-	while ($row = plaatprotect_db_fetch_object($result)) {
-	
-		if (strlen($data)>0) {
-			$data .= ',';
-		}
-		if ($row->zid==3) {
-			$data .= "['".date("H:i",strtotime($row->timestamp))."',".$row->temperature.",0,0,0]";
-		}
-		if ($row->zid==4) {
-			$data .= "['".date("H:i",strtotime($row->timestamp))."',0,".$row->temperature.",0,0]";
-		}
-		if ($row->zid==6) {
-			$data .= "['".date("H:i",strtotime($row->timestamp))."',0,0,".$row->temperature.",0]";
-		}
-		if ($row->zid==7) {
-			$data .= "['".date("H:i",strtotime($row->timestamp))."',0,0,0,".$row->temperature."]";
-		}
+	while ($i<$offset) {
+
+		$first = true;
+		
+		$timestamp1 = date("Y-m-d H:i:s", $current_date+($step*$i));
+		$timestamp2 = date("Y-m-d H:i:s", $current_date+($step*(++$i)));
+				
+		$sql1 = 'select zid, type from zwave where type="Sensor" order by zid';
+		$result1 = plaatprotect_db_query($sql1);
+		while ($node = plaatprotect_db_fetch_object($result1)) {
+		
+			$sql2  = 'select timestamp, zid, temperature from sensor where temperature>0 and ';
+			$sql2 .= 'timestamp>="'.$timestamp1.'" and timestamp<="'.$timestamp2.'" and zid='.$node->zid.' order by timestamp';
+		
+			$result2 = plaatprotect_db_query($sql2);
+			$row = plaatprotect_db_fetch_object($result2);
+			
+			$value = 0;
+			if (isset($row->zid)) {
+				$value = $row->temperature;
+			}
+			
+			if (strlen($data)>0) {
+				$data .= ',';
+			}
+				
+			if ($first) {
+				$data .= "['".$i."',";
+				$first=false;
+			}
+			
+			$data .= $value;			
+		}				
+		$data .= ']';
 	}
 	
 	$json2 = "[".$data."]";
@@ -77,12 +91,15 @@ function plaatprotect_temperature_page() {
 			function drawChart() {
 
 				var data = new google.visualization.DataTable();
-				data.addColumn("string", "Time");
-				data.addColumn("number",  "'.plaatprotect_db_zwave(3)->location.'");
-				data.addColumn("number",  "'.plaatprotect_db_zwave(4)->location.'");
-				data.addColumn("number",  "'.plaatprotect_db_zwave(6)->location.'");
-				data.addColumn("number",  "'.plaatprotect_db_zwave(7)->location.'");
-				data.addRows('.$json2.');
+				data.addColumn("string", "Time");';
+				
+				$sql1 = 'select zid, type from zwave where type="Sensor" order by zid';
+				$result1 = plaatprotect_db_query($sql1);
+				while ($node = plaatprotect_db_fetch_object($result1)) {
+				
+					$page .= 'data.addColumn("number",  "'.plaatprotect_db_zwave($node->zid)->location.'"); ';
+				};
+				$page .= 'data.addRows('.$json2.');
 
 				var options = {
 					legend: { position: "top", textStyle: {fontSize: 10} },
