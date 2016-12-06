@@ -9,7 +9,6 @@ sudo apt-get install php5
 sudo apt-get install python
 sudo apt-get install mysql-server
 sudo apt-get install python-mysqldb
-sudo apt-get install fswebcam
 
 ### Step 2 . Create mysql plaatprotect database
 mysql -u root -p
@@ -28,11 +27,11 @@ sudo chmod a+wrx /var/www/html/plaatprotect/backup
 sudo chmod a+wrx /var/www/html/plaatprotect/webcam
 
 ### Step 4. Create config.inc with correct database settings
-cp config.inc.sample config.inc
+cp config.php.sample config.php
 	 
 ### Step 5. Add the following cron job:
 crontab -e
-* * * * * cd /var/www/html/plaatprotect/cron.php; php cron.php
+* * * * * cd /var/www/html/plaatprotect; php cron.php
 
 ### Step 6. Go to http://[raspberry-ip]/plaatprotect.
 Select setting page and customize plaatprotect to your personal needs!

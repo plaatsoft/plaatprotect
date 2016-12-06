@@ -256,6 +256,17 @@ switch ($pid) {
 		include "temperature.php";
 		$page = plaatprotect_temperature();
 		break;
+		
+	case PAGE_HUMIDITY: 
+		include "humidity.php";
+		$page = plaatprotect_humidity();
+		break;
+		
+	case PAGE_LUMINANCE: 
+		include "luminance.php";
+		$page = plaatprotect_luminance();
+		break;
+		
 
 	case PAGE_DONATE: 
 		include "donate.php";

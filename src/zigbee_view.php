@@ -19,7 +19,7 @@
 
 /**
  * @file
- * @brief contain hue page
+ * @brief contain zigbee page
  */
 
 /*

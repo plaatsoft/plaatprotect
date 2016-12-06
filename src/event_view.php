@@ -18,7 +18,7 @@
 
 /**
  * @file
- * @brief contain hue page
+ * @brief contain event view page
  */
 
 /*

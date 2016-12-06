@@ -18,7 +18,7 @@
 
 /**
  * @file
- * @brief contain temperature report
+ * @brief contain humidity report
  */
  
 /*
@@ -27,7 +27,7 @@
 ** ---------------------
 */
 
-function plaatprotect_temperature_page() {
+function plaatprotect_humidity_page() {
 
 	// input
 	global $pid;
@@ -55,7 +55,7 @@ function plaatprotect_temperature_page() {
 		$result1 = plaatprotect_db_query($sql1);
 		while ($node = plaatprotect_db_fetch_object($result1)) {
 		
-			$sql2  = 'select timestamp, zid, temperature from sensor where temperature>0 and ';
+			$sql2  = 'select timestamp, zid, humidity from sensor where humidity>0 and ';
 			$sql2 .= 'timestamp>="'.$timestamp1.'" and timestamp<="'.$timestamp2.'" and zid='.$node->zid.' order by timestamp';
 		
 			$result2 = plaatprotect_db_query($sql2);
@@ -63,7 +63,7 @@ function plaatprotect_temperature_page() {
 			
 			$value = 0;
 			if (isset($row->zid)) {
-				$value = $row->temperature;
+				$value = $row->humidity;
 			}
 			
 			if (strlen($data)>0) {
@@ -116,7 +116,7 @@ function plaatprotect_temperature_page() {
 		}
 		</script>';
 	
-	$page .= '<h1>Temperature Chart '.plaatprotect_dayofweek($date).' '.$day.'-'.$month.'-'.$year.'</h1>';
+	$page .= '<h1>Humidity Chart '.plaatprotect_dayofweek($date).' '.$day.'-'.$month.'-'.$year.'</h1>';
 
 	$page .= '<div id="chart_div" style="width:950px; height:350px"></div>';
 	
@@ -135,7 +135,7 @@ function plaatprotect_temperature_page() {
 ** ---------------------
 */
 
-function plaatprotect_temperature() {
+function plaatprotect_humidity() {
 
   /* input */
   global $pid;  
@@ -143,8 +143,8 @@ function plaatprotect_temperature() {
 	/* Page handler */
 	switch ($pid) {
 
-		case PAGE_TEMPERATURE:
-			return plaatprotect_temperature_page();
+		case PAGE_HUMIDITY:
+			return plaatprotect_humidity_page();
 			break;
 	}
 }

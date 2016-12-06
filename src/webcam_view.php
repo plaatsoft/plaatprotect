@@ -217,10 +217,8 @@ function plaatprotect_webcam_page() {
 	$page .= '<br/>';
 	$page .= '<style>.image{-moz-animation: none; -o-animation: none; -webkit-animation: none; animation: none}></style>';
   
-	if ($device1=="true" ) {
-		$page .= '<img class="image" src="webcam/image1.jpg" alt="" id="webcam1" width="480" height="360" >';
-		$page .= '<script>window.setInterval(function() { document.getElementById("webcam1").src = "webcam/image3.jpg?random="+new Date().getTime(); }, 500);</script>';
-	}
+	$page .= '<img class="image" src="webcam/image1.jpg" alt="" id="webcam1" width="480" height="360" >';
+	$page .= '<script>window.setInterval(function() { document.getElementById("webcam1").src = "webcam/image3.jpg?random="+new Date().getTime(); }, 500);</script>';
 	
 	if ($device2=="true" ) {
 		$page .= '&nbsp;';

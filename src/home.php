@@ -206,19 +206,13 @@ function plaatprotect_home_page() {
 		
 	$page .= '<tr>';		
 	$page .= '<td>';
-	if ($webcam_present=="true") {
-		$page .= plaatprotect_link('pid='.PAGE_WEBCAM, t('LINK_WEBCAM'));
-	}
+	$page .= plaatprotect_link('pid='.PAGE_WEBCAM, t('LINK_WEBCAM'));
 	$page .= '</td>';	
 	$page .= '<td>';
-	if ($zwave_present=="true") {
-		$page .= plaatprotect_link('pid='.PAGE_ZWAVE, t('LINK_ZWAVE'));
-	} 
+	$page .= plaatprotect_link('pid='.PAGE_ZWAVE, t('LINK_ZWAVE'));
 	$page .= '</td>';		
 	$page .= '<td>';
-	if ($hue_present=="true") {
-		$page .= plaatprotect_link('pid='.PAGE_ZIGBEE, t('LINK_ZIGBEE'));
-	} 
+	$page .= plaatprotect_link('pid='.PAGE_ZIGBEE, t('LINK_ZIGBEE'));
 	$page .= '</td>';		
 	$page .= '<td>';
 	$page .= plaatprotect_link('pid='.PAGE_NOTIFICATION, t('LINK_NOTIFICATION'));
@@ -227,7 +221,6 @@ function plaatprotect_home_page() {
 	
 	$page .= '<tr>';	
 	$page .= '<td>';
-	$page .= plaatprotect_link('pid='.PAGE_BATTERY, t('LINK_BATTERY'));
 	$page .= '</td>';		
 	$page .= '<td>';		
 	$page .= plaatprotect_link('pid='.PAGE_CHART, t('LINK_CHART'));
@@ -236,10 +229,24 @@ function plaatprotect_home_page() {
 	$page .= plaatprotect_link('pid='.PAGE_EVENT_VIEW.'&id=0', t('LINK_LOGGING'));
 	$page .= '</td>';		
 	$page .= '<td>';
-	$page .= plaatprotect_link('pid='.PAGE_TEMPERATURE, t('LINK_TEMPERATURE'));
 	$page .= '</td>';
 	$page .= '</tr>';
-			
+				
+	$page .= '<tr>';	
+	$page .= '<td>';
+	$page .= plaatprotect_link('pid='.PAGE_BATTERY, t('LINK_BATTERY'));
+	$page .= '</td>';		
+	$page .= '<td>';		
+	$page .= plaatprotect_link('pid='.PAGE_TEMPERATURE, t('LINK_TEMPERATURE'));
+	$page .= '</td>';
+	$page .= '<td>';
+	$page .= plaatprotect_link('pid='.PAGE_HUMIDITY, t('LINK_HUMIDITY'));
+	$page .= '</td>';		
+	$page .= '<td>';
+	$page .= plaatprotect_link('pid='.PAGE_LUMINANCE, t('LINK_LUMINANCE'));
+	$page .= '</td>';
+	$page .= '</tr>';
+	
 	$page .= '<tr>';	
 	$page .= '<td>';
 	$settings_password = plaatprotect_db_config_value('settings_password',CATEGORY_SECURITY);		
@@ -271,15 +278,15 @@ function plaatprotect_home_page() {
 	switch (plaatprotect_db_config_value('alarm_scenario',CATEGORY_GENERAL)) {
 
 		case SCENARIO_SLEEP: 
-			$page .= plaatprotect_link('pid='.$pid.'&sid='.SCENARIO_SLEEP.'&eid='.EVENT_SWITCH_SCENARIO, t('SCENARIO_SLEEP'));
+			$page .= plaatprotect_link_confirm('pid='.$pid.'&sid='.SCENARIO_SLEEP.'&eid='.EVENT_SWITCH_SCENARIO, t('SCENARIO_SLEEP'), t('ARE_YOU_SURE'));
 			break;
 					
 		case SCENARIO_AWAY: 
-			$page .= plaatprotect_link('pid='.$pid.'&sid='.SCENARIO_AWAY.'&eid='.EVENT_SWITCH_SCENARIO, t('SCENARIO_AWAY'));
+			$page .= plaatprotect_link_confirm('pid='.$pid.'&sid='.SCENARIO_AWAY.'&eid='.EVENT_SWITCH_SCENARIO, t('SCENARIO_AWAY'), t('ARE_YOU_SURE'));
 		   break;
 			
 		default: 
-			$page .= plaatprotect_link('pid='.$pid.'&sid='.SCENARIO_HOME.'&eid='.EVENT_SWITCH_SCENARIO, t('SCENARIO_HOME'));
+			$page .= plaatprotect_link_confirm('pid='.$pid.'&sid='.SCENARIO_HOME.'&eid='.EVENT_SWITCH_SCENARIO, t('SCENARIO_HOME'), t('ARE_YOU_SURE'));
 			break;
 	}
 	$page .= '</td>';
@@ -288,11 +295,11 @@ function plaatprotect_home_page() {
 	switch (plaatprotect_db_config_value('panic_on',CATEGORY_GENERAL)) {
 	
 		case PANIC_OFF: 
-			$page .= plaatprotect_link('pid='.$pid.'&eid='.EVENT_ON, t('LINK_PANIC_ON'));
+			$page .= plaatprotect_link_confirm('pid='.$pid.'&eid='.EVENT_ON, t('LINK_PANIC_ON'), t('ARE_YOU_SURE'));
 			break;
 					
 		case PANIC_ON: 
-			$page .= plaatprotect_link('pid='.$pid.'&eid='.EVENT_OFF, t('LINK_PANIC_OFF'));
+			$page .= plaatprotect_link_confirm('pid='.$pid.'&eid='.EVENT_OFF, t('LINK_PANIC_OFF'), t('ARE_YOU_SURE'));
 		   break;
 	}
 	$page .= '</td>';

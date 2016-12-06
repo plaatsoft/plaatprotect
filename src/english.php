@@ -33,6 +33,7 @@ $lang['THEME_TO_LIGHT'] = 'Light theme';
 $lang['THEME_TO_DARK'] = 'Dark theme';
 $lang['ENGLISH'] = 'English';
 $lang['DUTCH'] = 'Dutch';
+$lang['ARE_YOU_SURE'] = 'Are you sure?';
 
 $lang['DAY_0']           = 'Sun';
 $lang['DAY_1']           = 'Mon';
@@ -83,8 +84,6 @@ $lang['LINK_SETTINGS']      = i('cog') . 'Settings';
 $lang['LINK_RELEASE_NOTES'] = i('calendar') . 'Release Notes';
 $lang['LINK_ABOUT']         = i('book') . 'About';
 $lang['LINK_DONATE']        = i('money') . 'Donate';
-$lang['LINK_BATTERY']       = i('area-chart') . 'Battery';
-$lang['LINK_TEMPERATURE']   = i('area-chart') . 'Temperature';
 $lang['LINK_DELETE']        = i('remove').'Delete'; 
 $lang['LINK_WEBCAM']        = i('camera') . 'Webcams'; 
 $lang['LINK_ZIGBEE']        = i('wifi') . 'Zigbee';
@@ -93,6 +92,10 @@ $lang['LINK_ARCHIVE']       = i('folder-open') . 'Archive';
 $lang['LINK_ZWAVE']         = i('wifi') . 'Z-Wave'; 
 $lang['LINK_NOTIFICATION']  = i('folder-open') . 'Notification'; 
 $lang['LINK_CHART']         = i('area-chart') . 'Movement'; 
+$lang['LINK_BATTERY']       = i('area-chart') . 'Battery';
+$lang['LINK_HUMIDITY']      = i('area-chart') . 'Humidity';
+$lang['LINK_TEMPERATURE']   = i('area-chart') . 'Temperature';
+$lang['LINK_LUMINANCE']    = i('area-chart') . 'Luminance';
 
 $lang['LINK_ON']             = 'ON'; 
 $lang['LINK_OFF']            = 'OFF'; 

@@ -56,6 +56,8 @@ define('PAGE_SETTING_LIST',         26);
 define('PAGE_SETTING_EDIT',         27);
 define('PAGE_BATTERY',              28);
 define('PAGE_TEMPERATURE',          29);
+define('PAGE_HUMIDITY',             30);
+define('PAGE_LUMINANCE',				31);
 
 /*
 ** -----------
@@ -94,13 +96,13 @@ define('EVENT_FILTER',              133);
 ** -----------
 */
 
-define('SCENARIO_HOME',   1);
-define('SCENARIO_SLEEP',  2);
-define('SCENARIO_AWAY',   3);
-define('SCENARIO_PANIC',  4);
+define('SCENARIO_HOME',   				1);
+define('SCENARIO_SLEEP',  				2);
+define('SCENARIO_AWAY',  				3);
+define('SCENARIO_PANIC',  				4);
 
-define('PANIC_ON',        1);
-define('PANIC_OFF',       0);
+define('PANIC_ON',        				1);
+define('PANIC_OFF',       				0);
 
 /*
 ** -----------
@@ -269,7 +271,7 @@ function general_header() {
 
   $page .= add_icons();
 
-  $page .= loadJS('js/link.js');
+  $page .= loadJS('js/link2.js');
   
    $page .= loadCSS('css/general1.css');
 
@@ -489,11 +491,7 @@ function plaatprotect_token_encode($token) {
  * Create button like link 
  */
 function plaatprotect_link($parameters, $label, $title="") {
-   
-	global $link_counter;
-	
-	$link_counter++;
-	
+   	
 	$link  = '<a href="javascript:link(\''.plaatprotect_token_encode($parameters).'\');" class="link" ';			
 	
 	if (strlen($title)!=0) {
@@ -501,6 +499,17 @@ function plaatprotect_link($parameters, $label, $title="") {
 	}
 	
 	$link .= '>'.$label.'</a>';	
+	return $link;
+}
+
+/**
+ * Create hidden link with popup
+ */ 
+function plaatprotect_link_confirm($parameters, $label, $question="") {
+   			
+	$link  = '<a href="javascript:show_confirm(\''.$question.'\',\''.plaatprotect_token_encode($parameters).'\');" class="link" ';
+	$link .= '>'.$label.'</a>';	
+		
 	return $link;
 }
 

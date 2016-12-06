@@ -23,9 +23,9 @@
   
 $time_start = microtime(true);
 
-include "config.inc";
-include "general.inc";
-include "database.inc";
+include "config.php";
+include "general.php";
+include "database.php";
 
 /*
 ** ---------------------
@@ -35,10 +35,10 @@ include "database.inc";
 
 plaatprotect_db_connect($dbhost, $dbuser, $dbpass, $dbname);
 
-#$zwave_present = plaatprotect_db_config_value('zwave_present', CATEGORY_ZWAVE);
-#if ($zwave_present=="true") {
-#   exec('cd '.BASE_DIR.'/interfaces;php zwave.php > /dev/null 2>&1 &');
-#}
+$zwave_present = plaatprotect_db_config_value('zwave_present', CATEGORY_ZWAVE);
+if ($zwave_present=="true") {
+   exec('cd '.BASE_DIR.'/interfaces;php zwave.php > /dev/null 2>&1 &');
+}
 
 $webcam_present_1 = plaatprotect_db_config_value('webcam_present', CATEGORY_WEBCAM_1);
 if ($webcam_present_1=="true") {
