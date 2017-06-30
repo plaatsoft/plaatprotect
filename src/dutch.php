@@ -251,7 +251,7 @@ $lang['ZWAVE_VERSION'] = 'Versie';
 $lang['ZWAVE_STATE'] = 'Status';
 $lang['ZWAVE_HOME'] = 'Thuis';
 $lang['ZWAVE_SLEEP'] = 'Slapen';
-$lang['ZWAVE_AWAY'] = 'Weg';s
+$lang['ZWAVE_AWAY'] = 'Weg';
 $lang['ZWAVE_PANIC'] = 'Paniek';
 
 /*
