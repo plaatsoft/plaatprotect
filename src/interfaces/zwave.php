@@ -41,7 +41,8 @@ define( 'LOCK_FILE', "/tmp/".basename( $argv[0], ".php" ).".lock" );
 if( plaatprotect_islocked() ) die( "Already running.\n" ); 
 
 // Open Aeotec Zstick (Gen. 5) device 
-exec('stty -F /dev/ttyACM0 9600 raw');
+exec('stty -F /dev/ttyACM0 cs8 9600 ignbrk -brkint -imaxbel -opost -onlcr -isig -icanon -iexten -echo -echoe -echok -echoctl -echoke noflsh -ixon -crtscts');
+//exec('stty -F /dev/ttyACM0 9600 raw');
 $fp=fopen("/dev/ttyACM0","c+");
 	
 /**
@@ -1008,6 +1009,9 @@ function Receive() {
 
     $timer=0;
     $data .= $c;
+
+    echo $c;
+
     $count++;
 	 
 	 if (($start==0) && ($c==chr(0x06))) {
@@ -1119,6 +1123,10 @@ function plaatprotect_zwave_state_machine() {
 			if ($data->value=="off") {
 			
 				/* Disable Sirene */
+				SendDataActiveHorn($data->zid, 0, $data->zid);
+				Receive();
+				SendDataActiveHorn($data->zid, 0, $data->zid);
+				Receive();
 				SendDataActiveHorn($data->zid, 0, $data->zid);
 				Receive();
 				
