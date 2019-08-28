@@ -29,7 +29,7 @@
 
 function plaatprotect_luminance_page() {
 
-	// input
+		// input
 	global $pid;
 	global $date;
 	
@@ -44,23 +44,20 @@ function plaatprotect_luminance_page() {
 		
 	$data="";
 	
-	while ($i<$offset) {
-
-		$first = true;
-		
-		$timestamp1 = date("Y-m-d H:i:s", $current_date+($step*$i));
-		$timestamp2 = date("Y-m-d H:i:s", $current_date+($step*(++$i)));
+	$timestamp1 = date("Y-m-d 00:00:00", $current_date+($step*$i));
+	$timestamp2 = date("Y-m-d 23:59:59", $current_date+($step*(++$i)));
 				
-		$sql1 = 'select zid, type from zwave where type="Sensor" order by zid';
-		$result1 = plaatprotect_db_query($sql1);
-		while ($node = plaatprotect_db_fetch_object($result1)) {
+	$sql1 = 'select zid  from sensor group by zid';
+	$result1 = plaatprotect_db_query($sql1);
+	while ($node = plaatprotect_db_fetch_object($result1)) {
 		
-			$sql2  = 'select timestamp, zid, luminance from sensor where luminance>0 and ';
-			$sql2 .= 'timestamp>="'.$timestamp1.'" and timestamp<="'.$timestamp2.'" and zid='.$node->zid.' order by timestamp';
-		
-			$result2 = plaatprotect_db_query($sql2);
-			$row = plaatprotect_db_fetch_object($result2);
+		$sql2  = 'select timestamp, zid, luminance from sensor where ';
+		$sql2 .= 'timestamp>="'.$timestamp1.'" and timestamp<="'.$timestamp2.'" and zid='.$node->zid.' order by timestamp';
+						
+		$result2 = plaatprotect_db_query($sql2);
 			
+		while ($row = plaatprotect_db_fetch_object($result2)) {
+				
 			$value = 0;
 			if (isset($row->zid)) {
 				$value = $row->luminance;
@@ -70,18 +67,15 @@ function plaatprotect_luminance_page() {
 				$data .= ',';
 			}
 				
-			if ($first) {
-				$data .= "['".$i."',";
-				$first=false;
-			}
+			$data .= "['".substr($row->timestamp,11,5)."',";
+			$data .= round($value,2).']';
 			
-			$data .= $value;			
 		}				
-		$data .= ']';
+		break;
 	}
 	
 	$json2 = "[".$data."]";
-		
+
 	$page = '
 		   <script type="text/javascript" src="https://www.google.com/jsapi"></script>
 			<script type="text/javascript">
@@ -91,7 +85,9 @@ function plaatprotect_luminance_page() {
 			function drawChart() {
 
 				var data = new google.visualization.DataTable();
-				data.addColumn("string", "Time");';
+				data.addColumn("string", "Time");
+				data.addColumn("number",  "Lumance");
+				';
 				
 				$sql1 = 'select zid, type from zwave where type="Sensor" order by zid';
 				$result1 = plaatprotect_db_query($sql1);

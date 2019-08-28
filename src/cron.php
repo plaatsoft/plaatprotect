@@ -49,7 +49,7 @@ exec('cd '.BASE_DIR.'/interfaces; php event.php > /dev/null 2>&1 &');
 
 exec('cd '.BASE_DIR.'/interfaces; php zigbee.php > /dev/null 2>&1 &');	
 
-$query  = 'select cid from cron where DATE(last_run)!="'.date("Y-m-d").'"'; 
+$query  = 'select cid from cron where DATE(last_run)>"'.date()-.'"'; 
 $result = plaatprotect_db_query($query);	
 if ($data = plaatprotect_db_fetch_object($result)) {
 	
@@ -58,10 +58,17 @@ if ($data = plaatprotect_db_fetch_object($result)) {
 		
 			case 1:
 				// Delete old webcam recording
-				$dir = BASE_DIR.'/webcam/'.date('Y-m-d', strtotime('-30 days'));
+				$dir = BASE_DIR.'/webcam/'.date('Y-m-d H:M:s', strtotime('-30 days'));
 				exec('rm -rf '.$dir);
 				plaatprotect_db_cron_update($data->cid);
 				break;
+				
+			case 2:
+				// Read Hue Sensors
+				exec('cd '.BASE_DIR.'/interfaces;php hue_sensors.php > /dev/null 2>&1 &');
+				plaatprotect_db_cron_update($data->cid);
+				break;
+				
 		}
 }
 

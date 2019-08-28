@@ -38,50 +38,57 @@ function plaatprotect_temperature_page() {
 	$month = ltrim($month ,'0');
 	$current_date = mktime(0, 0, 0, $month, $day, $year);  
 	
-	$i=0;	
-	$offset = 24;
-	$step = (24*60*60)/$offset;
+	$step = 300;
 		
 	$data="";
 	
-	while ($i<$offset) {
-
-		$first = true;
-		
+	for ($i=0; $i<288; $i++) {
+	
 		$timestamp1 = date("Y-m-d H:i:s", $current_date+($step*$i));
-		$timestamp2 = date("Y-m-d H:i:s", $current_date+($step*(++$i)));
+		$timestamp2 = date("Y-m-d H:i:s", $current_date+($step*($i+1)));
 				
-		$sql1 = 'select zid, type from zwave where type="Sensor" order by zid';
+		$sql1 = 'select zid  from sensor group by zid';
 		$result1 = plaatprotect_db_query($sql1);
+		
+		$first=true;
+		$found=false;
 		while ($node = plaatprotect_db_fetch_object($result1)) {
-		
-			$sql2  = 'select timestamp, zid, temperature from sensor where temperature>0 and ';
+			
+			$sql2  = 'select timestamp, zid, temperature from sensor where ';
 			$sql2 .= 'timestamp>="'.$timestamp1.'" and timestamp<="'.$timestamp2.'" and zid='.$node->zid.' order by timestamp';
-		
+								
 			$result2 = plaatprotect_db_query($sql2);
-			$row = plaatprotect_db_fetch_object($result2);
-			
-			$value = 0;
-			if (isset($row->zid)) {
-				$value = $row->temperature;
-			}
-			
+				
+			while ($row = plaatprotect_db_fetch_object($result2)) {
+					
+				$found=true;
+					
+				$value = 0;
+				if (isset($row->zid)) {
+					$value = $row->temperature;
+				} 
+				
+				if ($first==true) {
+					if (strlen($data)>0) {
+						$data .= ',';
+					}					
+					$data .= "['".substr($timestamp1,11,5)."'";					
+					$first=false;
+				} 
+				$data .= ", ".round($value,2);
+			}		
+		}
+		if ($found==false) {
 			if (strlen($data)>0) {
 				$data .= ',';
-			}
-				
-			if ($first) {
-				$data .= "['".$i."',";
-				$first=false;
-			}
-			
-			$data .= $value;			
-		}				
-		$data .= ']';
+			}	
+			$data .= "['".substr($timestamp1,11,5)."',0,0";
+		}
+		$data .= ']';	
 	}
 	
 	$json2 = "[".$data."]";
-		
+
 	$page = '
 		   <script type="text/javascript" src="https://www.google.com/jsapi"></script>
 			<script type="text/javascript">
@@ -93,6 +100,12 @@ function plaatprotect_temperature_page() {
 				var data = new google.visualization.DataTable();
 				data.addColumn("string", "Time");';
 				
+				$sql3 = 'select zid from sensor group by zid';
+				$result3 = plaatprotect_db_query($sql3);	
+				while ($node = plaatprotect_db_fetch_object($result3)) {
+					$page .= 'data.addColumn("number", "'.$node->zid.'");'."\r\n";
+				};
+							
 				$sql1 = 'select zid, type from zwave where type="Sensor" order by zid';
 				$result1 = plaatprotect_db_query($sql1);
 				while ($node = plaatprotect_db_fetch_object($result1)) {
@@ -116,7 +129,7 @@ function plaatprotect_temperature_page() {
 		}
 		</script>';
 	
-	$page .= '<h1>Temperature Chart '.plaatprotect_dayofweek($date).' '.$day.'-'.$month.'-'.$year.'</h1>';
+	$page .= '<h1>Temperature '.plaatprotect_dayofweek($date).' '.$day.'-'.$month.'-'.$year.'</h1>';
 
 	$page .= '<div id="chart_div" style="width:950px; height:350px"></div>';
 	

@@ -264,13 +264,15 @@ function plaatprotect_db_get_session($ip, $new=false) {
 		if (($new==true) || ((time()-strtotime($data->timestamp))>(60*15))) {		
 			$session_id = md5(date('Y-m-d H:i:s'));
 		}
-			   
-		$sql = 'update session set timestamp=SYSDATE(), session_id="'.$session_id.'", requests='.++$requests.' where sid="'.$data->sid.'"';
-	   plaatprotect_db_query($sql);
+
+		$now = date('Y-m-d H:i:s');
+		$sql = 'update session set timestamp="'.$now.'", session_id="'.$session_id.'", requests='.++$requests.' where sid="'.$data->sid.'"';
+	    plaatprotect_db_query($sql);
 	  
    } else {
 
-		$sql = 'insert into session (timestamp, ip, requests, language, theme) value (SYSDATE(), "'.$ip.'", 1, "en", "light")';
+		$now = date('Y-m-d H:i:s');
+		$sql = 'insert into session (timestamp, ip, requests, language, theme, session_id) value ("'.$now.'", "'.$ip.'", 1, "en", "light", "'.$session_id.'")';
 		plaatprotect_db_query($sql);
 	}
 
@@ -327,7 +329,8 @@ function plaatprotect_db_config($key, $category=0) {
 
 function plaatprotect_db_config_update($config) {
 
-  $query = 'update config set value="'.$config->value.'", date=SYSDATE() where id='.$config->id;		
+  $now = date('Y-m-d H:i:s');
+  $query = 'update config set value="'.$config->value.'", date="'.$now.'" where id='.$config->id;		
   
   return plaatprotect_db_query($query);
 }
