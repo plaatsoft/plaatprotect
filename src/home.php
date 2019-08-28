@@ -13,7 +13,7 @@
 **  Or send an email to the following address.
 **  Email   : info@plaatsoft.nl
 **
-**  All copyrights reserved (c) 2008-2016 PlaatSoft
+**  All copyrights reserved (c) 1996-2019 PlaatSoft
 */
 
 /**
@@ -32,9 +32,15 @@ $version = plaatprotect_db_config_value('database_version', CATEGORY_GENERAL);
 $username = plaatprotect_post("username", "");
 $password = plaatprotect_post("password", "");
 
-$webcam_present = plaatprotect_db_config_value('webcam_present', CATEGORY_WEBCAM_1);
+$webcam_present1 = plaatprotect_db_config_value('webcam_present', CATEGORY_WEBCAM_1);
+$webcam_present2 = plaatprotect_db_config_value('webcam_present', CATEGORY_WEBCAM_2);
 $hue_present = plaatprotect_db_config_value('hue_present', CATEGORY_ZIGBEE);
 $zwave_present = plaatprotect_db_config_value('zwave_present', CATEGORY_ZWAVE);
+
+$enable_battery_view = plaatprotect_db_config_value('enable_battery_view', CATEGORY_GENERAL);
+$enable_temperature_view = plaatprotect_db_config_value('enable_temperature_view', CATEGORY_GENERAL);
+$enable_luminance_view = plaatprotect_db_config_value('enable_luminance_view', CATEGORY_GENERAL);
+$enable_humidity_view = plaatprotect_db_config_value('enable_humidity_view', CATEGORY_GENERAL);
 
 /*
 ** ---------------------
@@ -132,13 +138,13 @@ function plaatprotect_home_login_event() {
 
 function plaatprotect_home_login_page() {
 
-   // input
-   global $id;
+	// input	
+	global $id;
 	global $name;
 	global $version;
 			
 	$page = '<h1>';
-   $page .= t('TITLE').' ' ;
+	$page .= t('TITLE').' ' ;
 	$page .= '<span id="version">'.$version."</span>";
 	if (strlen($name)>0) {
 		$page .= ' ('.$name.') ';
@@ -179,15 +185,21 @@ function plaatprotect_home_page() {
 
 	// input	
 	global $pid;
-	global $webcam_present;	
+	global $webcam_present1;	
+	global $webcam_present2;	
 	global $zwave_present;
 	global $hue_present;
 	global $name;
 	global $session;
 	global $version;
 	
+	global $enable_battery_view;
+	global $enable_temperature_view;
+	global $enable_luminance_view;
+	global $enable_humidity_view;
+	
 	$page = '<h1>';
-   $page .= t('TITLE').' ';
+	$page .= t('TITLE').' ';
 	$page .= '<span id="version">'.$version."</span>";
 	if (strlen($name)>0) {
 		$page .= ' ('.$name.') ';
@@ -206,17 +218,27 @@ function plaatprotect_home_page() {
 		
 	$page .= '<tr>';		
 	$page .= '<td>';
-	$page .= plaatprotect_link('pid='.PAGE_WEBCAM, t('LINK_WEBCAM'));
-	$page .= '</td>';	
-	$page .= '<td>';
-	$page .= plaatprotect_link('pid='.PAGE_ZWAVE, t('LINK_ZWAVE'));
+	if (($webcam_present1=="true") || ($webcam_present2=="true")) {
+		$page .= plaatprotect_link('pid='.PAGE_WEBCAM, t('LINK_WEBCAM'));
+	}	
 	$page .= '</td>';		
+	
 	$page .= '<td>';
-	$page .= plaatprotect_link('pid='.PAGE_ZIGBEE, t('LINK_ZIGBEE'));
+	if ($hue_present=="true") {
+		$page .= plaatprotect_link('pid='.PAGE_ZIGBEE, t('LINK_ZIGBEE'));
+	}
 	$page .= '</td>';		
+	
 	$page .= '<td>';
 	$page .= plaatprotect_link('pid='.PAGE_NOTIFICATION, t('LINK_NOTIFICATION'));
 	$page .= '</td>';		
+		
+	$page .= '<td>';
+	if ($zwave_present=="true") {
+		$page .= plaatprotect_link('pid='.PAGE_ZWAVE, t('LINK_ZWAVE'));
+	}
+	$page .= '</td>';	
+	
 	$page .= '</tr>';
 	
 	$page .= '<tr>';	
@@ -234,17 +256,25 @@ function plaatprotect_home_page() {
 				
 	$page .= '<tr>';	
 	$page .= '<td>';
-	$page .= plaatprotect_link('pid='.PAGE_BATTERY, t('LINK_BATTERY'));
+	if ($enable_battery_view=="true") {
+		$page .= plaatprotect_link('pid='.PAGE_BATTERY, t('LINK_BATTERY'));
+	}
 	$page .= '</td>';		
 	$page .= '<td>';		
-	$page .= plaatprotect_link('pid='.PAGE_TEMPERATURE, t('LINK_TEMPERATURE'));
+	if ($enable_temperature_view=="true") {
+		$page .= plaatprotect_link('pid='.PAGE_TEMPERATURE, t('LINK_TEMPERATURE'));
+	}
 	$page .= '</td>';
-	$page .= '<td>';
-	$page .= plaatprotect_link('pid='.PAGE_HUMIDITY, t('LINK_HUMIDITY'));
 	$page .= '</td>';		
 	$page .= '<td>';
-	$page .= plaatprotect_link('pid='.PAGE_LUMINANCE, t('LINK_LUMINANCE'));
+	if ($enable_luminance_view=="true") {
+		$page .= plaatprotect_link('pid='.PAGE_LUMINANCE, t('LINK_LUMINANCE'));
+	}
 	$page .= '</td>';
+	$page .= '<td>';
+	if ($enable_humidity_view=="true") {
+		$page .= plaatprotect_link('pid='.PAGE_HUMIDITY, t('LINK_HUMIDITY'));
+	}	
 	$page .= '</tr>';
 	
 	$page .= '<tr>';	

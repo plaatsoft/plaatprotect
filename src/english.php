@@ -13,7 +13,7 @@
 **  Or send an email to the following address.
 **  Email   : info@plaatsoft.nl
 **
-**  All copyrights reserved (c) 2008-2016 PlaatSoft
+**  All copyrights reserved (c) 1996-2019 PlaatSoft
 */
 
 /**
@@ -28,7 +28,7 @@
 */
 
 $lang['TITLE'] = 'PlaatProtect';
-$lang['LINK_COPYRIGHT'] = '<a class="normal_link" href="http://www.plaatsoft.nl/">PlaatSoft</a> 2008-'.date("Y").' - All Copyright Reserved ';
+$lang['LINK_COPYRIGHT'] = '<a class="normal_link" href="http://www.plaatsoft.nl/">PlaatSoft</a> 1996-'.date("Y").' - All Copyright Reserved ';
 $lang['THEME_TO_LIGHT'] = 'Light theme';
 $lang['THEME_TO_DARK'] = 'Dark theme';
 $lang['ENGLISH'] = 'English';
@@ -199,6 +199,11 @@ $lang['mobile_nma_key'] = 'Notify My Android (NMA) App Key';
 
 $lang['device_offline_timeout'] = 'Device Offline timeout in seconds';
 $lang['alarm_duration'] = 'Alarm duration in seconds';
+
+$lang['enable_battery_view'] = 'Enable Battery View';
+$lang['enable_temperature_view'] = 'Enable Temperature View';
+$lang['enable_humidity_view'] = 'Enable Humidity View';
+$lang['enable_luminance_view'] = 'Enable Luminance View';
 
 $lang['CATEGORY0']  = 'General'; 
 $lang['CATEGORY11'] = 'Z-Wave'; 
