@@ -27,7 +27,7 @@
 ** ---------------------
 */
 
-$name = plaatprotect_db_config_value('system_name', CATEGORY_LOOK_AND_FEEL);
+$name = plaatprotect_db_config_value('system_name', CATEGORY_GENERAL);
 $version = plaatprotect_db_config_value('database_version', CATEGORY_GENERAL);
 $username = plaatprotect_post("username", "");
 $password = plaatprotect_post("password", "");
@@ -211,9 +211,11 @@ function plaatprotect_home_page() {
 	$page .= '<table>';
 		
 	$page .= '<tr>';
-	$page .= '<th width="25%"></th>';
-	$page .= '<th width="25%"></th>';
-	$page .= '<th width="25%"></th>';
+	$page .= '<th width="20%"></th>';
+	$page .= '<th width="20%"></th>';
+	$page .= '<th width="20%"></th>';
+	$page .= '<th width="20%"></th>';
+	$page .= '<th width="20%"></th>';
 	$page .= '</tr>';
 		
 	$page .= '<tr>';		
@@ -222,62 +224,73 @@ function plaatprotect_home_page() {
 		$page .= plaatprotect_link('pid='.PAGE_WEBCAM, t('LINK_WEBCAM'));
 	}	
 	$page .= '</td>';		
-	
-	$page .= '<td>';
-	if ($hue_present=="true") {
-		$page .= plaatprotect_link('pid='.PAGE_ZIGBEE, t('LINK_ZIGBEE'));
-	}
-	$page .= '</td>';		
-	
+
 	$page .= '<td>';
 	$page .= plaatprotect_link('pid='.PAGE_NOTIFICATION, t('LINK_NOTIFICATION'));
 	$page .= '</td>';		
 		
 	$page .= '<td>';
-	if ($zwave_present=="true") {
-		$page .= plaatprotect_link('pid='.PAGE_ZWAVE, t('LINK_ZWAVE'));
+	$page .= plaatprotect_link('pid='.PAGE_EVENT_VIEW.'&id=0', t('LINK_LOGGING'));
+	$page .= '</td>';	
+
+	$page .= '<td>';
+	if ($hue_present=="true") {
+		$page .= plaatprotect_link('pid='.PAGE_ZIGBEE, t('LINK_ZIGBEE'));
 	}
 	$page .= '</td>';	
 	
+	$page .= '<td>';
+	if ($zwave_present=="true") {
+		$page .= plaatprotect_link('pid='.PAGE_ZWAVE, t('LINK_ZWAVE'));
+	}
+	$page .= '</td>';
+		
 	$page .= '</tr>';
+		
+	// ---------------------------
 	
 	$page .= '<tr>';	
-	$page .= '<td>';
-	$page .= '</td>';		
-	$page .= '<td>';		
-	$page .= plaatprotect_link('pid='.PAGE_CHART, t('LINK_CHART'));
-	$page .= '</td>';
-	$page .= '<td>';
-	$page .= plaatprotect_link('pid='.PAGE_EVENT_VIEW.'&id=0', t('LINK_LOGGING'));
-	$page .= '</td>';		
-	$page .= '<td>';
-	$page .= '</td>';
-	$page .= '</tr>';
-				
-	$page .= '<tr>';	
+
 	$page .= '<td>';
 	if ($enable_battery_view=="true") {
 		$page .= plaatprotect_link('pid='.PAGE_BATTERY, t('LINK_BATTERY'));
 	}
-	$page .= '</td>';		
+	$page .= '</td>';	
+	
+	$page .= '<td>';		
+	$page .= plaatprotect_link('pid='.PAGE_CHART, t('LINK_CHART'));
+	$page .= '</td>';
+	
 	$page .= '<td>';		
 	if ($enable_temperature_view=="true") {
 		$page .= plaatprotect_link('pid='.PAGE_TEMPERATURE, t('LINK_TEMPERATURE'));
 	}
 	$page .= '</td>';
-	$page .= '</td>';		
+
 	$page .= '<td>';
 	if ($enable_luminance_view=="true") {
 		$page .= plaatprotect_link('pid='.PAGE_LUMINANCE, t('LINK_LUMINANCE'));
 	}
 	$page .= '</td>';
+
 	$page .= '<td>';
 	if ($enable_humidity_view=="true") {
 		$page .= plaatprotect_link('pid='.PAGE_HUMIDITY, t('LINK_HUMIDITY'));
 	}	
+
 	$page .= '</tr>';
+
+	// ---------------------------
+
 	
 	$page .= '<tr>';	
+	
+	$page .= '<td>';
+	$page .= '</td>';
+	
+	$page .= '<td>';
+	$page .= '</td>';
+	
 	$page .= '<td>';
 	$settings_password = plaatprotect_db_config_value('settings_password',CATEGORY_SECURITY);		
 	if (strlen($settings_password)>0) {
@@ -286,17 +299,37 @@ function plaatprotect_home_page() {
 		$page .= plaatprotect_link('pid='.PAGE_SETTING_CATEGORY, t('LINK_SETTINGS')); 
 	}
 	$page .= '</td>';		
+	
+	$page .= '<td>';
+	$page .= '</td>';
+	
+	$page .= '<td>';
+	$page .= '</td>';
+	
+	$page .= '</tr>';
+
+	// ---------------------------
+	
+	$page .= '<tr>';
+	
+	$page .= '<td>';
+	$page .= '</td>';
+	
 	$page .= '<td>';		
 	$page .= plaatprotect_link('pid='.PAGE_DONATE, t('LINK_DONATE'));
 	$page .= '</td>';
+	
 	$page .= '<td>';
 	$page .= plaatprotect_link('pid='.PAGE_ABOUT, t('LINK_ABOUT'));				
 	$page .= '</td>';
+	
 	$page .= '<td>';
 	$page .= plaatprotect_link('pid='.PAGE_RELEASE_NOTES, t('LINK_RELEASE_NOTES'));		
 	$page .= '</td>';
+	
 	$page .= '</tr>';
 	
+	// ---------------------------
 	$page .= '</table>';
 	
 	$page .= '<br/>';	

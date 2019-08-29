@@ -46,6 +46,10 @@ function plaatprotect_temperature_page() {
 	
 		$timestamp1 = date("Y-m-d H:i:s", $current_date+($step*$i));
 		$timestamp2 = date("Y-m-d H:i:s", $current_date+($step*($i+1)));
+		
+		if ($timestamp1>date("Y-m-d H:i:s")) {
+			break;
+		}
 				
 		$sql1 = 'select zid  from sensor group by zid';
 		$result1 = plaatprotect_db_query($sql1);
@@ -103,15 +107,9 @@ function plaatprotect_temperature_page() {
 				$sql3 = 'select zid from sensor group by zid';
 				$result3 = plaatprotect_db_query($sql3);	
 				while ($node = plaatprotect_db_fetch_object($result3)) {
-					$page .= 'data.addColumn("number", "'.$node->zid.'");'."\r\n";
+					$page .= 'data.addColumn("number", "'.plaatprotect_db_hue($node->zid)->location.'");'."\r\n";
 				};
-							
-				$sql1 = 'select zid, type from zwave where type="Sensor" order by zid';
-				$result1 = plaatprotect_db_query($sql1);
-				while ($node = plaatprotect_db_fetch_object($result1)) {
-				
-					$page .= 'data.addColumn("number",  "'.plaatprotect_db_zwave($node->zid)->location.'"); ';
-				};
+	
 				$page .= 'data.addRows('.$json2.');
 
 				var options = {

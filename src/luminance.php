@@ -29,7 +29,7 @@
 
 function plaatprotect_luminance_page() {
 
-		// input
+	// input
 	global $pid;
 	global $date;
 	
@@ -38,40 +38,57 @@ function plaatprotect_luminance_page() {
 	$month = ltrim($month ,'0');
 	$current_date = mktime(0, 0, 0, $month, $day, $year);  
 	
-	$i=0;	
-	$offset = 24;
-	$step = (24*60*60)/$offset;
+	$step = 300;
 		
 	$data="";
 	
-	$timestamp1 = date("Y-m-d 00:00:00", $current_date+($step*$i));
-	$timestamp2 = date("Y-m-d 23:59:59", $current_date+($step*(++$i)));
-				
-	$sql1 = 'select zid  from sensor group by zid';
-	$result1 = plaatprotect_db_query($sql1);
-	while ($node = plaatprotect_db_fetch_object($result1)) {
+	for ($i=0; $i<288; $i++) {
+	
+		$timestamp1 = date("Y-m-d H:i:s", $current_date+($step*$i));
+		$timestamp2 = date("Y-m-d H:i:s", $current_date+($step*($i+1)));
 		
-		$sql2  = 'select timestamp, zid, luminance from sensor where ';
-		$sql2 .= 'timestamp>="'.$timestamp1.'" and timestamp<="'.$timestamp2.'" and zid='.$node->zid.' order by timestamp';
-						
-		$result2 = plaatprotect_db_query($sql2);
-			
-		while ($row = plaatprotect_db_fetch_object($result2)) {
+		if ($timestamp1>date("Y-m-d H:i:s")) {
+			break;
+		}
 				
-			$value = 0;
-			if (isset($row->zid)) {
-				$value = $row->luminance;
-			}
+		$sql1 = 'select zid  from sensor group by zid';
+		$result1 = plaatprotect_db_query($sql1);
+		
+		$first=true;
+		$found=false;
+		while ($node = plaatprotect_db_fetch_object($result1)) {
 			
+			$sql2  = 'select timestamp, zid, luminance from sensor where ';
+			$sql2 .= 'timestamp>="'.$timestamp1.'" and timestamp<="'.$timestamp2.'" and zid='.$node->zid.' order by timestamp';
+								
+			$result2 = plaatprotect_db_query($sql2);
+				
+			while ($row = plaatprotect_db_fetch_object($result2)) {
+					
+				$found=true;
+					
+				$value = 0;
+				if (isset($row->zid)) {
+					$value = $row->luminance;
+				} 
+				
+				if ($first==true) {
+					if (strlen($data)>0) {
+						$data .= ',';
+					}					
+					$data .= "['".substr($timestamp1,11,5)."'";					
+					$first=false;
+				} 
+				$data .= ", ".round($value,2);
+			}		
+		}
+		if ($found==false) {
 			if (strlen($data)>0) {
 				$data .= ',';
-			}
-				
-			$data .= "['".substr($row->timestamp,11,5)."',";
-			$data .= round($value,2).']';
-			
-		}				
-		break;
+			}	
+			$data .= "['".substr($timestamp1,11,5)."',0,0";
+		}
+		$data .= ']';	
 	}
 	
 	$json2 = "[".$data."]";
@@ -85,16 +102,14 @@ function plaatprotect_luminance_page() {
 			function drawChart() {
 
 				var data = new google.visualization.DataTable();
-				data.addColumn("string", "Time");
-				data.addColumn("number",  "Lumance");
-				';
+				data.addColumn("string", "Time");';
 				
-				$sql1 = 'select zid, type from zwave where type="Sensor" order by zid';
-				$result1 = plaatprotect_db_query($sql1);
-				while ($node = plaatprotect_db_fetch_object($result1)) {
-				
-					$page .= 'data.addColumn("number",  "'.plaatprotect_db_zwave($node->zid)->location.'"); ';
+				$sql3 = 'select zid from sensor group by zid';
+				$result3 = plaatprotect_db_query($sql3);	
+				while ($node = plaatprotect_db_fetch_object($result3)) {
+					$page .= 'data.addColumn("number", "'.plaatprotect_db_hue($node->zid)->location.'");'."\r\n";
 				};
+								
 				$page .= 'data.addRows('.$json2.');
 
 				var options = {
@@ -112,7 +127,7 @@ function plaatprotect_luminance_page() {
 		}
 		</script>';
 	
-	$page .= '<h1>Luminance Chart '.plaatprotect_dayofweek($date).' '.$day.'-'.$month.'-'.$year.'</h1>';
+	$page .= '<h1>Luminance '.plaatprotect_dayofweek($date).' '.$day.'-'.$month.'-'.$year.'</h1>';
 
 	$page .= '<div id="chart_div" style="width:950px; height:350px"></div>';
 	

@@ -27,6 +27,18 @@
 ** ---------------------
 */
 
+$note[4] = '<div class="subparagraph">Version 0.4 (29-09-2019)</div>
+<div class="large_text">
+<ul>
+<li>Added system name setting.</li>
+<li>Login username can now also be defined.</li>
+<li>Sensors views can now be enabled/disable as setting.</li>
+<li>Improve temparature chart. Now all sensors data is showed.</li>
+<li>Improve luminance chart. Now all sensors data is showed.</li>
+</ul>
+</div>';
+
+
 $note[3] = '<div class="subparagraph">Version 0.3 (05-12-2016)</div>
 <div class="large_text">
 <ul>

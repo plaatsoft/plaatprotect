@@ -37,3 +37,9 @@ INSERT INTO config (category, token, value, options, date, readonly, rebuild, en
 INSERT INTO config (category, token, value, options, date, readonly, rebuild, encrypt) VALUES 
 (0, 'enable_humidity_view', 'false', 'true,false', '0000-00-00', 0, 0, 0);
 
+INSERT INTO config (category, token, value, options, date, readonly, rebuild, encrypt) VALUES 
+(51, 'home_username', '', '', '0000-00-00', 0, 0, 0);
+
+INSERT INTO config (category, token, value, options, date, readonly, rebuild, encrypt) VALUES 
+(0, 'system_name', '', '', '0000-00-00', 0, 0, 0);
+
