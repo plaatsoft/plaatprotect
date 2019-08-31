@@ -16,7 +16,6 @@
 **  All copyrights reserved (c) 1996-2019 PlaatSoft
 */
 
-
 /**
  * @file
  * @brief contain zigbee page

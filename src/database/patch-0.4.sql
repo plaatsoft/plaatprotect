@@ -11,7 +11,7 @@
 --  Or send an email to the following address.
 --  Email   : info@plaatsoft.nl
 --
---  All copyrights reserved (c) 1996-2018 PlaatSoft
+--  All copyrights reserved (c) 1996-2019 PlaatSoft
 --
 
 UPDATE config SET value="0.4" WHERE token='database_version';
