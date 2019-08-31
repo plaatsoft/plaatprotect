@@ -20,11 +20,14 @@ UPDATE config SET value="0.4" WHERE token='database_version';
 ALTER TABLE `session` CHANGE `sid` `sid` INT(11) NOT NULL AUTO_INCREMENT;
 ALTER TABLE `event` CHANGE `eid` `eid` INT(11) NOT NULL AUTO_INCREMENT;
 ALTER TABLE `config` CHANGE `id` `id` INT(11) NOT NULL AUTO_INCREMENT;
-ALTER TABLE `cron` ADD `step` INT NOT NULL AFTER `last_run`;
 
 -- Cron table
-INSERT INTO cron (`cid`, `note`, `last_run`, `step`) VALUES ('2', 'hue_sensors', '2019-08-25 00:00:00', 60);
-UPDATE `cron` SET `step` = '86400' WHERE `cron`.`cid` = 1;
+ALTER TABLE `cron` ADD `every_x_mins` INT NOT NULL AFTER `last_run`;
+UPDATE `cron` SET `every_x_mins` = '1440' WHERE `cron`.`cid` = 1;
+INSERT INTO cron (`cid`, `note`, `last_run`, `every_x_mins`) VALUES ('2', 'hue_luminance_sensors', '2019-08-31 00:00:00', 5);
+INSERT INTO cron (`cid`, `note`, `last_run`, `every_x_mins`) VALUES ('3', 'hue_motion_sensors', '2019-08-31 00:00:00', 1);
+INSERT INTO cron (`cid`, `note`, `last_run`, `every_x_mins`) VALUES ('4', 'hue_temperature_sensors', '2019-08-31 00:00:00', 5);
+
 
 -- Config table
 INSERT INTO config (category, token, value, options, date, readonly, rebuild, encrypt) VALUES (0, 'enable_battery_view', 'false', 'true,false', '0000-00-00', 0, 0, 0);

@@ -285,13 +285,10 @@ function plaatprotect_db_get_session($ip, $new=false) {
 ** ---------------------
 */
 
-/**
- * Update Cron
- */
 function plaatprotect_db_cron_update($cid) {
 		
 	$query  = 'update cron set '; 
-	$query .= 'last_run = "'.date("Y-m-d H:i:s").'" ';
+	$query .= 'last_run = "'.date("Y-m-d H:i:00").'" ';
 	$query .= 'where cid='.$cid; 
 	
 	return plaatprotect_db_query($query);

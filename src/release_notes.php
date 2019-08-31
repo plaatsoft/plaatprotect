@@ -27,19 +27,19 @@
 ** ---------------------
 */
 
-$note[4] = '<div class="subparagraph">Version 0.4 (29-09-2019)</div>
+$note[4] = '<div class="subparagraph">Version 0.4 (31-08-2019)</div>
 <div class="large_text">
 <ul>
 <li>Added system name setting.</li>
 <li>Login username can now also be defined.</li>
-<li>Sensors views can now be enabled/disable as setting.</li>
-<li>Improve temparature chart. Now all sensors data is showed.</li>
-<li>Improve luminance chart. Now all sensors data is showed.</li>
-<li>Improve motion chart. Now all sensors data is showed.</li>
+<li>Sensors views can now be enabled/disable in settings.</li>
+<li>Improve all views. Now all sensors data is showed in one chart.</li>
+<li>Improve main menu.</li>
+<li>Improve cron job.</li>
+<li>Added support for hue motion sensors.</li>
 <li>Improve database table structure.</li>
 </ul>
 </div>';
-
 
 $note[3] = '<div class="subparagraph">Version 0.3 (05-12-2016)</div>
 <div class="large_text">
