@@ -116,12 +116,13 @@ td > a:last-child {
 }
 
 a, input[type=submit] {
+display: inline-block;
   outline: none;
   background-color: #1E88E5;
   color: #fff;
   text-decoration: none;
   padding: 12px 20px;
-  margin: 0px 10px;
+  margin: 2px;
   cursor: pointer;
 }
 
@@ -139,6 +140,10 @@ a:active, input[type=submit]:active {
 
 .nav {
    margin: 20px;
+}
+
+.menu a {
+	width: 120px;
 }
 
 .copyright {
@@ -245,4 +250,3 @@ a .fa.right {
     0% { transform: rotateY(0deg); }
     100% { transform: rotateY(360deg); }
 }
-

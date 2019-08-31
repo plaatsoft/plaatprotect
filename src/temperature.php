@@ -29,7 +29,7 @@
 
 function plaatprotect_temperature_page() {
 
-	// input
+// input
 	global $pid;
 	global $date;
 	
@@ -39,57 +39,58 @@ function plaatprotect_temperature_page() {
 	$current_date = mktime(0, 0, 0, $month, $day, $year);  
 	
 	$step = 300;
-		
-	$data="";
+	$data = "";
+	$type = ZIGBEE_TYPE_TEMPERATURE;
 	
-	for ($i=0; $i<288; $i++) {
+	for ($i=0; $i<((60*60*24/$step)); $i++) {
 	
 		$timestamp1 = date("Y-m-d H:i:s", $current_date+($step*$i));
 		$timestamp2 = date("Y-m-d H:i:s", $current_date+($step*($i+1)));
 		
+		// break if date is in future
 		if ($timestamp1>date("Y-m-d H:i:s")) {
 			break;
 		}
-				
-		$sql1 = 'select zid  from sensor group by zid';
+
+		$sql1 = 'select zid from zigbee where type='.$type.' order by zid';
 		$result1 = plaatprotect_db_query($sql1);
 		
 		$first=true;
-		$found=false;
 		while ($node = plaatprotect_db_fetch_object($result1)) {
 			
-			$sql2  = 'select timestamp, zid, temperature from sensor where ';
-			$sql2 .= 'timestamp>="'.$timestamp1.'" and timestamp<="'.$timestamp2.'" and zid='.$node->zid.' order by timestamp';
-								
+			$sql2  = 'select value from sensor where timestamp>="'.$timestamp1.'" and timestamp<"'.$timestamp2.'" and zid='.$node->zid.' limit 0,1';
 			$result2 = plaatprotect_db_query($sql2);
-				
-			while ($row = plaatprotect_db_fetch_object($result2)) {
+			$row2 = plaatprotect_db_fetch_object($result2);
 					
-				$found=true;
-					
-				$value = 0;
-				if (isset($row->zid)) {
-					$value = $row->temperature;
-				} 
-				
-				if ($first==true) {
-					if (strlen($data)>0) {
-						$data .= ',';
-					}					
-					$data .= "['".substr($timestamp1,11,5)."'";					
-					$first=false;
-				} 
-				$data .= ", ".round($value,2);
-			}		
+			if ($first==true) {
+				if (strlen($data)>0) {
+					$data .= ',';
+				}		
+				$data .= "['".substr($timestamp1,11,5)."'";					
+				$first=false;
+			} 
+			
+			$value = 0;
+			if (isset($row2->value)) {
+				$value = $row2->value;
+			} 
+			$data .= ",".round($value,2);
+		}	
+		if ($first==false) {
+			$data .= ']';	
 		}
-		if ($found==false) {
-			if (strlen($data)>0) {
-				$data .= ',';
-			}	
-			$data .= "['".substr($timestamp1,11,5)."',0,0";
-		}
-		$data .= ']';	
 	}
+	
+	if (strlen($data)==0) {
+		$data .= '["00:00"';
+		
+		$sql1 = 'select zid from zigbee where type='.$type.' order by zid';
+		$result1 = plaatprotect_db_query($sql1);
+		while ($node = plaatprotect_db_fetch_object($result1)) {
+			$data .= ',0';
+		}
+		$data .= ']';
+	}	
 	
 	$json2 = "[".$data."]";
 
@@ -104,10 +105,10 @@ function plaatprotect_temperature_page() {
 				var data = new google.visualization.DataTable();
 				data.addColumn("string", "Time");';
 				
-				$sql3 = 'select zid from sensor group by zid';
+				$sql3 = 'select zid from zigbee where type='.$type.' order by zid';
 				$result3 = plaatprotect_db_query($sql3);	
 				while ($node = plaatprotect_db_fetch_object($result3)) {
-					$page .= 'data.addColumn("number", "'.plaatprotect_db_hue($node->zid)->location.'");'."\r\n";
+					$page .= 'data.addColumn("number", "'.plaatprotect_db_zigbee($node->zid)->location.'");'."\r\n";
 				};
 	
 				$page .= 'data.addRows('.$json2.');

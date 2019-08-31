@@ -237,14 +237,14 @@ switch ($pid) {
 		$page = plaatprotect_zwave();
 		break;
 		
-	case PAGE_NOTIFICATION: 
-		include "notification.php";
-		$page = plaatprotect_notification();
+	case PAGE_ACTOR: 
+		include "actor.php";
+		$page = plaatprotect_actor();
 		break;
 	
-	case PAGE_CHART: 
-		include "chart.php";
-		$page = plaatprotect_chart();
+	case PAGE_MOTION: 
+		include "motion.php";
+		$page = plaatprotect_motion();
 		break;
 		
 	case PAGE_BATTERY: 

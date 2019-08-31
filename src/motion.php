@@ -18,7 +18,7 @@
 
 /**
  * @file
- * @brief contain day energy in report
+ * @brief show motion chart
  */
  
 /*
@@ -27,7 +27,7 @@
 ** ---------------------
 */
 
-function plaatprotect_chart_page() {
+function plaatprotect_motion_page() {
 
 	// input
 	global $pid;
@@ -38,35 +38,62 @@ function plaatprotect_chart_page() {
 	$month = ltrim($month ,'0');
 	$current_date = mktime(0, 0, 0, $month, $day, $year);  
 	
-   $i=0;	
-	$offset = 12*24;
-	$step = (24*60*60)/$offset;
-		
-	$data="";
+	$step = 300;
+	$data = "";
+	$type = ZIGBEE_TYPE_MOTION;
 	
-	while ($i++<$offset) {
-
+	for ($i=0; $i<((60*60*24/$step)); $i++) {
+	
 		$timestamp1 = date("Y-m-d H:i:s", $current_date+($step*$i));
 		$timestamp2 = date("Y-m-d H:i:s", $current_date+($step*($i+1)));
-			
-		$sql  = 'select eid from event where category='.CATEGORY_ZWAVE.' and action like "%alarm%" and ';
-		$sql .= 'timestamp>="'.$timestamp1.'" and timestamp<="'.$timestamp2.'"';
 		
-		$value = 0;
-		$result = plaatprotect_db_query($sql);
-		$row = plaatprotect_db_fetch_object($result);
-		if (isset($row->eid)) {
-			$value = 1;
+		// break if date is in future
+		if ($timestamp1>date("Y-m-d H:i:s")) {
+			break;
 		}
-		if (strlen($data)>0) {
-			$data .= ',';
+
+		$sql1 = 'select zid from zigbee where type='.$type.' order by zid';
+		$result1 = plaatprotect_db_query($sql1);
+		
+		$first=true;
+		while ($node = plaatprotect_db_fetch_object($result1)) {
+			
+			$sql2  = 'select value from sensor where timestamp>="'.$timestamp1.'" and timestamp<"'.$timestamp2.'" and zid='.$node->zid.' limit 0,1';
+			$result2 = plaatprotect_db_query($sql2);
+			$row2 = plaatprotect_db_fetch_object($result2);
+					
+			if ($first==true) {
+				if (strlen($data)>0) {
+					$data .= ',';
+				}		
+				$data .= "['".substr($timestamp1,11,5)."'";					
+				$first=false;
+			} 
+			
+			$value = 0;
+			if (isset($row2->value)) {
+				$value = $row2->value;
+			} 
+			$data .= ",".round($value,2);
+		}	
+		if ($first==false) {
+			$data .= ']';	
 		}
-		$data .= "['".date("H:i", $current_date+($step*$i))."',";
-		$data .= round($value,2).']';
 	}
 	
-	$json = "[".$data."]";
+	if (strlen($data)==0) {
+		$data .= '["00:00"';
 		
+		$sql1 = 'select zid from zigbee where type='.$type.' order by zid';
+		$result1 = plaatprotect_db_query($sql1);
+		while ($node = plaatprotect_db_fetch_object($result1)) {
+			$data .= ',0';
+		}
+		$data .= ']';
+	}	
+	
+	$json2 = "[".$data."]";
+
 	$page = '
 		   <script type="text/javascript" src="https://www.google.com/jsapi"></script>
 			<script type="text/javascript">
@@ -76,9 +103,15 @@ function plaatprotect_chart_page() {
 			function drawChart() {
 
 				var data = new google.visualization.DataTable();
-				data.addColumn("string", "Time");
-				data.addColumn("number",  "Movement");
-				data.addRows('.$json.');
+				data.addColumn("string", "Time");';
+				
+				$sql3 = 'select zid from zigbee where type='.$type.' order by zid';
+				$result3 = plaatprotect_db_query($sql3);	
+				while ($node = plaatprotect_db_fetch_object($result3)) {
+					$page .= 'data.addColumn("number", "'.plaatprotect_db_zigbee($node->zid)->location.'");'."\r\n";
+				};
+	
+				$page .= 'data.addRows('.$json2.');
 
 				var options = {
 					legend: { position: "top", textStyle: {fontSize: 10} },
@@ -95,10 +128,10 @@ function plaatprotect_chart_page() {
 		}
 		</script>';
 	
-	$page .= '<h1>Movement Chart '.plaatprotect_dayofweek($date).' '.$day.'-'.$month.'-'.$year.'</h1>';
+	$page .= '<h1>Motion '.plaatprotect_dayofweek($date).' '.$day.'-'.$month.'-'.$year.'</h1>';
 
 	$page .= '<div id="chart_div" style="width:950px; height:350px"></div>';
-	
+
 	$page .= '<div class="nav">';
 	$page .= plaatprotect_link('pid='.$pid.'&date='.plaatprotect_prev_day($date), t('LINK_PREV'));
 	$page .= plaatprotect_link('pid='.PAGE_HOME, t('LINK_HOME'));
@@ -114,7 +147,7 @@ function plaatprotect_chart_page() {
 ** ---------------------
 */
 
-function plaatprotect_chart() {
+function plaatprotect_motion() {
 
   /* input */
   global $pid;  
@@ -122,8 +155,8 @@ function plaatprotect_chart() {
 	/* Page handler */
 	switch ($pid) {
 
-		case PAGE_CHART:
-			return plaatprotect_chart_page();
+		case PAGE_MOTION:
+			return plaatprotect_motion_page();
 			break;
 	}
 }

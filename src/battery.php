@@ -13,7 +13,7 @@
 **  Or send an email to the following address.
 **  Email   : info@plaatsoft.nl
 **
-**  All copyrights reserved (c) 1996-2019 PlaatSoft
+**  All copyrights reserved (c) 2008-2016 PlaatSoft
 */
 
 /**
@@ -33,56 +33,67 @@ function plaatprotect_battery_page() {
 	global $pid;
 	global $date;
 	
-	
 	list($year, $month, $day) = explode("-", $date);	
 	$day = ltrim($day ,'0');
 	$month = ltrim($month ,'0');
 	$current_date = mktime(0, 0, 0, $month, $day, $year);  
-		
-   $i=0;	
-	$offset = 24;
-	$step = (24*60*60)/$offset;
-		
-	$data="";
 	
-	while ($i<$offset) {
-
-		$first = true;
-		
+	$step = 300;
+	$data = "";
+	$type = ZIGBEE_TYPE_BATTERY;
+	
+	for ($i=0; $i<((60*60*24/$step)); $i++) {
+	
 		$timestamp1 = date("Y-m-d H:i:s", $current_date+($step*$i));
-		$timestamp2 = date("Y-m-d H:i:s", $current_date+($step*(++$i)));
-				
-		$sql1 = 'select zid, type from zwave where type="Sensor" order by zid';
+		$timestamp2 = date("Y-m-d H:i:s", $current_date+($step*($i+1)));
+		
+		// break if date is in future
+		if ($timestamp1>date("Y-m-d H:i:s")) {
+			break;
+		}
+
+		$sql1 = 'select zid from zigbee where type='.$type.' order by zid';
 		$result1 = plaatprotect_db_query($sql1);
+		
+		$first=true;
 		while ($node = plaatprotect_db_fetch_object($result1)) {
-		
-			$sql2  = 'select timestamp, zid, battery from sensor where battery>0 and ';
-			$sql2 .= 'timestamp>="'.$timestamp1.'" and timestamp<="'.$timestamp2.'" and zid='.$node->zid.' order by timestamp';
-		
+			
+			$sql2  = 'select value from sensor where timestamp>="'.$timestamp1.'" and timestamp<"'.$timestamp2.'" and zid='.$node->zid.' limit 0,1';
 			$result2 = plaatprotect_db_query($sql2);
-			$row = plaatprotect_db_fetch_object($result2);
+			$row2 = plaatprotect_db_fetch_object($result2);
+					
+			if ($first==true) {
+				if (strlen($data)>0) {
+					$data .= ',';
+				}		
+				$data .= "['".substr($timestamp1,11,5)."'";					
+				$first=false;
+			} 
 			
 			$value = 0;
-			if (isset($row->zid)) {
-				$value = $row->battery;
-			}
-			
-			if (strlen($data)>0) {
-				$data .= ',';
-			}
-				
-			if ($first) {
-				$data .= "['".$i."',";
-				$first=false;
-			}
-			
-			$data .= $value;			
-		}				
-		$data .= ']';
+			if (isset($row2->value)) {
+				$value = $row2->value;
+			} 
+			$data .= ",".round($value,2);
+		}	
+		if ($first==false) {
+			$data .= ']';	
+		}
 	}
 	
-	$json2 = "[".$data."]";
+	if (strlen($data)==0) {
+		$data .= '["00:00"';
 		
+		$sql1 = 'select zid from zigbee where type='.$type.' order by zid';
+		$result1 = plaatprotect_db_query($sql1);
+		while ($node = plaatprotect_db_fetch_object($result1)) {
+			$data .= ',0';
+		}
+		$data .= ']';
+	}	
+	
+	$json2 = "[".$data."]";
+
 	$page = '
 		   <script type="text/javascript" src="https://www.google.com/jsapi"></script>
 			<script type="text/javascript">
@@ -94,12 +105,12 @@ function plaatprotect_battery_page() {
 				var data = new google.visualization.DataTable();
 				data.addColumn("string", "Time");';
 				
-				$sql1 = 'select zid, type from zwave where type="Sensor" order by zid';
-				$result1 = plaatprotect_db_query($sql1);
-				while ($node = plaatprotect_db_fetch_object($result1)) {
-				
-					$page .= 'data.addColumn("number",  "'.plaatprotect_db_zwave($node->zid)->location.'"); ';
+				$sql3 = 'select zid from zigbee where type='.$type.' order by zid';
+				$result3 = plaatprotect_db_query($sql3);	
+				while ($node = plaatprotect_db_fetch_object($result3)) {
+					$page .= 'data.addColumn("number", "'.plaatprotect_db_zigbee($node->zid)->location.'");'."\r\n";
 				};
+	
 				$page .= 'data.addRows('.$json2.');
 
 				var options = {

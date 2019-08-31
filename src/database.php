@@ -440,19 +440,9 @@ function plaatprotect_db_zwave_alive($zid) {
 ** ---------------------
 */
 
-function plaatprotect_db_sensor_last($zid, $timestamp) {
+function plaatprotect_db_sensor_insert($zid, $timestamp, $value) {
  	
-   $query  = 'select sid, zid, luminance, temperature, humidity, ultraviolet, battery from sensor where zid='.$zid.' and timestamp="'.$timestamp.'"';
-   $result = plaatprotect_db_query($query); 
-	$row = plaatprotect_db_fetch_object($result);
- 
-	return $row;
-}
-
-function plaatprotect_db_sensor_insert($zid, $timestamp, $luminance, $temperature, $humidity, $ultraviolet, $battery) {
- 	
-	$query  = 'insert into sensor (zid, timestamp, luminance, temperature, humidity, ultraviolet, battery) ';
-	$query .= 'values ('.$zid.',"'.$timestamp.'",'.$luminance.','.$temperature.','.$humidity.','.$ultraviolet.','.$battery.')';
+	$query  = 'insert into sensor (zid, timestamp, value) values ('.$zid.',"'.$timestamp.'",'.$value.')';
 	
 	plaatprotect_db_query($query);
 }
@@ -461,11 +451,7 @@ function plaatprotect_db_sensor_update($sensor) {
 	
 	$query  = 'update sensor set ';
 	$query .= 'zid='.$sensor->zid.',';
-	$query .= 'luminance='.$sensor->luminance.',';
-	$query .= 'temperature='.$sensor->temperature.',';
-	$query .= 'humidity='.$sensor->humidity.',';
-	$query .= 'ultraviolet='.$sensor->ultraviolet.',';
-	$query .= 'battery='.$sensor->battery.' ';
+	$query .= 'value='.$sensor->value.' ';
 	$query .= 'where sid='.$sensor->sid;	
 	
 	plaatprotect_db_query($query);
@@ -473,44 +459,47 @@ function plaatprotect_db_sensor_update($sensor) {
 
 /*
 ** ---------------------
-** HUE
+** ZIGBEE
 ** ---------------------
 */
 
-define('HUE_STATE_OFF',      0);
-define('HUE_STATE_ON',       1);
-define('HUE_STATE_OFFLINE',  2);
+define('ZIGBEE_STATE_OFF',        0);
+define('ZIGBEE_STATE_ON',         1);
+define('ZIGBEE_STATE_OFFLINE',    2);
 
-function plaatprotect_db_hue($hid) {
+define('ZIGBEE_TYPE_LIGHT',       0);
+define('ZIGBEE_TYPE_TEMPERATURE', 1);
+define('ZIGBEE_TYPE_LUMINANCE',   2);
+define('ZIGBEE_TYPE_MOTION',      3);
+define('ZIGBEE_TYPE_BATTERY',     4);
+define('ZIGBEE_TYPE_HUMIDITY',    5);
+
+function plaatprotect_db_zigbee($zid) {
  	
-   $query  = 'select hid, vendor, type, version, location, state, home, sleep, away, panic from hue where hid='.$hid;
+   $query  = 'select zid, vendor, type, version, location, state from zigbee where zid='.$zid;
    $result = plaatprotect_db_query($query); 
 	$row = plaatprotect_db_fetch_object($result);
  
 	return $row;
 }
 
-function plaatprotect_db_hue_update($data) {
+function plaatprotect_db_zigbee_update($data) {
  
-   $query  = 'update hue set '; 
+   $query  = 'update zigbee set '; 
 	$query .= 'vendor="'.plaatprotect_db_escape($data->vendor).'", ';
 	$query .= 'type="'.plaatprotect_db_escape($data->type).'", ';
 	$query .= 'version="'.plaatprotect_db_escape($data->version).'", ';
 	$query .= 'location="'.plaatprotect_db_escape($data->location).'", ';
 	$query .= 'state='.$data->state.', ';
-	$query .= 'home='.$data->home.', ';
-	$query .= 'sleep='.$data->sleep.', ';
-	$query .= 'away='.$data->away.', ';
-	$query .= 'panic='.$data->panic.' ';
-	$query .= 'where hid='.$data->hid; 
+	$query .= 'where zid='.$data->zid; 
 	
 	return plaatprotect_db_query($query);
 }
 
-function plaatprotect_db_hue_insert($hid, $vendor, $type, $version, $location, $state) {
+function plaatprotect_db_zigbee_insert($zid, $vendor, $type, $version, $location, $state) {
  	
-   $query  = 'insert into hue (hid, vendor, type, version, location, state) ';
-	$query .= 'values ('.$hid.',';
+   $query  = 'insert into zigbee (zid, vendor, type, version, location, state) ';
+	$query .= 'values ('.$zid.',';
 	$query .= '"'.plaatprotect_db_escape($vendor).'",';
 	$query .= '"'.plaatprotect_db_escape($type).'",';
 	$query .= '"'.plaatprotect_db_escape($version).'",';
@@ -520,10 +509,55 @@ function plaatprotect_db_hue_insert($hid, $vendor, $type, $version, $location, $
 	return plaatprotect_db_query($query);
 }
 
-function plaatprotect_db_hue_delete($hid) {
+function plaatprotect_db_zigbee_delete($zid) {
  
-	$query = 'delete from hue where hid='.$hid;
+	$query = 'delete from zigbee where zid='.$zid;
 	 
+	return plaatprotect_db_query($query);
+}
+
+
+/*
+** ---------------------
+** ACTOR
+** ---------------------
+*/
+
+define('ACTOR_TYPE_BULB',        0);
+define('ACTOR_TYPE_MAIL',        1);
+define('ACTOR_TYPE_MOBILE',      2);
+define('ACTOR_TYPE_HORN',        3);
+
+function plaatprotect_db_actor($aid) {
+ 	
+   $query  = 'select aid, vendor, version, type, location, home, sleep, away, panic from actor where aid='.$aid;
+   $result = plaatprotect_db_query($query); 
+   $row = plaatprotect_db_fetch_object($result);
+ 
+   return $row;
+}
+
+function plaatprotect_db_actor_update($data) {
+ 
+    $query  = 'update actor set '; 
+	$query .= 'vendor="'.plaatprotect_db_escape($data->vendor).'", ';
+	$query .= 'version="'.plaatprotect_db_escape($data->version).'", ';
+	$query .= 'type="'.plaatprotect_db_escape($data->type).'", ';	
+	$query .= 'location="'.plaatprotect_db_escape($data->location).'" ';
+	$query .= 'where aid='.$data->aid; 
+
+	return plaatprotect_db_query($query);
+}
+
+function plaatprotect_db_actor_insert($aid, $vendor, $type, $version, $location) {
+ 	
+    $query  = 'insert into actor (aid, vendor, version, type, location) ';
+	$query .= 'values ('.$aid.',';
+	$query .= '"'.plaatprotect_db_escape($vendor).'",';
+	$query .= '"'.plaatprotect_db_escape($version).'",';
+	$query .= plaatprotect_db_escape($type).',';
+	$query .= '"'.plaatprotect_db_escape($location).'")';
+	
 	return plaatprotect_db_query($query);
 }
 

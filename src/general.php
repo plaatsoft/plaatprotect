@@ -48,8 +48,8 @@ define('PAGE_ZWAVE_EDIT',           18);
 define('PAGE_ABOUT',                19);
 define('PAGE_DONATE',               20);
 define('PAGE_RELEASE_NOTES',        21);
-define('PAGE_CHART',                22);
-define('PAGE_NOTIFICATION',         23);
+define('PAGE_MOTION',               22);
+define('PAGE_ACTOR',                23);
 define('PAGE_SETTING_LOGIN',        24);
 define('PAGE_SETTING_CATEGORY',     25);
 define('PAGE_SETTING_LIST',         26);
@@ -89,6 +89,7 @@ define('EVENT_ON',                  130);
 define('EVENT_OFF',                 131);
 define('EVENT_EDIT',                132);
 define('EVENT_FILTER',              133);
+define('EVENT_REFRESH',             134);
 
 /*
 ** -----------
@@ -557,7 +558,7 @@ function plaatprotect_create_path($path) {
  *   Documentation: wplaat\n
  *
  * @section Licence
- *   <b>Copyright (c) 2008-2016 Plaatsoft</b>
+ *   <b>Copyright (c) 1996-2019 Plaatsoft</b>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by

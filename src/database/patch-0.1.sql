@@ -11,7 +11,7 @@
 --  Or send an email to the following address.
 --  Email   : info@plaatsoft.nl
 --
---  All copyrights reserved (c) 2008-2016 PlaatSoft
+--  All copyrights reserved (c) 1996-2019 PlaatSoft
 --
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";

@@ -34,13 +34,14 @@ $password = plaatprotect_post("password", "");
 
 $webcam_present1 = plaatprotect_db_config_value('webcam_present', CATEGORY_WEBCAM_1);
 $webcam_present2 = plaatprotect_db_config_value('webcam_present', CATEGORY_WEBCAM_2);
-$hue_present = plaatprotect_db_config_value('hue_present', CATEGORY_ZIGBEE);
+$zigbee_present = plaatprotect_db_config_value('zigbee_present', CATEGORY_ZIGBEE);
 $zwave_present = plaatprotect_db_config_value('zwave_present', CATEGORY_ZWAVE);
 
 $enable_battery_view = plaatprotect_db_config_value('enable_battery_view', CATEGORY_GENERAL);
 $enable_temperature_view = plaatprotect_db_config_value('enable_temperature_view', CATEGORY_GENERAL);
 $enable_luminance_view = plaatprotect_db_config_value('enable_luminance_view', CATEGORY_GENERAL);
 $enable_humidity_view = plaatprotect_db_config_value('enable_humidity_view', CATEGORY_GENERAL);
+$enable_motion_view = plaatprotect_db_config_value('enable_motion_view', CATEGORY_GENERAL);
 
 /*
 ** ---------------------
@@ -188,7 +189,7 @@ function plaatprotect_home_page() {
 	global $webcam_present1;	
 	global $webcam_present2;	
 	global $zwave_present;
-	global $hue_present;
+	global $zigbee_present;
 	global $name;
 	global $session;
 	global $version;
@@ -197,6 +198,7 @@ function plaatprotect_home_page() {
 	global $enable_temperature_view;
 	global $enable_luminance_view;
 	global $enable_humidity_view;
+	global $enable_motion_view;
 	
 	$page = '<h1>';
 	$page .= t('TITLE').' ';
@@ -208,136 +210,79 @@ function plaatprotect_home_page() {
 
 	$page .= '<div class="home">';
 
-	$page .= '<table>';
-		
-	$page .= '<tr>';
-	$page .= '<th width="20%"></th>';
-	$page .= '<th width="20%"></th>';
-	$page .= '<th width="20%"></th>';
-	$page .= '<th width="20%"></th>';
-	$page .= '<th width="20%"></th>';
-	$page .= '</tr>';
-		
-	$page .= '<tr>';		
-	$page .= '<td>';
+	$page .= '<div class="menu">';
 	if (($webcam_present1=="true") || ($webcam_present2=="true")) {
 		$page .= plaatprotect_link('pid='.PAGE_WEBCAM, t('LINK_WEBCAM'));
 	}	
-	$page .= '</td>';		
 
-	$page .= '<td>';
-	$page .= plaatprotect_link('pid='.PAGE_NOTIFICATION, t('LINK_NOTIFICATION'));
-	$page .= '</td>';		
-		
-	$page .= '<td>';
-	$page .= plaatprotect_link('pid='.PAGE_EVENT_VIEW.'&id=0', t('LINK_LOGGING'));
-	$page .= '</td>';	
-
-	$page .= '<td>';
-	if ($hue_present=="true") {
+	if ($zigbee_present=="true") {
 		$page .= plaatprotect_link('pid='.PAGE_ZIGBEE, t('LINK_ZIGBEE'));
 	}
-	$page .= '</td>';	
-	
-	$page .= '<td>';
+	$page .= plaatprotect_link('pid='.PAGE_EVENT_VIEW.'&id=0', t('LINK_LOGGING'));
+
+	$page .= plaatprotect_link('pid='.PAGE_ACTOR, t('LINK_ACTOR'));
 	if ($zwave_present=="true") {
 		$page .= plaatprotect_link('pid='.PAGE_ZWAVE, t('LINK_ZWAVE'));
 	}
-	$page .= '</td>';
-		
-	$page .= '</tr>';
+	$page .= '</div>';
 		
 	// ---------------------------
 	
-	$page .= '<tr>';	
+	$page .= '<div class="menu">';
 
-	$page .= '<td>';
 	if ($enable_battery_view=="true") {
 		$page .= plaatprotect_link('pid='.PAGE_BATTERY, t('LINK_BATTERY'));
 	}
-	$page .= '</td>';	
-	
-	$page .= '<td>';		
-	$page .= plaatprotect_link('pid='.PAGE_CHART, t('LINK_CHART'));
-	$page .= '</td>';
-	
-	$page .= '<td>';		
+
+	if ($enable_motion_view=="true") {
+		$page .= plaatprotect_link('pid='.PAGE_MOTION, t('LINK_MOTION'));
+	}
+
 	if ($enable_temperature_view=="true") {
 		$page .= plaatprotect_link('pid='.PAGE_TEMPERATURE, t('LINK_TEMPERATURE'));
 	}
-	$page .= '</td>';
 
-	$page .= '<td>';
 	if ($enable_luminance_view=="true") {
 		$page .= plaatprotect_link('pid='.PAGE_LUMINANCE, t('LINK_LUMINANCE'));
 	}
-	$page .= '</td>';
 
-	$page .= '<td>';
 	if ($enable_humidity_view=="true") {
 		$page .= plaatprotect_link('pid='.PAGE_HUMIDITY, t('LINK_HUMIDITY'));
 	}	
 
-	$page .= '</tr>';
+	$page .= '</div>';
 
 	// ---------------------------
 
+	$page .= '<div class="menu">';
 	
-	$page .= '<tr>';	
-	
-	$page .= '<td>';
-	$page .= '</td>';
-	
-	$page .= '<td>';
-	$page .= '</td>';
-	
-	$page .= '<td>';
 	$settings_password = plaatprotect_db_config_value('settings_password',CATEGORY_SECURITY);		
 	if (strlen($settings_password)>0) {
 		$page .= plaatprotect_link('pid='.PAGE_SETTING_LOGIN, t('LINK_SETTINGS')); 
 	} else {
 		$page .= plaatprotect_link('pid='.PAGE_SETTING_CATEGORY, t('LINK_SETTINGS')); 
 	}
-	$page .= '</td>';		
 	
-	$page .= '<td>';
-	$page .= '</td>';
-	
-	$page .= '<td>';
-	$page .= '</td>';
-	
-	$page .= '</tr>';
+	$page .= '</div>';
 
 	// ---------------------------
 	
-	$page .= '<tr>';
-	
-	$page .= '<td>';
-	$page .= '</td>';
-	
-	$page .= '<td>';		
+	$page .= '<div class="menu">';
 	$page .= plaatprotect_link('pid='.PAGE_DONATE, t('LINK_DONATE'));
-	$page .= '</td>';
-	
-	$page .= '<td>';
 	$page .= plaatprotect_link('pid='.PAGE_ABOUT, t('LINK_ABOUT'));				
-	$page .= '</td>';
-	
-	$page .= '<td>';
-	$page .= plaatprotect_link('pid='.PAGE_RELEASE_NOTES, t('LINK_RELEASE_NOTES'));		
-	$page .= '</td>';
-	
-	$page .= '</tr>';
+	$page .= plaatprotect_link('pid='.PAGE_RELEASE_NOTES, t('LINK_RELEASE_NOTES'));			
+	$page .= '</div>';
 	
 	// ---------------------------
-	$page .= '</table>';
 	
-	$page .= '<br/>';	
+	$page .= '<div class="menu">';
+	$page .= '&nbsp;';	
+	$page .= '</div>';
+	
+	// ---------------------------
+	
+	$page .= '<div class="menu">';
 		
-	$page .= '<table>';
-			
-	$page .= '<tr>';	
-	$page .= '<td width="20%">';		
 	switch (plaatprotect_db_config_value('alarm_scenario',CATEGORY_GENERAL)) {
 
 		case SCENARIO_SLEEP: 
@@ -352,9 +297,7 @@ function plaatprotect_home_page() {
 			$page .= plaatprotect_link_confirm('pid='.$pid.'&sid='.SCENARIO_HOME.'&eid='.EVENT_SWITCH_SCENARIO, t('SCENARIO_HOME'), t('ARE_YOU_SURE'));
 			break;
 	}
-	$page .= '</td>';
 		
-	$page .= '<td width="20%">';		
 	switch (plaatprotect_db_config_value('panic_on',CATEGORY_GENERAL)) {
 	
 		case PANIC_OFF: 
@@ -365,10 +308,7 @@ function plaatprotect_home_page() {
 			$page .= plaatprotect_link_confirm('pid='.$pid.'&eid='.EVENT_OFF, t('LINK_PANIC_OFF'), t('ARE_YOU_SURE'));
 		   break;
 	}
-	$page .= '</td>';
-	
-	$page .= '<tr>';
-	$page .= '</table>';
+	$page .= '</div>';
 	
 	$page .= '</div>';
 	

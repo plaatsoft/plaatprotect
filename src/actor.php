@@ -16,20 +16,15 @@
 **  All copyrights reserved (c) 1996-2019 PlaatSoft
 */
 
-/**
- * @file
- * @brief contain hue page
- */
-
 /*
 ** ---------------------
-** DATABASE
+** ACTIONS
 ** ---------------------
 */
 
-function plaatprotect_set_notification_state($id, $scenario) {
+function plaatprotect_set_actor_state($id, $scenario) {
 
-	$sql = 'select nid, type, home, sleep, away, panic from notification where nid='.$id;
+	$sql = 'select aid, type, home, sleep, away, panic from actor where aid='.$id;
 	$result = plaatprotect_db_query($sql);
 	$row = plaatprotect_db_fetch_object($result);
 	
@@ -63,22 +58,50 @@ function plaatprotect_set_notification_state($id, $scenario) {
 	switch ($scenario) {
 		
 		case SCENARIO_HOME: 	
-			$sql = 'update notification set home='.$value.' where nid='.$id;
+			$sql = 'update actor set home='.$value.' where aid='.$id;
 			break;
 					
 		case SCENARIO_SLEEP: 	
-			$sql = 'update notification set sleep='.$value.' where nid='.$id;
+			$sql = 'update actor set sleep='.$value.' where aid='.$id;
 			break;
 					
 		case SCENARIO_AWAY: 	
-			$sql = 'update notification set away='.$value.' where nid='.$id;
+			$sql = 'update actor set away='.$value.' where aid='.$id;
 			break;
 			
 		case SCENARIO_PANIC: 	
-			$sql = 'update notification set panic='.$value.' where nid='.$id;
+			$sql = 'update actor set panic='.$value.' where aid='.$id;
 			break;
 	}
 	plaatprotect_db_query($sql);
+}
+
+function plaatprotect_refresh_actor_configuration() {
+		
+ 	$zigbee_ip = plaatprotect_db_config_value('zigbee_ip_address',CATEGORY_ZIGBEE);
+ 	$zigbee_key = plaatprotect_db_config_value('zigbee_key',CATEGORY_ZIGBEE);	
+    $zigbee_url = "http://".$zigbee_ip."/api/".$zigbee_key."/lights/";
+	
+	@$json = file_get_contents($zigbee_url);
+	
+	$data = json_decode($json);
+		
+	foreach($data as $aid => $bulb ) {
+
+		$row = plaatprotect_db_actor($aid);
+		if (isset($row->aid)) {
+			
+			$row->vendor = $bulb->manufacturername;
+			$row->version = $bulb->swversion;
+			$row->location =  $bulb->name;
+			
+			plaatprotect_db_actor_update($row);
+			
+		} else {
+		
+			plaatprotect_db_actor_insert($aid, $bulb->manufacturername, 0, $bulb->swversion, $bulb->name);
+		}
+	}
 }
 
 /*
@@ -87,16 +110,12 @@ function plaatprotect_set_notification_state($id, $scenario) {
 ** ---------------------
 */
 
-/**
- * plaatprotect zwave overview page
- * @return HTML block which page contain.
- */
-function plaatprotect_notification_page() {
+function plaatprotect_actor_page() {
 
 	global $pid;
 
    $page ="<style>input[type='checkbox']{width:24px;height:24px}</style>";
-	$page .= '<h1>'.t('TITLE_NOTIFICATION').'</h1>';
+	$page .= '<h1>'.t('TITLE_ACTOR').'</h1>';
 	
 	$page .= '<br>';
 		
@@ -104,68 +123,92 @@ function plaatprotect_notification_page() {
 	
 	$page .= '<tr>';
 	
-	$page .= '<th width="15%">';
-	$page .= 'ID';
+	$page .= '<th width="5%">';
+	$page .= 'Id';
 	$page .= '</th>';
 	
-	$page .= '<th width="15%">';
-	$page .= 'Description';
+	$page .= '<th width="10%">';
+	$page .= t('ZIGBEE_LOCATION');
+	$page .= '</th>';
+	
+	$page .= '<th width="10%">';
+	$page .= 'Type';
 	$page .= '</th>';
 		
-	$page .= '<th width="15%">';
+	$page .= '<th width="10%">';
+	$page .= 'Vendor';
+	$page .= '</th>';
+
+	$page .= '<th width="10%">';
+	$page .= 'Version';
+	$page .= '</th>';
+	
+	$page .= '<th width="5%">';
 	$page .= 'Home';
 	$page .= '</th>';
 	
-	$page .= '<th width="15%">';
+	$page .= '<th width="5%">';
 	$page .= 'Sleep';
 	$page .= '</th>';
 	
-	$page .= '<th width="15%">';
+	$page .= '<th width="5%">';
 	$page .= 'Away';
 	$page .= '</th>';
 			
-	$page .= '<th width="15%">';
+	$page .= '<th width="5%">';
 	$page .= 'Panic';
 	$page .= '</th>';
 	
 	$page .= '</tr>';
 		
-	$sql = 'select nid, type, home, sleep, away, panic from notification';
+	$sql = 'select aid, location, type, vendor, version, home, sleep, away, panic from actor order by aid';
 	$result = plaatprotect_db_query($sql);
 	while ($row = plaatprotect_db_fetch_object($result)) {
 
 		$page .= '<tr>';
 		
 		$page .= '<td>';
-		$page .= $row->nid;
+		$page .= $row->aid;
 		$page .= '</td>';
 		
 		$page .= '<td>';
-		$page .= t('NOTIFICATION_'.$row->type);
+		$page .= $row->location;
 		$page .= '</td>';
-				
+		
+		$page .= '<td>';
+		$page .= t('ACTOR_TYPE_'.$row->type);
+		$page .= '</td>';
+	
+		$page .= '<td>';
+		$page .= $row->vendor;
+		$page .= '</td>';
+		
+		$page .= '<td>';
+		$page .= $row->version;
+		$page .= '</td>';
+		
 		$page .= '<td>';
 		$page .= '<input type="checkbox" ';
 		if ($row->home==1) { $page .= "checked"; }
-		$page .= ' onchange="link(\'pid='.$pid.'&eid='.EVENT_UPDATE.'&sid='.SCENARIO_HOME.'&id='.$row->nid.'\');">';
+		$page .= ' onchange="link(\'pid='.$pid.'&eid='.EVENT_UPDATE.'&sid='.SCENARIO_HOME.'&id='.$row->aid.'\');">';
 		$page .= '</td>';
 		
 		$page .= '<td>';
 		$page .= '<input type="checkbox" ';
 		if ($row->sleep==1) { $page .= "checked"; }
-		$page .= ' onchange="link(\'pid='.$pid.'&eid='.EVENT_UPDATE.'&sid='.SCENARIO_SLEEP.'&id='.$row->nid.'\');">';
+		$page .= ' onchange="link(\'pid='.$pid.'&eid='.EVENT_UPDATE.'&sid='.SCENARIO_SLEEP.'&id='.$row->aid.'\');">';
 		$page .= '</td>';
 		
 		$page .= '<td>';
 		$page .= '<input type="checkbox" ';
 		if ($row->away==1) { $page .= "checked"; }
-		$page .= ' onchange="link(\'pid='.$pid.'&eid='.EVENT_UPDATE.'&sid='.SCENARIO_AWAY.'&id='.$row->nid.'\');">';
+		$page .= ' onchange="link(\'pid='.$pid.'&eid='.EVENT_UPDATE.'&sid='.SCENARIO_AWAY.'&id='.$row->aid.'\');">';
 		$page .= '</td>';
 		
 		$page .= '<td>';
 		$page .= '<input type="checkbox" ';
 		if ($row->panic==1) { $page .= "checked"; }
-		$page .= ' onchange="link(\'pid='.$pid.'&eid='.EVENT_UPDATE.'&sid='.SCENARIO_PANIC.'&id='.$row->nid.'\');">';
+		$page .= ' onchange="link(\'pid='.$pid.'&eid='.EVENT_UPDATE.'&sid='.SCENARIO_PANIC.'&id='.$row->aid.'\');">';
 		$page .= '</td>';
 		
 		$page .= '</tr>';
@@ -175,6 +218,7 @@ function plaatprotect_notification_page() {
 		
 	$page .= '<div class="nav">';
 	$page .= plaatprotect_link('pid='.PAGE_HOME, t('LINK_HOME'));
+	$page .= plaatprotect_link('pid='.$pid.'&eid='.EVENT_REFRESH, t('LINK_REFRESH'));
 	$page .=  '</div>';
 			
 	return $page;
@@ -186,11 +230,7 @@ function plaatprotect_notification_page() {
 ** ---------------------
 */
 
-/**
- * plaatprotect 
- * @return HTML block which page contain.
- */
-function plaatprotect_notification() {
+function plaatprotect_actor() {
 
   /* input */
   global $pid;
@@ -202,15 +242,19 @@ function plaatprotect_notification() {
   switch ($eid) {
   
 		case EVENT_UPDATE: 
-			plaatprotect_set_notification_state($id, $sid);
+			plaatprotect_set_actor_state($id, $sid);
+			break;
+			
+		case EVENT_REFRESH: 
+			plaatprotect_refresh_actor_configuration();
 			break;
 	}
 
   /* Page handler */
   switch ($pid) {
 
-     case PAGE_NOTIFICATION:
-        return plaatprotect_notification_page();
+     case PAGE_ACTOR:
+        return plaatprotect_actor_page();
         break;
   }
 }

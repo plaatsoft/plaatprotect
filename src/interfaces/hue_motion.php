@@ -1,0 +1,76 @@
+<?php
+
+include "../general.php";
+include "../database.php";
+include "../config.php";
+
+/*
+** ---------------------
+** PARAMETERS
+** ---------------------
+*/
+
+define( 'LOCK_FILE', "/tmp/".basename( $argv[0], ".php" ).".lock" ); 
+if( plaatprotect_islocked() ) die( "Already running.\n" ); 
+
+/**
+ ********************************
+ * Zigbee functions
+ ********************************
+ */
+    
+function plaatprotect_zigbee_get_data($zid) {
+		
+	$zigbee_ip = plaatprotect_db_config_value('zigbee_ip_address',CATEGORY_ZIGBEE);
+ 	$zigbee_key = plaatprotect_db_config_value('zigbee_key',CATEGORY_ZIGBEE);
+    $zigbee_url = "http://".$zigbee_ip."/api/".$zigbee_key."/sensors/".$zid;
+	
+	$json = file_get_contents($zigbee_url);
+	
+	$data = json_decode($json);
+	
+	//print_r($data);
+	
+	$value = ($data->state->status);
+	$timestamp = date('Y-m-d H:i:00');
+	
+	$sql = 'select value from sensor where zid='.$zid.' order by timestamp desc limit 0,1';	
+	$result = plaatprotect_db_query($sql);
+	$row = plaatprotect_db_fetch_object($result);
+	
+	if (!isset($row->value) || ($row->value!=$value)) {
+		plaatprotect_db_sensor_insert($zid, $timestamp, $value);
+		
+		if ($value>0) {
+			plaatprotect_db_event_insert(CATEGORY_ZIGBEE, '{"zid":'.$zid.',"type":"set", "alarm":"motion"}');
+		} else {
+			plaatprotect_db_event_insert(CATEGORY_ZIGBEE, '{"zid":'.$zid.',"type":"set", "alarm":"off"}');
+		}
+	}
+}
+
+/**
+ ********************************
+ * State Machine
+ ********************************
+ */
+		
+plaatprotect_db_connect($dbhost, $dbuser, $dbpass, $dbname);
+
+$sql = 'select zid from zigbee where type='.ZIGBEE_TYPE_MOTION;
+$result = plaatprotect_db_query($sql);
+		
+while ($row=plaatprotect_db_fetch_object($result)) {
+	plaatprotect_zigbee_get_data($row->zid);
+}
+
+unlink( LOCK_FILE ); 
+exit(0); 
+
+/**
+ ********************************
+ * The End
+ ********************************
+ */
+ 
+?>

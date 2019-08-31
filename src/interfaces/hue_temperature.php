@@ -15,28 +15,26 @@ if( plaatprotect_islocked() ) die( "Already running.\n" );
 
 /**
  ********************************
- * HUE functions
+ * Zigbee functions
  ********************************
  */
     
-function plaatprotect_store_hue_data($hue_device) {
+function plaatprotect_zigbee_get_data($zid) {
 		
-	$hue_ip = plaatprotect_db_config_value('hue_ip_address',CATEGORY_ZIGBEE);
- 	$hue_key = plaatprotect_db_config_value('hue_key',CATEGORY_ZIGBEE);
+	$zigbee_ip = plaatprotect_db_config_value('zigbee_ip_address',CATEGORY_ZIGBEE);
+ 	$zigbee_key = plaatprotect_db_config_value('zigbee_key',CATEGORY_ZIGBEE);
+    $zigbee_url = "http://".$zigbee_ip."/api/".$zigbee_key."/sensors/".$zid;
 	
-    $hue_url = "http://".$hue_ip."/api/".$hue_key."/sensors/".$hue_device;
-	
-	@$json = file_get_contents($hue_url);
+	$json = file_get_contents($zigbee_url);
 	
 	$data = json_decode($json);
 	
-	print_r($data);
+	//print_r($data);
 	
-	$temperature = ($data->state->temperature/100);
-	$timestamp = date('Y-m-d H:i:s');
-	$battery = ($data->config->battery);
+	$value = ($data->state->temperature/100);
+	$timestamp = date('Y-m-d H:i:00');
 	
-	plaatprotect_db_sensor_insert($hue_device, $timestamp, 0, $temperature, 0, 0, $battery);
+	plaatprotect_db_sensor_insert($zid, $timestamp, $value);
 }
 
 /**
@@ -44,11 +42,15 @@ function plaatprotect_store_hue_data($hue_device) {
  * State Machine
  ********************************
  */
-
+		
 plaatprotect_db_connect($dbhost, $dbuser, $dbpass, $dbname);
 
-plaatprotect_store_hue_data(6);
-plaatprotect_store_hue_data(10);
+$sql = 'select zid from zigbee where type='.ZIGBEE_TYPE_TEMPERATURE;
+$result = plaatprotect_db_query($sql);
+		
+while ($row=plaatprotect_db_fetch_object($result)) {
+	plaatprotect_zigbee_get_data($row->zid);
+}
 
 
 unlink( LOCK_FILE ); 

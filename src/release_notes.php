@@ -35,6 +35,8 @@ $note[4] = '<div class="subparagraph">Version 0.4 (29-09-2019)</div>
 <li>Sensors views can now be enabled/disable as setting.</li>
 <li>Improve temparature chart. Now all sensors data is showed.</li>
 <li>Improve luminance chart. Now all sensors data is showed.</li>
+<li>Improve motion chart. Now all sensors data is showed.</li>
+<li>Improve database table structure.</li>
 </ul>
 </div>';
 

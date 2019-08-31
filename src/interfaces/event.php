@@ -27,11 +27,11 @@ include "../config.php";
 include "android.php";
 include "email.php";
 
-define('EVENT_ALARM_ON',         10);
-define('EVENT_ALARM_OFF',        11);
+define('EVENT_ALARM_ON',        10);
+define('EVENT_ALARM_OFF',       11);
 
-define('STATE_INIT',        		20);
-define('STATE_IDLE',        		21);
+define('STATE_INIT',        	20);
+define('STATE_IDLE',        	21);
 define('STATE_ALARM',      		22);
 
 $stop = false;
@@ -55,38 +55,55 @@ function plaatprotect_hue_alarm_group($event) {
 	$scenario = plaatprotect_db_config_value('alarm_scenario', CATEGORY_GENERAL);
 	$panic_on = plaatprotect_db_config_value('panic_on', CATEGORY_GENERAL);
 
-	$sql = 'select hid from hue ';
+	$sql = 'select aid from actor where type=0 ';
 
 	switch ($scenario) {
 	
 		case SCENARIO_HOME: 
-			$sql .= 'where home=1 ';
+			$sql .= 'and home=1 ';
 			break;
 			
 		case SCENARIO_SLEEP: 
-			$sql .= 'where sleep=1 ';
+			$sql .= 'and sleep=1 ';
 			break;		
 			
 		case SCENARIO_AWAY: 
-			$sql .= 'where away=1 ';
+			$sql .= 'and away=1 ';
 			break;
 	}
 	
 	if  ($panic_on==1) {
 		$sql .= 'or panic=1';
 	}
+	
+	echo $sql;
 
 	$result = plaatprotect_db_query($sql);
 	while ($row = plaatprotect_db_fetch_object($result)) {	
 		if ($event==EVENT_ALARM_ON) {
-			$command = '{"hid":'.$row->hid.', "action":"set", "value":"true"}';
+			plaatprotect_set_hue_state($row->aid, "true");
 		} else {
-			$command = '{"hid":'.$row->hid.', "action":"set", "value":"false"}';
+			plaatprotect_set_hue_state($row->aid, "false");
 		}
-		plaatprotect_log("Outbound zigbee event: ".$command);
-		plaatprotect_db_event_insert(CATEGORY_ZIGBEE, $command);		
+		plaatprotect_log("Hue Light ".$row->aid.' on');		
 	}
 }
+
+function plaatprotect_set_hue_state($hid, $value) {
+	
+ 	$hue_ip = plaatprotect_db_config_value('zigbee_ip_address',CATEGORY_ZIGBEE);
+ 	$hue_key = plaatprotect_db_config_value('zigbee_key',CATEGORY_ZIGBEE);
+	
+    $hue_url = "http://".$hue_ip."/api/".$hue_key."/lights/".$hid."/state";
+
+    $json = @file_get_contents($hue_url, false, stream_context_create(["http" => [
+      "method" => "PUT", "header" => "Content-type: application/json",
+      "content" => "{\"on\":". $value."}"
+    ]]));
+	 
+	echo $json;
+}
+
 
 function plaatprotect_zwave_alarm_group($event, $zid=0) {
 
@@ -131,20 +148,20 @@ function plaatprotect_mobile_alarm_group($event, $zid=0) {
 	$scenario = plaatprotect_db_config_value('alarm_scenario', CATEGORY_GENERAL);
 	$panic_on = plaatprotect_db_config_value('panic_on', CATEGORY_GENERAL);
 
-	$sql = 'select nid from notification ';
+	$sql = 'select aid from actor ';
 
 	switch ($scenario) {
 	
 		case SCENARIO_HOME: 
-			$sql .= 'where (home=1 and type=1) ';
+			$sql .= 'where (home=1 and type=101) ';
 			break;
 			
 		case SCENARIO_SLEEP: 
-			$sql .= 'where (sleep=1 and type=1) ';
+			$sql .= 'where (sleep=1 and type=101) ';
 			break;		
 			
 		case SCENARIO_AWAY: 
-			$sql .= 'where (away=1 and type=1) ';
+			$sql .= 'where (away=1 and type=101) ';
 			break;
 	}
 	
@@ -160,7 +177,7 @@ function plaatprotect_mobile_alarm_group($event, $zid=0) {
 		$subject =  "PlaatProtect Alarm";
 		
 		$body ="Alarm Location=";
-		$data = plaatprotect_db_zwave($zid);
+		$data = plaatprotect_db_zigbee($zid);
 		if ( isset($data->location) ) {
 			$body .= $data->location.' ';
 		} else {
@@ -183,25 +200,25 @@ function plaatprotect_email_alarm_group($event, $zid=0) {
 	$scenario = plaatprotect_db_config_value('alarm_scenario', CATEGORY_GENERAL);
 	$panic_on = plaatprotect_db_config_value('panic_on', CATEGORY_GENERAL);
 
-	$sql = 'select nid from notification ';
+	$sql = 'select aid from actor ';
 
 	switch ($scenario) {
 	
 		case SCENARIO_HOME: 
-			$sql .= 'where (home=1 and type=2) ';
+			$sql .= 'where (home=1 and type=102) ';
 			break;
 			
 		case SCENARIO_SLEEP: 
-			$sql .= 'where (sleep=1 and type=2) ';
+			$sql .= 'where (sleep=1 and type=102) ';
 			break;		
 			
 		case SCENARIO_AWAY: 
-			$sql .= 'where (away=1 and type=2) ';
+			$sql .= 'where (away=1 and type=102) ';
 			break;
 	}
 	
 	if  ($panic_on==1) {
-		$sql .= 'or (panic=1 and type=2)';
+		$sql .= 'or (panic=1 and type=102)';
 	}
 	
 	$result = plaatprotect_db_query($sql);
@@ -319,9 +336,9 @@ function plaatprotect_zwave_sensor($data) {
 	}
 }
 	
-function plaatprotect_zwave_alarm($data) {
+function plaatprotect_alarm_on($data) {
 
-	global $expire;
+	$expire=0;
 	
 	if (isset($data->type) && ($data->type=="set")) {
 		if (($data->alarm=="motion" || $data->alarm=="vibration")) {
@@ -330,6 +347,8 @@ function plaatprotect_zwave_alarm($data) {
 			$expire = time() + $duration;
 		}
 	}
+	
+	return $expire;
 }
 
 function plaatprotect_manual_panic($data) {
@@ -364,19 +383,18 @@ function plaatprotect_event_init() {
 	plaatprotect_log("StateMachine = Init");
 	
 	// Hue
-	$event = '{"hid":"all", "action":"get", "value":"init"}';
-	plaatprotect_db_event_insert(CATEGORY_ZIGBEE, $event);		
+	//$event = '{"hid":"all", "action":"get", "value":"init"}';
+	//plaatprotect_db_event_insert(CATEGORY_ZIGBEE, $event);		
 
-	$sql = 'select hid from hue ';
-	$result = plaatprotect_db_query($sql);
-	while ($row = plaatprotect_db_fetch_object($result)) {	
-	
-		$command = '{"hid":'.$row->hid.', "action":"set", "value":"false"}';
-		plaatprotect_log("Outbound zigbee event: ".$command);
-		plaatprotect_db_event_insert(CATEGORY_ZIGBEE, $command);		
-	}
+	//$sql = 'select zid from zigbee ';
+	//$result = plaatprotect_db_query($sql);
+	//while ($row = plaatprotect_db_fetch_object($result)) {	
+	//	$command = '{"zid":'.$row->zid.', "action":"set", "value":"false"}';
+	//	plaatprotect_log("Outbound zigbee event: ".$command);
+	//	plaatprotect_db_event_insert(CATEGORY_ZIGBEE, $command);		
+	//}
 		
-	plaatprotect_zwave_alarm_group(EVENT_ALARM_OFF);
+	//plaatprotect_zwave_alarm_group(EVENT_ALARM_OFF);
 	
 	$subject =  "INFO";
 	$body =  "Event process (re)start!";
@@ -394,7 +412,7 @@ function plaatprotect_event_idle() {
 	
 	plaatprotect_log("StateMachine = Idle");
 	
-	$row = plaatprotect_db_event(CATEGORY_ZWAVE);			
+	/*$row = plaatprotect_db_event(CATEGORY_ZWAVE);			
 	if (isset($row->eid)) {
 
 		plaatprotect_log("Inbound zwave event: ".$row->action);
@@ -404,10 +422,38 @@ function plaatprotect_event_idle() {
 		plaatprotect_zwave_alive($data);		
 		plaatprotect_zwave_vendor($data);		
 		plaatprotect_zwave_sensor($data);		
-		plaatprotect_zwave_alarm($data);
+		plaatprotect_alarm_on($data);
 		plaatprotect_manual_panic($data);
 	
 		if (($expire-time())>0) {
+	
+			$state = STATE_ALARM;
+		
+			$zid = 0;
+			if (isset($data->zid)) {
+				$zid = $data->zid;
+			}
+			
+			plaatprotect_hue_alarm_group(EVENT_ALARM_ON);			
+			plaatprotect_zwave_alarm_group(EVENT_ALARM_ON, $zid);
+			plaatprotect_mobile_alarm_group(EVENT_ALARM_ON, $zid);
+			plaatprotect_email_alarm_group(EVENT_ALARM_ON, $zid);
+		}
+	
+		$row->processed=1;
+		plaatprotect_db_event_update($row);
+	}*/
+	
+	$row = plaatprotect_db_event(CATEGORY_ZIGBEE);			
+	if (isset($row->eid)) {
+
+		plaatprotect_log("Inbound zigbee event: ".$row->action);
+	
+		$data = json_decode($row->action);
+	
+		$expire=plaatprotect_alarm_on($data);
+	
+		if ($expire>0) {
 	
 			$state = STATE_ALARM;
 		
@@ -438,7 +484,7 @@ function plaatprotect_event_alarm() {
 	
 	plaatprotect_log("StateMachine = Alarm [".($expire-time())." sec]");
 
-	$row = plaatprotect_db_event(CATEGORY_ZWAVE);			
+	/*$row = plaatprotect_db_event(CATEGORY_ZWAVE);			
 	if (isset($row->eid)) {
 
 		plaatprotect_log("Inbound zwave event: ".$row->action);
@@ -448,7 +494,7 @@ function plaatprotect_event_alarm() {
 		plaatprotect_zwave_alive($data);
 		plaatprotect_zwave_vendor($data);
 		plaatprotect_zwave_sensor($data);
-		plaatprotect_zwave_alarm($data);
+		plaatprotect_alarm_on($data);
 		plaatprotect_manual_panic($data);
 				
 		$row->processed=1;
@@ -456,8 +502,8 @@ function plaatprotect_event_alarm() {
 		
 	} else {
 		usleep($sleep);
-	}	
-
+	}*/	
+		
 	if (($expire-time())<=0) {
 	
 		$state = STATE_IDLE;
@@ -466,7 +512,10 @@ function plaatprotect_event_alarm() {
 		plaatprotect_zwave_alarm_group(EVENT_ALARM_OFF);
 		plaatprotect_mobile_alarm_group(EVENT_ALARM_OFF);
 		plaatprotect_email_alarm_group(EVENT_ALARM_OFF);
-   }
+    }
+	else {
+		usleep($sleep);
+	}
 }
 
 function plaatprotect_event_state_machine() {

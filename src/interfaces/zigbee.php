@@ -79,7 +79,7 @@ function plaatprotect_get_hue_state() {
  	$hue_ip = plaatprotect_db_config_value('hue_ip_address',CATEGORY_ZIGBEE);
  	$hue_key = plaatprotect_db_config_value('hue_key',CATEGORY_ZIGBEE);
 	
-   $hue_url = "http://".$hue_ip."/api/".$hue_key."/lights/";
+    $hue_url = "http://".$hue_ip."/api/".$hue_key."/lights/";
 	
 	@$json = file_get_contents($hue_url);
 

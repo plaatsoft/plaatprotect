@@ -78,24 +78,25 @@ $lang['LINK_NEXT_FAST']     = i('forward');
 $lang['LINK_PREV_FAST']     = i('backward'); 
 $lang['LINK_END']           = i('fast-forward'); 
 $lang['LINK_BEGIN']         = i('fast-backward'); 
+$lang['LINK_REFRESH']       = 'Refresh'; 
 
-$lang['LINK_LOGGING']       = i('database') . 'Logging';  
-$lang['LINK_SETTINGS']      = i('cog') . 'Settings';  
+$lang['LINK_LOGGING']       = i('database') . 'Events';  
+$lang['LINK_SETTINGS']      = i('cog') . 'Settings';
 $lang['LINK_RELEASE_NOTES'] = i('calendar') . 'Release Notes';
 $lang['LINK_ABOUT']         = i('book') . 'About';
 $lang['LINK_DONATE']        = i('money') . 'Donate';
 $lang['LINK_DELETE']        = i('remove').'Delete'; 
 $lang['LINK_WEBCAM']        = i('camera') . 'Webcams'; 
-$lang['LINK_ZIGBEE']        = i('wifi') . 'Zigbee';
+$lang['LINK_ZIGBEE']        = i('wifi') . 'Sensors';
 $lang['LINK_PICTURE']       = i('camera') . 'Picture'; 
 $lang['LINK_ARCHIVE']       = i('folder-open') . 'Archive'; 
 $lang['LINK_ZWAVE']         = i('wifi') . 'Z-Wave'; 
-$lang['LINK_NOTIFICATION']  = i('folder-open') . 'Notification'; 
-$lang['LINK_CHART']         = i('area-chart') . 'Movement'; 
+$lang['LINK_ACTOR']         = i('folder-open') . 'Actors'; 
+$lang['LINK_MOTION']        = i('area-chart') . 'Motion'; 
 $lang['LINK_BATTERY']       = i('area-chart') . 'Battery';
 $lang['LINK_HUMIDITY']      = i('area-chart') . 'Humidity';
 $lang['LINK_TEMPERATURE']   = i('area-chart') . 'Temperature';
-$lang['LINK_LUMINANCE']    = i('area-chart') . 'Luminance';
+$lang['LINK_LUMINANCE']     = i('area-chart') . 'Luminance';
 
 $lang['LINK_ON']             = 'ON'; 
 $lang['LINK_OFF']            = 'OFF'; 
@@ -189,10 +190,10 @@ $lang['webcam_device'] = 'Webcam device mapping';
 $lang['webcam_fps'] = 'Webcam Frames Per Second';
 $lang['webcam_no_motion_area'] = 'Webcam no motion detect area';
 
-$lang['hue_description'] = 'Philips HUE description';
-$lang['hue_ip_address'] = 'Philips HUE IP address of bridge';
-$lang['hue_key'] = 'Philips HUE access key';
-$lang['hue_present'] = 'Philips HUE present';
+$lang['zigbee_description'] = 'Zigbee description';
+$lang['zigbee_ip_address'] = 'Zigbee controller IP address';
+$lang['zigbee_key'] = 'Zigbee controller access key';
+$lang['zigbee_present'] = 'Zigbee controller present';
 
 $lang['mobile_present'] = 'Android mobile present';
 $lang['mobile_nma_key'] = 'Notify My Android (NMA) App Key';
@@ -204,6 +205,7 @@ $lang['enable_battery_view'] = 'Enable Battery View';
 $lang['enable_temperature_view'] = 'Enable Temperature View';
 $lang['enable_humidity_view'] = 'Enable Humidity View';
 $lang['enable_luminance_view'] = 'Enable Luminance View';
+$lang['enable_motion_view'] = 'Enable Motion View';
 
 $lang['CATEGORY0']  = 'General'; 
 $lang['CATEGORY11'] = 'Z-Wave'; 
@@ -230,8 +232,12 @@ $lang['TITLE_ARCHIVE' ] = 'Archive';
 ** ------------------
 */
 
-$lang['TITLE_ZIGBEE'] ='Zigbee Network';
+$lang['TITLE_ZIGBEE'] ='Sensors';
 
+$lang['SENSOR_TYPE_1'] = 'Temparature';
+$lang['SENSOR_TYPE_2'] = 'Luminance';
+$lang['SENSOR_TYPE_3'] = 'Motion';
+	
 $lang['ZIGBEE_ID'] = 'Id';
 $lang['ZIGBEE_VENDOR'] = 'Vendor';
 $lang['ZIGBEE_TYPE'] = 'Type';
@@ -264,15 +270,16 @@ $lang['ZWAVE_PANIC'] = 'Panic';
 
 /*
 ** ------------------
-** NOTIFICATION PAGE
+** ACTOR PAGE
 ** ------------------
 */
 
-$lang['TITLE_NOTIFICATION'] ='Notification System';
+$lang['TITLE_ACTOR'] ='Actors';
 
-$lang['NOTIFICATION_1'] = 'Mobile';
-$lang['NOTIFICATION_2'] = 'Email';
-$lang['NOTIFICATION_3'] = 'Drone';
+$lang['ACTOR_TYPE_0'] = 'Bulb';
+$lang['ACTOR_TYPE_1'] = 'Mobile';
+$lang['ACTOR_TYPE_2'] = 'Email';
+$lang['ACTOR_TYPE_3'] = 'Horn';
 
 /*
 ** ------------------
@@ -280,7 +287,7 @@ $lang['NOTIFICATION_3'] = 'Drone';
 ** ------------------
 */
 
-$lang['TITLE_EVENT'] ='Event Logging';
+$lang['TITLE_EVENT'] ='Events';
 
 $lang['EVENT_TIMESTAMP'] = 'Timestamp';
 $lang['EVENT_AGO'] = 'Ago';
