@@ -27,7 +27,7 @@ include "config.php";
 include "general.php";
 include "database.php";
 
-define('DEBUG2', 0);
+define('LOG', 0);
 
 /*
 ** ---------------------
@@ -60,7 +60,7 @@ while ( $row=plaatprotect_db_fetch_object($result) ) {
 		
 	if ( time() > ($row->last_run+($row->every_x_mins*60))) {
 	
-		if (DEBUG2 == 1) {
+		if (LOG == 1) {
 			echo "start cron job ".$row->cid."\r\n";
 		}
 
@@ -81,6 +81,9 @@ while ( $row=plaatprotect_db_fetch_object($result) ) {
 					
 			case 4: exec('cd '.BASE_DIR.'/interfaces; php hue_temperature.php > /dev/null 2>&1 &');
 					break;
+					
+			case 5: exec('cd '.BASE_DIR.'; php backup.php > /dev/null 2>&1 &');
+					break;
 		}
 		plaatprotect_db_cron_update($row->cid);
 	}
@@ -93,7 +96,7 @@ plaatprotect_db_close();
 $time_end = microtime(true);
 $time = $time_end - $time_start;
 
-if (DEBUG2 == 1) {
+if (LOG == 1) {
    echo "cron took ".round($time,2)." secs\r\n";
 }
 

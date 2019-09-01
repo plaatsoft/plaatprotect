@@ -20,6 +20,8 @@ include "../general.php";
 include "../database.php";
 include "../config.php";
 
+define('LOG', 0);
+
 /*
 ** ---------------------
 ** PARAMETERS
@@ -36,7 +38,7 @@ if( plaatprotect_islocked() ) die( "Already running.\n" );
  */
     
 function plaatprotect_zigbee_get_data($zid) {
-		
+	
 	$zigbee_ip = plaatprotect_db_config_value('zigbee_ip_address',CATEGORY_ZIGBEE);
  	$zigbee_key = plaatprotect_db_config_value('zigbee_key',CATEGORY_ZIGBEE);
     $zigbee_url = "http://".$zigbee_ip."/api/".$zigbee_key."/sensors/".$zid;
@@ -45,10 +47,12 @@ function plaatprotect_zigbee_get_data($zid) {
 	
 	$data = json_decode($json);
 	
-	//print_r($data);
+	if (LOG == 1) {	
+		#print_r($data);
+	}
 	
 	$value = ($data->state->status);
-	$timestamp = date('Y-m-d H:i:00');
+	$timestamp = date('Y-m-d H:i:s');
 	
 	$sql = 'select value from sensor where zid='.$zid.' order by timestamp desc limit 0,1';	
 	$result = plaatprotect_db_query($sql);
@@ -58,9 +62,21 @@ function plaatprotect_zigbee_get_data($zid) {
 		plaatprotect_db_sensor_insert($zid, $timestamp, $value);
 		
 		if ($value>0) {
+			if (LOG == 1) {	
+				echo $zid." alarm ON\r\n";
+			}
 			plaatprotect_db_event_insert(CATEGORY_ZIGBEE, '{"zid":'.$zid.',"type":"set", "alarm":"motion"}');
 		} else {
+			if (LOG == 1) {	
+				echo $zid." alarm OFF\r\n";
+			}
 			plaatprotect_db_event_insert(CATEGORY_ZIGBEE, '{"zid":'.$zid.',"type":"set", "alarm":"off"}');
+		}
+		
+	} else {
+	
+		if (LOG == 1) {	
+			echo $zid." alarm idle\r\n";
 		}
 	}
 }
@@ -72,12 +88,25 @@ function plaatprotect_zigbee_get_data($zid) {
  */
 		
 plaatprotect_db_connect($dbhost, $dbuser, $dbpass, $dbname);
+	
+for ($i=0; $i<12; $i++) {	
 
-$sql = 'select zid from zigbee where type='.ZIGBEE_TYPE_MOTION;
-$result = plaatprotect_db_query($sql);
+	if (LOG == 1) {	
+		echo "Loop ".$i."\r\n";
+	}	
 		
-while ($row=plaatprotect_db_fetch_object($result)) {
-	plaatprotect_zigbee_get_data($row->zid);
+	$sql = 'select zid from zigbee where type='.ZIGBEE_TYPE_MOTION;
+	$result = plaatprotect_db_query($sql);
+
+	while ($row=plaatprotect_db_fetch_object($result)) {
+				
+		plaatprotect_zigbee_get_data($row->zid);	
+	}
+	
+	if (LOG == 1) {	
+		echo "sleep 5 seconds\r\n";
+	}	
+	sleep(5);
 }
 
 unlink( LOCK_FILE ); 
