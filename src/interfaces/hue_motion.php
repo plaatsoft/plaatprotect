@@ -89,7 +89,7 @@ function plaatprotect_zigbee_get_data($zid) {
 		
 plaatprotect_db_connect($dbhost, $dbuser, $dbpass, $dbname);
 	
-for ($i=0; $i<12; $i++) {	
+for ($i=0; $i<11; $i++) {	
 
 	if (LOG == 1) {	
 		echo "Loop ".$i."\r\n";
