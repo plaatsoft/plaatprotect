@@ -27,6 +27,9 @@
 ** ---------------------
 */
 
+// TODO Fetch Hue sensor configuration automatic
+// TODO Make event handler work again
+
 $note[5] = '<div class="subparagraph">Version 0.5 (01-09-2019)</div>
 <div class="large_text">
 <ul>
