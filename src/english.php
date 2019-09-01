@@ -237,6 +237,9 @@ $lang['TITLE_ZIGBEE'] ='Sensors';
 $lang['SENSOR_TYPE_1'] = 'Temparature';
 $lang['SENSOR_TYPE_2'] = 'Luminance';
 $lang['SENSOR_TYPE_3'] = 'Motion';
+$lang['SENSOR_TYPE_4'] = 'Battery';
+$lang['SENSOR_TYPE_5'] = 'Humidity';
+$lang['SENSOR_TYPE_6'] = 'Switch';
 	
 $lang['ZIGBEE_ID'] = 'Id';
 $lang['ZIGBEE_VENDOR'] = 'Vendor';

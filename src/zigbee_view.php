@@ -16,10 +16,67 @@
 **  All copyrights reserved (c) 1996-2019 PlaatSoft
 */
 
-/**
- * @file
- * @brief contain zigbee page
- */
+/*
+** ---------------------
+** ACTION
+** ---------------------
+*/
+
+function plaatprotect_refresh_actor_configuration() {
+		
+ 	$zigbee_ip = plaatprotect_db_config_value('zigbee_ip_address',CATEGORY_ZIGBEE);
+ 	$zigbee_key = plaatprotect_db_config_value('zigbee_key',CATEGORY_ZIGBEE);	
+    $zigbee_url = "http://".$zigbee_ip."/api/".$zigbee_key."/sensors/";
+	
+	@$json = file_get_contents($zigbee_url);
+	
+	$data = json_decode($json);
+		
+	$location = "";
+		
+	foreach($data as $zid => $sensor ) {
+
+		$type = ZIGBEE_TYPE_BATTERY;
+
+		if ($sensor->type=="ZLLTemperature") {
+			$location =  $sensor->name;
+		}	
+		if ($sensor->type=="ZLLTemperature") {
+			$type = ZIGBEE_TYPE_TEMPERATURE;
+			$location =  $sensor->name;
+		}
+		if ($sensor->type=="ZLLLightLevel") {
+			$type = ZIGBEE_TYPE_LUMINANCE;
+			$location =  $sensor->name;
+		}
+		if ($sensor->type=="ZLLSwitch") {
+			$type = ZIGBEE_TYPE_SWITCH;
+			$location =  $sensor->name;
+		}
+		if (($sensor->type=="CLIPGenericStatus") && (strpos($sensor->name,"MotionSensor")!==false)) {
+			$type = ZIGBEE_TYPE_MOTION;
+			$location =  $sensor->name;
+		}
+		
+		if ($type != ZIGBEE_TYPE_BATTERY) {
+	
+			$row = plaatprotect_db_zigbee($zid);
+		
+			if (isset($row->zid)) {
+			
+				$row->vendor = $sensor->manufacturername;
+				$row->version = $sensor->swversion;
+				$row->location = $location;
+			
+				plaatprotect_db_zigbee_update($row);
+			
+			} else {
+		
+				plaatprotect_db_zigbee_insert($zid, $sensor->manufacturername, $type, $sensor->swversion, $location);
+			}
+		}
+	}
+}
 
 /*
 ** ---------------------
@@ -45,23 +102,23 @@ function plaatprotect_zigbee_page() {
 	$page .= '<thead>';
 	$page .= '<tr>';
 	
-	$page .= '<th width="10%">';
+	$page .= '<th>';
 	$page .= t('ZIGBEE_ID');
 	$page .= '</th>';
 	
-	$page .= '<th width="10%">';
+	$page .= '<th>';
 	$page .= t('ZIGBEE_LOCATION');
 	$page .= '</th>';
 	
-	$page .= '<th width="10%">';
+	$page .= '<th>';
 	$page .= t('ZIGBEE_TYPE');
 	$page .= '</th>';
 	
-	$page .= '<th width="10%">';
+	$page .= '<th>';
 	$page .= t('ZIGBEE_VENDOR');
 	$page .= '</th>';
 	
-	$page .= '<th width="10%">';
+	$page .= '<th>';
 	$page .= t('ZIGBEE_VERSION');
 	$page .= '</th>';
 	
@@ -91,6 +148,7 @@ function plaatprotect_zigbee_page() {
 		
 	$page .= '<div class="nav">';
 	$page .= plaatprotect_link('pid='.PAGE_HOME, t('LINK_HOME'));
+	$page .= plaatprotect_link('pid='.$pid.'&eid='.EVENT_REFRESH, t('LINK_REFRESH'));
 	$page .=  '</div>';
 	
 	//$page .= '<script>setTimeout(link,2500,\'pid='.$pid.'\');</script>';
@@ -111,18 +169,26 @@ function plaatprotect_zigbee_page() {
 function plaatprotect_zigbee() {
 
 	/* input */
-  global $pid;
-  global $eid;
-  global $zid;
-  global $sid;
+	global $pid;
+	global $eid;
+	global $zid;
+	global $sid;
+  
+	/* Event handler */
+	switch ($eid) {
+  
+		case EVENT_REFRESH: 
+			plaatprotect_refresh_actor_configuration();
+			break;
+	}
       
-  /* Page handler */
-  switch ($pid) {
+	/* Page handler */
+	switch ($pid) {
 
-     case PAGE_ZIGBEE:
-        return plaatprotect_zigbee_page();
-        break;
-  }
+		case PAGE_ZIGBEE:
+			return plaatprotect_zigbee_page();
+			break;
+	}
 }
 
 /*

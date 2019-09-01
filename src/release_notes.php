@@ -35,6 +35,8 @@ $note[5] = '<div class="subparagraph">Version 0.5 (01-09-2019)</div>
 <ul>
 <li>Improve zigbee motion detection</li>
 <li>Added daily database backup</li>
+<li>Improve table look-and-feel</li>
+<li>Added Zigbee Sensor detection</li>
 </ul>
 </div>';
 

@@ -101,9 +101,8 @@ table {
    margin: auto;
 }
 
-.home tr,
-.home td {
-   vertical-align: top;
+td {
+   padding-left: 20px;
 }
 
 td > a{

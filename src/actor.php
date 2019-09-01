@@ -123,39 +123,39 @@ function plaatprotect_actor_page() {
 	
 	$page .= '<tr>';
 	
-	$page .= '<th width="5%">';
+	$page .= '<th>';
 	$page .= 'Id';
 	$page .= '</th>';
 	
-	$page .= '<th width="10%">';
+	$page .= '<th>';
 	$page .= t('ZIGBEE_LOCATION');
 	$page .= '</th>';
 	
-	$page .= '<th width="10%">';
+	$page .= '<th>';
 	$page .= 'Type';
 	$page .= '</th>';
 		
-	$page .= '<th width="10%">';
+	$page .= '<th>';
 	$page .= 'Vendor';
 	$page .= '</th>';
 
-	$page .= '<th width="10%">';
+	$page .= '<th>';
 	$page .= 'Version';
 	$page .= '</th>';
 	
-	$page .= '<th width="5%">';
+	$page .= '<th>';
 	$page .= 'Home';
 	$page .= '</th>';
 	
-	$page .= '<th width="5%">';
+	$page .= '<th>';
 	$page .= 'Sleep';
 	$page .= '</th>';
 	
-	$page .= '<th width="5%">';
+	$page .= '<th>';
 	$page .= 'Away';
 	$page .= '</th>';
 			
-	$page .= '<th width="5%">';
+	$page .= '<th>';
 	$page .= 'Panic';
 	$page .= '</th>';
 	

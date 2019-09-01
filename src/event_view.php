@@ -51,23 +51,23 @@ function plaatprotect_event_view_page() {
 
 	$page .= '<tr>';
 
-	$page .= '<th width="150px">';
+	$page .= '<th>';
 	$page .= t('EVENT_TIMESTAMP');
 	$page .= '</th>';
 
-	$page .= '<th width="100px">';
+	$page .= '<th>';
 	$page .= t('EVENT_AGO');
 	$page .= '</th>';
 	
-	$page .= '<th width="100px">';
+	$page .= '<th>';
 	$page .= t('EVENT_CATEGORY');
 	$page .= '</th>';
 
-	$page .= '<th width="450px">';
+	$page .= '<th>';
 	$page .= t('EVENT_ACTION');
 	$page .= '</th>';
 	
-	$page .= '<th width="10px">';
+	$page .= '<th>';
 	$page .= t('EVENT_PROCESSED');
 	$page .= '</th>';
 

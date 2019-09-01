@@ -482,6 +482,7 @@ define('ZIGBEE_TYPE_LUMINANCE',   2);
 define('ZIGBEE_TYPE_MOTION',      3);
 define('ZIGBEE_TYPE_BATTERY',     4);
 define('ZIGBEE_TYPE_HUMIDITY',    5);
+define('ZIGBEE_TYPE_SWITCH',      6);
 
 function plaatprotect_db_zigbee($zid) {
  	
@@ -496,24 +497,22 @@ function plaatprotect_db_zigbee_update($data) {
  
    $query  = 'update zigbee set '; 
 	$query .= 'vendor="'.plaatprotect_db_escape($data->vendor).'", ';
-	$query .= 'type="'.plaatprotect_db_escape($data->type).'", ';
+	$query .= 'type='.plaatprotect_db_escape($data->type).', ';
 	$query .= 'version="'.plaatprotect_db_escape($data->version).'", ';
-	$query .= 'location="'.plaatprotect_db_escape($data->location).'", ';
-	$query .= 'state='.$data->state.', ';
+	$query .= 'location="'.plaatprotect_db_escape($data->location).'" ';
 	$query .= 'where zid='.$data->zid; 
 	
 	return plaatprotect_db_query($query);
 }
 
-function plaatprotect_db_zigbee_insert($zid, $vendor, $type, $version, $location, $state) {
+function plaatprotect_db_zigbee_insert($zid, $vendor, $type, $version, $location) {
  	
-   $query  = 'insert into zigbee (zid, vendor, type, version, location, state) ';
+   $query  = 'insert into zigbee (zid, vendor, type, version, location) ';
 	$query .= 'values ('.$zid.',';
 	$query .= '"'.plaatprotect_db_escape($vendor).'",';
-	$query .= '"'.plaatprotect_db_escape($type).'",';
+	$query .= ''.plaatprotect_db_escape($type).',';
 	$query .= '"'.plaatprotect_db_escape($version).'",';
-	$query .= '"'.plaatprotect_db_escape($location).'",';
-	$query .= $state.')';
+	$query .= '"'.plaatprotect_db_escape($location).'")';
 	
 	return plaatprotect_db_query($query);
 }
