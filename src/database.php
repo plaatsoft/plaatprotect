@@ -476,6 +476,7 @@ define('ZIGBEE_STATE_OFF',        0);
 define('ZIGBEE_STATE_ON',         1);
 define('ZIGBEE_STATE_OFFLINE',    2);
 
+define('ZIGBEE_TYPE_UNKNOWN',    -1);
 define('ZIGBEE_TYPE_LIGHT',       0);
 define('ZIGBEE_TYPE_TEMPERATURE', 1);
 define('ZIGBEE_TYPE_LUMINANCE',   2);

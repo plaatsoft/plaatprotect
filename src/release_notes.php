@@ -33,10 +33,11 @@
 $note[5] = '<div class="subparagraph">Version 0.5 (01-09-2019)</div>
 <div class="large_text">
 <ul>
-<li>Improve zigbee motion detection</li>
+<li>Added zigbee sensor inventory detection</li>
+<li>Added zigbee motion sensor support</li>
+<li>Added zigbee battery view</li>
 <li>Added daily database backup</li>
 <li>Improve table look-and-feel</li>
-<li>Added Zigbee Sensor detection</li>
 </ul>
 </div>';
 
@@ -49,7 +50,7 @@ $note[4] = '<div class="subparagraph">Version 0.4 (31-08-2019)</div>
 <li>Improve all views. Now all sensors data is showed in one chart</li>
 <li>Improve main menu</li>
 <li>Improve cron job</li>
-<li>Added support for hue motion sensors</li>
+<li>Added zigbee lightbulb inventory detection</li>
 <li>Improve database table structure</li>
 </ul>
 </div>';

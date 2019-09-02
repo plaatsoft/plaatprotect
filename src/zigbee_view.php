@@ -36,34 +36,44 @@ function plaatprotect_refresh_actor_configuration() {
 		
 	foreach($data as $zid => $sensor ) {
 
-		$type = ZIGBEE_TYPE_BATTERY;
-
-		if ($sensor->type=="ZLLTemperature") {
-			$location =  $sensor->name;
-		}	
-		if ($sensor->type=="ZLLTemperature") {
-			$type = ZIGBEE_TYPE_TEMPERATURE;
-			$location =  $sensor->name;
-		}
-		if ($sensor->type=="ZLLLightLevel") {
-			$type = ZIGBEE_TYPE_LUMINANCE;
-			$location =  $sensor->name;
-		}
-		if ($sensor->type=="ZLLSwitch") {
-			$type = ZIGBEE_TYPE_SWITCH;
-			$location =  $sensor->name;
-		}
-		if (($sensor->type=="CLIPGenericStatus") && (strpos($sensor->name,"MotionSensor")!==false)) {
-			$type = ZIGBEE_TYPE_MOTION;
+		$type = ZIGBEE_TYPE_UNKNOWN;
+		
+		if ($sensor->type=="ZLLPresence") {
+			$type = ZIGBEE_TYPE_BATTERY;
 			$location =  $sensor->name;
 		}
 		
-		if ($type != ZIGBEE_TYPE_BATTERY) {
+		if ($sensor->type=="ZLLTemperature") {
+			$type = ZIGBEE_TYPE_TEMPERATURE;
+		}
+		
+		if ($sensor->type=="ZLLLightLevel") {
+			$type = ZIGBEE_TYPE_LUMINANCE;			
+		}
+		
+		if ($sensor->type=="ZLLSwitch") {
+			$type = ZIGBEE_TYPE_BATTERY;
+			$location =  $sensor->name;
+		}	
+			
+		if (($sensor->type=="CLIPGenericStatus") && (strpos($sensor->name,"MotionSensor")!==false)) {
+			$type = ZIGBEE_TYPE_MOTION;
+			
+			$key = $sensor->uniqueid;
+			$key = str_replace("MotionSensor ", "", $key);
+			$key = str_replace(".Companion", "", $key);
+			
+			$row = plaatprotect_db_zigbee($key);
+			$location =  $row->location;			
+		}
+		
+		if ($type != ZIGBEE_TYPE_UNKNOWN) {
 	
 			$row = plaatprotect_db_zigbee($zid);
 		
 			if (isset($row->zid)) {
 			
+				$row->type = $type;
 				$row->vendor = $sensor->manufacturername;
 				$row->version = $sensor->swversion;
 				$row->location = $location;

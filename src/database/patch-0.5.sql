@@ -19,3 +19,4 @@ UPDATE config SET value="0.5" WHERE token='database_version';
 
 -- cron table
 INSERT INTO cron (`cid`, `note`, `last_run`, `every_x_mins`) VALUES ('5', 'database_backup', '2019-09-01 00:00:00', 1440);
+INSERT INTO cron (`cid`, `note`, `last_run`, `every_x_mins`) VALUES ('6', 'hue_battery_sensor', '2019-09-01 00:00:00', 5);
