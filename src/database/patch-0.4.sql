@@ -29,7 +29,7 @@ INSERT INTO cron (`cid`, `note`, `last_run`, `every_x_mins`) VALUES ('3', 'hue_m
 INSERT INTO cron (`cid`, `note`, `last_run`, `every_x_mins`) VALUES ('4', 'hue_temperature_sensors', '2019-08-31 00:00:00', 5);
 
 -- Config table
-INSERT INTO config (category, token, value, options, date, readonly, rebuild, encrypt) VALUES (0, 'enable_battery_view', 'false', 'true,false', '0000-00-00', 0, 0, 0);
+INSERT INTO config (category, token, value, options, date, readonly, rebuild, encrypt) VALUES (0, 'enable_battery_view', 'true', 'true,false', '0000-00-00', 0, 0, 0);
 INSERT INTO config (category, token, value, options, date, readonly, rebuild, encrypt) VALUES (0, 'enable_temperature_view', 'true', 'true,false', '0000-00-00', 0, 0, 0);
 INSERT INTO config (category, token, value, options, date, readonly, rebuild, encrypt) VALUES (0, 'enable_luminance_view', 'true', 'true,false', '0000-00-00', 0, 0, 0);
 INSERT INTO config (category, token, value, options, date, readonly, rebuild, encrypt) VALUES (0, 'enable_humidity_view', 'false', 'true,false', '0000-00-00', 0, 0, 0);
