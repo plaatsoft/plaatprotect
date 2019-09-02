@@ -34,7 +34,7 @@
 function plaatprotect_about_page() {
 
   $page  = '<h1>'.t('ABOUT_TITLE').'</h1>';
-  $page .= '<br/>';
+
   $page .= '<div class="large_text">'.t('ABOUT_CONTENT').'</div>';
 
   $page .= '<br/>';

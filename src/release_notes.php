@@ -113,8 +113,7 @@ function plaatprotect_release_notes_page(){
   global $note;
   
   $page  = '<h1>Release Notes</h1>';
-  $page .= '<br/>';
-  
+   
   $page .= $note[$id];
   
   $page .= '<div class="nav">';

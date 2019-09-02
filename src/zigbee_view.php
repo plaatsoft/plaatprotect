@@ -109,7 +109,7 @@ function plaatprotect_zigbee_page() {
 	$page .= '<h1>'.t('TITLE_ZIGBEE').'</h1>';
 
 	$page .= '<table>';
-	$page .= '<thead>';
+
 	$page .= '<tr>';
 	
 	$page .= '<th>';
@@ -133,9 +133,7 @@ function plaatprotect_zigbee_page() {
 	$page .= '</th>';
 	
 	$page .= '</tr>';
-	$page .= '</thead>';
-	$page .= '<tbody>';
-	
+		
 	$sql = 'select zid, vendor, type, version, location, state from zigbee order by zid';
 	$result = plaatprotect_db_query($sql);
 	while ($row = plaatprotect_db_fetch_object($result)) {

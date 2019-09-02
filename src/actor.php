@@ -114,11 +114,8 @@ function plaatprotect_actor_page() {
 
 	global $pid;
 
-   $page ="<style>input[type='checkbox']{width:24px;height:24px}</style>";
-	$page .= '<h1>'.t('TITLE_ACTOR').'</h1>';
-	
-	$page .= '<br>';
-		
+	$page = '<h1>'.t('TITLE_ACTOR').'</h1>';
+			
 	$page .= '<table>';
 	
 	$page .= '<tr>';

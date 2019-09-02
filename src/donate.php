@@ -31,9 +31,7 @@ function plaatprotect_donate_page() {
 
   $page = '<h1>'.t('DONATE_TITLE').'</h1>';
 
-  $page .= '<br/>';
   $page .= '<div class="large_text">'.t('DONATE_CONTENT').'</div>';
-  $page .= '<br/>';
   $page .= '<br/>';
 
   // Dirty hack to get Paypal button working :)
@@ -45,8 +43,6 @@ function plaatprotect_donate_page() {
   $page .= '<input type="image" src="https://www.paypalobjects.com/en_US/i/btn/btn_donateCC_LG.gif" border="0" name="submit" alt="">';
   $page .= '<img alt="" border="0" src="https://www.paypalobjects.com/en_US/i/scr/pixel.gif" width="1" height="1">';
   $page .= '</form>';
-
-  $page .= '<br/>';
 
   $page .= '<div class="nav">';
   $page .= plaatprotect_link('pid='.PAGE_HOME, t('LINK_HOME'));

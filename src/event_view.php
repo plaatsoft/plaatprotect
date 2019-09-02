@@ -34,9 +34,8 @@ function plaatprotect_event_view_page() {
 	global $eid;
 	global $eid2;
 
-   $page ="<style>input[type='checkbox']{width:24px;height:24px}</style>";
+    $page ="<style>input[type='checkbox']{width:24px;height:24px}</style>";
 	$page .= '<h1>'.t('TITLE_EVENT').'</h1>';
-	$page .= '<br>';
 	
 	$sql  = 'select timestamp, category, action, processed from event ';
 	if ($eid2 == EVENT_FILTER) {
@@ -131,7 +130,6 @@ function plaatprotect_event_view_page() {
 		$page .= '<tr>';
     }
 	$page .= '</table>';
-	$page .= '<br/>';
 
 	$page .= '<div class="nav">';
 	$page .= plaatprotect_link('pid='.$pid.'&eid='.EVENT_PREV.'&eid2='.$eid2.'&id='.$id, t('LINK_PREV'));

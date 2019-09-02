@@ -229,8 +229,6 @@ function plaatprotect_setting_category_page() {
 	$result = plaatprotect_db_query($sql);
 	
 	$page  = '<h1>'.t('SETTING_TITLE').'</h1>';
-
-	$page .= '<br/>';
 	
 	$page .= '<div class="setting">';
 	$page .= '<table>';
@@ -251,9 +249,7 @@ function plaatprotect_setting_category_page() {
 	}
 	$page .= '</table>';
 	$page .= '</div>';
-	
-	$page .= '<br/>';
-	 
+
 	$page .= '<div class="nav">';
 
 	$page .= plaatprotect_link('pid='.PAGE_HOME, t('LINK_HOME'));
