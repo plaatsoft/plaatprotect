@@ -226,6 +226,7 @@ function plaatprotect_event_idle() {
 		plaatprotect_db_event_update($row);
 	
 	} else {
+		plaatprotect_log("sleep");	
 		usleep($sleep);
 	}
 }
@@ -264,6 +265,7 @@ function plaatprotect_event_alarm() {
 	
 		$row->processed=1;
 		plaatprotect_db_event_update($row);
+		return;
 	}
 		
 	if (($expire-time())<=0) {
@@ -276,6 +278,7 @@ function plaatprotect_event_alarm() {
 		plaatprotect_email_alarm_group(EVENT_ALARM_OFF);
     }
 	else {
+		plaatprotect_log("sleep");	
 		usleep($sleep);
 	}
 }
