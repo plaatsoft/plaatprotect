@@ -94,7 +94,91 @@ plaatprotect_db_connect($dbhost, $dbuser, $dbpass, $dbname);
  * General
  ********************************
  */
- 
+
+function plaatprotect_zwave_alive($data) {
+
+	if (isset($data->zid)) {
+		plaatprotect_db_zwave_alive($data->zid);
+	}
+}
+
+function plaatprotect_zwave_vendor($data) {
+		
+	if (isset($data->zid) && isset($data->vendor) && isset($data->device)) {
+			
+		$zwave = plaatprotect_db_zwave($data->zid);
+		$zwave->vendor = $data->vendor;
+		$zwave->type = $data->device;
+		
+		plaatprotect_db_zwave_update($zwave);
+	}
+}	
+	
+function plaatprotect_zwave_sensor($data) {
+	
+	if (isset($data->type) && ($data->type=="report")) {
+			
+		$timestamp = date('Y-m-d H:i:00');
+			
+		$sensor = plaatprotect_db_sensor_last($data->zid, $timestamp);
+		if (isset($sensor->sid)) {
+			
+			if (isset($data->luminance)) {
+				$sensor->luminance = $data->luminance;
+			}
+			
+			if (isset($data->temperature)) {
+				$sensor->temperature = $data->temperature;
+			}
+			
+			if (isset($data->humidity)) {
+				$sensor->humidity = $data->humidity;
+			}
+			
+			if (isset($data->ultraviolet)) {
+				$sensor->ultraviolet = $data->ultraviolet;
+			}
+			
+			if (isset($data->battery)) {
+				$sensor->battery = $data->battery;
+			}
+				
+			plaatprotect_db_sensor_update($sensor);
+			
+		} else {
+			
+			$luminance=0;
+			$temperature=0;
+			$humidity=0;
+			$ultraviolet=0;
+			$battery=0;
+			
+			if (isset($data->luminance)) {
+				$luminance = $data->luminance;
+			}
+			
+			if (isset($data->temperature)) {
+				$temperature = $data->temperature;
+			}
+			
+			if (isset($data->humidity)) {
+				$humidity = $data->humidity;
+			}
+			
+			if (isset($data->ultraviolet)) {
+				$ultraviolet = $data->ultraviolet;
+			}
+			
+			if (isset($data->battery)) {
+				$battery = $data->battery;
+			}
+			
+			plaatprotect_db_sensor_insert($data->zid, $timestamp, $luminance, $temperature, $humidity, $ultraviolet, $battery);	
+		}
+	}
+}
+
+
 /**
  * Zwave checksum calculation
  */

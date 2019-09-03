@@ -48,7 +48,7 @@ if ($webcam_present_1=="true") {
    exec('cd '.BASE_DIR.'/interfaces; php webcam.php 1 > /dev/null 2>&1 &');	
 }
 
-//exec('cd '.BASE_DIR.'/interfaces; php event.php > /dev/null 2>&1 &');
+exec('cd '.BASE_DIR.'/interfaces; php event.php > /dev/null 2>&1 &');
 
 // Run every X minutes
 $query  = 'select cid, UNIX_TIMESTAMP(last_run) as last_run, every_x_mins from cron order by cid'; 

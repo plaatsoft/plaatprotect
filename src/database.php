@@ -350,15 +350,18 @@ function plaatprotect_db_config_update($config) {
 ** ---------------------
 */
 
-function plaatprotect_db_event($category=0) {
+function plaatprotect_db_event($category1=0, $category2=0) {
 	
-   $query  = 'select eid, timestamp, category, action, processed from event where processed=0 ';
-   if ($category!=0) {
-		$query .= 'and category='.$category.' ';
+    $query  = 'select eid, timestamp, category, action, processed from event where processed=0 ';
+    if ($category1!=0) {
+		$query .= 'and category='.$category1.' ';
+	}
+	if ($category2!=0) {
+		$query .= 'or category='.$category2.' ';
 	}
 	$query .= 'order by timestamp limit 0,1';
-   $result = plaatprotect_db_query($query);
-   $row = plaatprotect_db_fetch_object($result);
+    $result = plaatprotect_db_query($query);
+    $row = plaatprotect_db_fetch_object($result);
 	$result->close();
 
 	return $row;
@@ -533,8 +536,8 @@ function plaatprotect_db_zigbee_delete($zid) {
 */
 
 define('ACTOR_TYPE_BULB',        0);
-define('ACTOR_TYPE_MAIL',        1);
-define('ACTOR_TYPE_MOBILE',      2);
+define('ACTOR_TYPE_MOBILE',      1);
+define('ACTOR_TYPE_EMAIL',       2);
 define('ACTOR_TYPE_HORN',        3);
 
 function plaatprotect_db_actor($aid) {

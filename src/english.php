@@ -173,9 +173,6 @@ $lang['request_counter'] = 'Page request counter';
 
 $lang['zwave_present'] = 'Zwave present';
 
-$lang['email_present'] = 'Email present';
-$lang['email_address'] = 'Email notification address';
-
 $lang['system_name'] = 'System name';
 
 $lang['home_password'] = 'Protect application with a password.';
@@ -194,6 +191,9 @@ $lang['zigbee_description'] = 'Zigbee description';
 $lang['zigbee_ip_address'] = 'Zigbee controller IP address';
 $lang['zigbee_key'] = 'Zigbee controller access key';
 $lang['zigbee_present'] = 'Zigbee controller present';
+
+$lang['email_present'] = 'Email notification present';
+$lang['email_address'] = 'Email notification address';
 
 $lang['mobile_present'] = 'Android mobile present';
 $lang['mobile_nma_key'] = 'Notify My Android (NMA) App Key';
