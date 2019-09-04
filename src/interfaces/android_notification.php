@@ -54,4 +54,56 @@ function plaatprotect_mobile_notification($topic, $content, $severity=0) {
 	}	
 }
 
+function plaatprotect_mobile_alarm_group($event, $zid=0) {
+
+	$scenario = plaatprotect_db_config_value('alarm_scenario', CATEGORY_GENERAL);
+	$panic_on = plaatprotect_db_config_value('panic_on', CATEGORY_GENERAL);
+
+	$sql = 'select aid from actor ';
+
+	switch ($scenario) {
+	
+		case SCENARIO_HOME: 
+			$sql .= 'where (home=1 and type=101) ';
+			break;
+			
+		case SCENARIO_SLEEP: 
+			$sql .= 'where (sleep=1 and type=101) ';
+			break;		
+			
+		case SCENARIO_AWAY: 
+			$sql .= 'where (away=1 and type=101) ';
+			break;
+	}
+	
+	if  ($panic_on==1) {
+		$sql .= 'or (panic=1 and type=1)';
+	}
+	
+	$result = plaatprotect_db_query($sql);
+   
+	while ($row = plaatprotect_db_fetch_object($result)) {
+	
+		// Notication to mobile
+		$subject =  "PlaatProtect Alarm";
+		
+		$body ="Alarm Location=";
+		$data = plaatprotect_db_zigbee($zid);
+		if ( isset($data->location) ) {
+			$body .= $data->location.' ';
+		} else {
+			$body .= 'Unknown ';
+		}
+			
+		if ($event==EVENT_ALARM_ON) {
+			$body .= 'Event=on';
+		} else {
+			$body .= 'Event=off';
+		}
+	
+		plaatprotect_log("Outbound mobile event: ".$body);
+		plaatprotect_mobile_notification($subject, $body, 2);
+	}
+}
+
 ?>

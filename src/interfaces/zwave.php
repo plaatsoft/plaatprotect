@@ -45,6 +45,47 @@ exec('stty -F /dev/ttyACM0 cs8 9600 ignbrk -brkint -imaxbel -opost -onlcr -isig 
 //exec('stty -F /dev/ttyACM0 9600 raw');
 $fp=fopen("/dev/ttyACM0","c+");
 	
+	
+
+function plaatprotect_zwave_alarm_group($event, $zid=0) {
+
+	$scenario = plaatprotect_db_config_value('alarm_scenario', CATEGORY_GENERAL);
+	$panic_on = plaatprotect_db_config_value('panic_on', CATEGORY_GENERAL);
+
+	$sql = 'select zid from zwave where ';
+
+	switch ($scenario) {
+	
+		case SCENARIO_HOME: 
+			$sql .= '(home=1 and type="Sirene") ';
+			break;
+			
+		case SCENARIO_SLEEP: 
+			$sql .= '(sleep=1 and type="Sirene") ';
+			break;		
+			
+		case SCENARIO_AWAY: 
+			$sql .= '(away=1 and type="Sirene")';
+			break;
+	}
+
+	if  ($panic_on==1) {
+		$sql .= 'or (panic=1 and type="Sirene")';
+	}
+	
+	$result = plaatprotect_db_query($sql);
+	while ($row = plaatprotect_db_fetch_object($result)) {	
+		if ($event==EVENT_ALARM_ON) {
+			$command = '{"zid":'.$row->zid.', "action":"sirene", "value":"on"}';
+		} else {
+			$command = '{"zid":'.$row->zid.', "action":"sirene", "value":"off"}';
+		}		
+		plaatprotect_log("Outbound zwave event: ".$command);
+		plaatprotect_db_event_insert(CATEGORY_ZWAVE_CONTROL, $command);		
+	}
+}
+
+	
 /**
  ********************************
  * Database

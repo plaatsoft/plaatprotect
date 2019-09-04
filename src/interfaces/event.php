@@ -27,6 +27,7 @@ include "../config.php";
 
 include "android_notification.php";
 include "email_notification.php";
+include "hue_notification.php";
 
 define('EVENT_ALARM_ON',        10);
 define('EVENT_ALARM_OFF',       11);
@@ -46,103 +47,7 @@ if( plaatprotect_islocked() ) die( "Already running.\n" );
 
 /*
 ** ---------------------
-** Counter measures
-** ---------------------
-*/
-
-function plaatprotect_zwave_alarm_group($event, $zid=0) {
-
-	$scenario = plaatprotect_db_config_value('alarm_scenario', CATEGORY_GENERAL);
-	$panic_on = plaatprotect_db_config_value('panic_on', CATEGORY_GENERAL);
-
-	$sql = 'select zid from zwave where ';
-
-	switch ($scenario) {
-	
-		case SCENARIO_HOME: 
-			$sql .= '(home=1 and type="Sirene") ';
-			break;
-			
-		case SCENARIO_SLEEP: 
-			$sql .= '(sleep=1 and type="Sirene") ';
-			break;		
-			
-		case SCENARIO_AWAY: 
-			$sql .= '(away=1 and type="Sirene")';
-			break;
-	}
-
-	if  ($panic_on==1) {
-		$sql .= 'or (panic=1 and type="Sirene")';
-	}
-	
-	$result = plaatprotect_db_query($sql);
-	while ($row = plaatprotect_db_fetch_object($result)) {	
-		if ($event==EVENT_ALARM_ON) {
-			$command = '{"zid":'.$row->zid.', "action":"sirene", "value":"on"}';
-		} else {
-			$command = '{"zid":'.$row->zid.', "action":"sirene", "value":"off"}';
-		}		
-		plaatprotect_log("Outbound zwave event: ".$command);
-		plaatprotect_db_event_insert(CATEGORY_ZWAVE_CONTROL, $command);		
-	}
-}
-
-function plaatprotect_mobile_alarm_group($event, $zid=0) {
-
-	$scenario = plaatprotect_db_config_value('alarm_scenario', CATEGORY_GENERAL);
-	$panic_on = plaatprotect_db_config_value('panic_on', CATEGORY_GENERAL);
-
-	$sql = 'select aid from actor ';
-
-	switch ($scenario) {
-	
-		case SCENARIO_HOME: 
-			$sql .= 'where (home=1 and type=101) ';
-			break;
-			
-		case SCENARIO_SLEEP: 
-			$sql .= 'where (sleep=1 and type=101) ';
-			break;		
-			
-		case SCENARIO_AWAY: 
-			$sql .= 'where (away=1 and type=101) ';
-			break;
-	}
-	
-	if  ($panic_on==1) {
-		$sql .= 'or (panic=1 and type=1)';
-	}
-	
-	$result = plaatprotect_db_query($sql);
-   
-	while ($row = plaatprotect_db_fetch_object($result)) {
-	
-		// Notication to mobile
-		$subject =  "PlaatProtect Alarm";
-		
-		$body ="Alarm Location=";
-		$data = plaatprotect_db_zigbee($zid);
-		if ( isset($data->location) ) {
-			$body .= $data->location.' ';
-		} else {
-			$body .= 'Unknown ';
-		}
-			
-		if ($event==EVENT_ALARM_ON) {
-			$body .= 'Event=on';
-		} else {
-			$body .= 'Event=off';
-		}
-	
-		plaatprotect_log("Outbound mobile event: ".$body);
-		plaatprotect_mobile_notification($subject, $body, 2);
-	}
-}
-
-/*
-** ---------------------
-** Actions
+** Utils
 ** ---------------------
 */
 
@@ -152,7 +57,6 @@ function plaatprotect_alarm_off($data) {
 	
 	if (isset($data->type) && ($data->type=="set")) {
 		if ($data->alarm=="off")  {
-							
 			return true;
 		}
 	}
@@ -183,7 +87,6 @@ function plaatprotect_manual_panic($data) {
 			
 		} else {
 		
-			// Swith alarm off
 			$expire = time();
 		}
 	}
@@ -195,42 +98,7 @@ function plaatprotect_manual_panic($data) {
 ** ---------------------
 */
 
-function plaatprotect_event_idle() {
 
-	global $sleep;
-	global $state;
-	global $expire;
-	
-	plaatprotect_log("StateMachine = Idle");
-		
-	$row = plaatprotect_db_event(CATEGORY_ZIGBEE, CATEGORY_ZWAVE);				
-	if (isset($row->eid)) {
-
-		plaatprotect_log("Inbound action: ".$row->action);	
-		$data = json_decode($row->action);
-		
-		if (plaatprotect_alarm_on($data)) {
-	
-			$expire = time() + plaatprotect_db_config_value("alarm_duration", CATEGORY_GENERAL);		
-			$state = STATE_ALARM;
-			$zid = $data->zid;
-			
-			plaatprotect_email_alarm_group(EVENT_ALARM_ON, $zid);
-			
-			//plaatprotect_hue_alarm_group(EVENT_ALARM_ON);			
-			//plaatprotect_zwave_alarm_group(EVENT_ALARM_ON, $zid);
-			//plaatprotect_mobile_alarm_group(EVENT_ALARM_ON, $zid);
-		}
-	
-		$row->processed=1;
-		plaatprotect_db_event_update($row);
-	
-	} else {
-		plaatprotect_log("sleep");	
-		usleep($sleep);
-	}
-}
- 
 function plaatprotect_event_alarm() {
 
 	global $sleep;
@@ -256,9 +124,8 @@ function plaatprotect_event_alarm() {
 			$state = STATE_IDLE;
 			$zid = $data->zid;
 			
-			plaatprotect_email_alarm_group(EVENT_ALARM_OFF, $zid);
-			
-			//plaatprotect_hue_alarm_group(EVENT_ALARM_OFF);			
+			plaatprotect_email_alarm_group(EVENT_ALARM_OFF, $zid);			
+			plaatprotect_hue_alarm_group(EVENT_ALARM_OFF);			
 			//plaatprotect_zwave_alarm_group(EVENT_ALARM_OFF, $zid);
 			//plaatprotect_mobile_alarm_group(EVENT_ALARM_OFF, $zid);
 		}
@@ -272,18 +139,51 @@ function plaatprotect_event_alarm() {
 	
 		$state = STATE_IDLE;
 		
-		//plaatprotect_hue_alarm_group(EVENT_ALARM_OFF);	
-		//plaatprotect_zwave_alarm_group(EVENT_ALARM_OFF);
-		//plaatprotect_mobile_alarm_group(EVENT_ALARM_OFF);
 		plaatprotect_email_alarm_group(EVENT_ALARM_OFF);
+		plaatprotect_hue_alarm_group(EVENT_ALARM_OFF);			
+		//plaatprotect_zwave_alarm_group(EVENT_ALARM_OFF, $zid);
+		//plaatprotect_mobile_alarm_group(EVENT_ALARM_OFF, $zid);
+	
     }
 	else {
-		plaatprotect_log("sleep");	
 		usleep($sleep);
 	}
 }
 
+function plaatprotect_event_idle() {
 
+	global $sleep;
+	global $state;
+	global $expire;
+	
+	plaatprotect_log("StateMachine = Idle");
+		
+	$row = plaatprotect_db_event(CATEGORY_ZIGBEE, CATEGORY_ZWAVE);				
+	if (isset($row->eid)) {
+
+		plaatprotect_log("Inbound action: ".$row->action);	
+		$data = json_decode($row->action);
+		
+		if (plaatprotect_alarm_on($data)) {
+	
+			$expire = time() + plaatprotect_db_config_value("alarm_duration", CATEGORY_GENERAL);		
+			$state = STATE_ALARM;
+			$zid = $data->zid;
+			
+			plaatprotect_email_alarm_group(EVENT_ALARM_ON, $zid);			
+			plaatprotect_hue_alarm_group(EVENT_ALARM_ON);	
+			//plaatprotect_zwave_alarm_group(EVENT_ALARM_ON, $zid);
+			//plaatprotect_mobile_alarm_group(EVENT_ALARM_ON, $zid);
+		}
+	
+		$row->processed=1;
+		plaatprotect_db_event_update($row);
+	
+	} else {
+		usleep($sleep);
+	}
+}
+ 
 function plaatprotect_event_init() {
 	
 	global $state;
@@ -300,14 +200,10 @@ function plaatprotect_event_init() {
 		
 	//plaatprotect_zwave_alarm_group(EVENT_ALARM_OFF);
 	
-	$subject =  "INFO";
-	$body =  "Event process (re)start!";
-	plaatprotect_log("Outbound mobile event: ".$body);
-	plaatprotect_mobile_notification($subject, $body, 0);
+	plaatprotect_log("Event process (re)start!");
 	
 	$state = STATE_IDLE;
 }
-
 
 function plaatprotect_event_state_machine() {
 

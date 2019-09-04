@@ -30,7 +30,7 @@
 // TODO Fetch Hue sensor configuration automatic
 // TODO Make event handler work again
 
-$note[5] = '<div class="subparagraph">Version 0.5 (03-09-2019)</div>
+$note[5] = '<div class="subparagraph">Version 0.5 (04-09-2019)</div>
 <div class="large_text">
 <ul>
 <li>Added zigbee sensor inventory detection</li>
@@ -38,7 +38,8 @@ $note[5] = '<div class="subparagraph">Version 0.5 (03-09-2019)</div>
 <li>Added zigbee battery view</li>
 <li>Added daily database backup</li>
 <li>Improve table look-and-feel</li>
-<li>Improve email notification when alarm is triggered</li>
+<li>Improve email alarm notification</li>
+<li>Improve hue bulb alarm notification</li>
 </ul>
 </div>';
 
