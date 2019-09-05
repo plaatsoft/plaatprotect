@@ -101,10 +101,7 @@ function plaatprotect_refresh_actor_configuration() {
 function plaatprotect_zigbee_page() {
 
 	global $pid;
-	
-	//$event = '{"zid":"all", "action":"get"}';
-	//plaatprotect_db_event_insert(CATEGORY_ZIGBEE, $event);
-		
+			
 	$page ="<style>input[type='checkbox']{width:24px;height:24px}</style>";
 	$page .= '<h1>'.t('TITLE_ZIGBEE').'</h1>';
 

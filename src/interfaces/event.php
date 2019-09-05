@@ -107,10 +107,13 @@ function plaatprotect_event_alarm() {
 	
 	plaatprotect_log("StateMachine = Alarm [".($expire-time())." sec]");
 	
-	$row = plaatprotect_db_event(CATEGORY_ZIGBEE, CATEGORY_ZWAVE);				
+	$row = plaatprotect_db_event_onramp_oldest();				
 	if (isset($row->eid)) {
 
-		plaatprotect_log("Inbound action: ".$row->action);	
+		plaatprotect_db_event_offramp_insert($row->category, $row->action, $row->timestamp);
+		plaatprotect_db_event_onramp_delete($row->eid);		
+		
+		plaatprotect_log($row->action);	
 		$data = json_decode($row->action);
 		
 		if (plaatprotect_alarm_on($data)) {
@@ -129,9 +132,6 @@ function plaatprotect_event_alarm() {
 			//plaatprotect_zwave_alarm_group(EVENT_ALARM_OFF, $zid);
 			//plaatprotect_mobile_alarm_group(EVENT_ALARM_OFF, $zid);
 		}
-	
-		$row->processed=1;
-		plaatprotect_db_event_update($row);
 		return;
 	}
 		
@@ -158,10 +158,13 @@ function plaatprotect_event_idle() {
 	
 	plaatprotect_log("StateMachine = Idle");
 		
-	$row = plaatprotect_db_event(CATEGORY_ZIGBEE, CATEGORY_ZWAVE);				
+	$row = plaatprotect_db_event_onramp_oldest();				
 	if (isset($row->eid)) {
 
-		plaatprotect_log("Inbound action: ".$row->action);	
+		plaatprotect_db_event_offramp_insert($row->category, $row->action, $row->timestamp);
+		plaatprotect_db_event_onramp_delete($row->eid);		
+		
+		plaatprotect_log($row->action);	
 		$data = json_decode($row->action);
 		
 		if (plaatprotect_alarm_on($data)) {
@@ -175,10 +178,6 @@ function plaatprotect_event_idle() {
 			//plaatprotect_zwave_alarm_group(EVENT_ALARM_ON, $zid);
 			//plaatprotect_mobile_alarm_group(EVENT_ALARM_ON, $zid);
 		}
-	
-		$row->processed=1;
-		plaatprotect_db_event_update($row);
-	
 	} else {
 		usleep($sleep);
 	}
@@ -195,7 +194,7 @@ function plaatprotect_event_init() {
 	//while ($row = plaatprotect_db_fetch_object($result)) {	
 	//	$command = '{"zid":'.$row->zid.', "action":"set", "value":"false"}';
 	//	plaatprotect_log("Outbound zigbee event: ".$command);
-	//	plaatprotect_db_event_insert(CATEGORY_ZIGBEE, $command);		
+	//	plaatprotect_db_event_onramp_insert(CATEGORY_ZIGBEE, $command);		
 	//}
 		
 	//plaatprotect_zwave_alarm_group(EVENT_ALARM_OFF);

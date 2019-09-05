@@ -16,7 +16,7 @@
 **  All copyrights reserved (c) 1996-2019 PlaatSoft
 */
  
-function plaatprotect_email_notification($subject, $body) {
+function plaatprotect_email_notification($subject, $body, $alarm) {
 
 	$email_present = plaatprotect_db_config_value('email_present', CATEGORY_EMAIL);
 
@@ -27,11 +27,13 @@ function plaatprotect_email_notification($subject, $body) {
 		$header .= "MIME-Version: 1.0\r\n";
 		$header .= "Content-Type: text/html; charset=ISO-8859-1\r\n";
 	
-		if (mail($email, $subject, $body, $header)) {
-			plaatprotect_log("Email to ".$email.' succesfull');
-		} else {
-			plaatprotect_log("Email to ".$email.' failed');
+		if (mail($email, $subject, $body, $header)) {			
+			$event = '{"email":"delivered", "alarm":"'.$alarm.'"}';
+		} else {		
+			$event = '{"email":"failed", "alarm":"'.$alarm.'"}';
 		}
+		plaatprotect_db_event_offramp_insert(CATEGORY_EMAIL, $event);
+		
 	} else {
 		plaatprotect_log('Outbound email disabled');
 	}
@@ -98,13 +100,15 @@ function plaatprotect_email_alarm_group($event, $zid=0) {
 		$body .= "<p>";
 		if ($event==EVENT_ALARM_ON) {
 			$body .= "Alarm=on\r\n";
+			$alarm = "on";
 		} else {
 			$body .= "Alarm=off\r\n";
+			$alarm = "off";
 		}
 		$body .= "</p>";
 		$body .= "</html>";
 	
-		plaatprotect_email_notification($subject, $body);
+		plaatprotect_email_notification($subject, $body, $alarm);
 	}
 }
 

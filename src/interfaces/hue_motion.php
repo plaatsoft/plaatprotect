@@ -65,12 +65,12 @@ function plaatprotect_zigbee_get_data($zid) {
 			if (LOG == 1) {	
 				echo $zid." alarm ON\r\n";
 			}
-			plaatprotect_db_event_insert(CATEGORY_ZIGBEE, '{"zid":'.$zid.',"type":"set", "alarm":"motion"}');
+			plaatprotect_db_event_onramp_insert(CATEGORY_ZIGBEE, '{"zid":'.$zid.', "type":"set", "alarm":"motion"}');
 		} else {
 			if (LOG == 1) {	
 				echo $zid." alarm OFF\r\n";
 			}
-			plaatprotect_db_event_insert(CATEGORY_ZIGBEE, '{"zid":'.$zid.',"type":"set", "alarm":"off"}');
+			plaatprotect_db_event_onramp_insert(CATEGORY_ZIGBEE, '{"zid":'.$zid.', "type":"set", "alarm":"off"}');
 		}
 		
 	} else {

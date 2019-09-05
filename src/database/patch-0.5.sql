@@ -25,6 +25,25 @@ INSERT INTO config (category, token, value, options, date, readonly, rebuild, en
 INSERT INTO config (category, token, value, options, date, readonly, rebuild, encrypt) VALUES (21, 'email_present', 'false', 'true,false', '0000-00-00', 0, 0, 0);
 INSERT INTO config (category, token, value, options, date, readonly, rebuild, encrypt) VALUES (21, 'email_address', '', '', '0000-00-00', 0, 0, 0);
 
+-- event_offramp;
+ALTER TABLE event RENAME TO event_offramp;
+
+
+CREATE TABLE `event_onramp` (
+  `eid` int(11) NOT NULL,
+  `timestamp` datetime NOT NULL,
+  `category` int(11) NOT NULL,
+  `action` varchar(256) NOT NULL
+) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+
+ALTER TABLE `event_onramp`
+  ADD PRIMARY KEY (`eid`),
+  ADD KEY `timestamp` (`timestamp`);
+
+ALTER TABLE `event_onramp`
+  MODIFY `eid` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=1;
+  
+  ALTER TABLE `event_offramp` DROP `processed`;
 
 
 

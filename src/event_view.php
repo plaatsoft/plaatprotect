@@ -37,7 +37,7 @@ function plaatprotect_event_view_page() {
     $page ="<style>input[type='checkbox']{width:24px;height:24px}</style>";
 	$page .= '<h1>'.t('TITLE_EVENT').'</h1>';
 	
-	$sql  = 'select timestamp, category, action, processed from event ';
+	$sql  = 'select timestamp, category, action from event_offramp ';
 	if ($eid2 == EVENT_FILTER) {
 		$sql .= 'where action like "%alarm%" ';
 	}
@@ -66,10 +66,6 @@ function plaatprotect_event_view_page() {
 	$page .= t('EVENT_ACTION');
 	$page .= '</th>';
 	
-	$page .= '<th>';
-	$page .= t('EVENT_PROCESSED');
-	$page .= '</th>';
-
 	$page .= '</tr>';
   
 	$page .= '</th>';
@@ -122,11 +118,7 @@ function plaatprotect_event_view_page() {
 		$page .= '<td>';
 		$page .= $row->action;
 		$page .= '</td>';
-		
-		$page .= '<td>';
-		$page .= $row->processed;
-		$page .= '</td>';
-				
+
 		$page .= '<tr>';
     }
 	$page .= '</table>';

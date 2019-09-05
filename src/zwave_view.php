@@ -86,9 +86,9 @@ function plaatprotect_zwave_edit_page($id) {
 	$row = plaatprotect_db_zwave($id);
 	
 	$page .= '<br/>';
-   $page .= '<label>'.t('ZWAVE_LOCATION').':</label>';
-   $page .= '<input type="input" name="location" size="30" value="'.$row->location.'" />';
-   $page .= '<br/>';
+    $page .= '<label>'.t('ZWAVE_LOCATION').':</label>';
+    $page .= '<input type="input" name="location" size="30" value="'.$row->location.'" />';
+    $page .= '<br/>';
 	$page .= '<br/>';
 
 	$page .= '<div class="nav">';
@@ -104,7 +104,7 @@ function plaatprotect_zwave_page() {
 	global $pid;
 
 	$event = '{"zid":"all", "action":"init"}';
-	plaatprotect_db_event_insert(CATEGORY_ZWAVE_CONTROL, $event);
+	plaatprotect_db_event_onramp_insert(CATEGORY_ZWAVE_CONTROL, $event);
 	
 	$device_offline_timeout = plaatprotect_db_config_value('device_offline_timeout',CATEGORY_GENERAL);
 

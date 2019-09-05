@@ -27,8 +27,13 @@ function plaatprotect_set_hue_state($hid, $value) {
       "method" => "PUT", "header" => "Content-type: application/json",
       "content" => "{\"on\":". $value."}"
     ]]));
-	 
-	//echo $json;
+		
+	if ($value=="true") {	
+		$event = '{"zid":"'.$hid.'", "type":"set", "light":"on" }';
+	} else {
+		$event = '{"zid":"'.$hid.'", "type":"set", "light":"off" }';
+	}
+	plaatprotect_db_event_offramp_insert(CATEGORY_ZIGBEE, $event);
 }
 
 function plaatprotect_hue_alarm_group($event) {
@@ -61,10 +66,8 @@ function plaatprotect_hue_alarm_group($event) {
 	while ($row = plaatprotect_db_fetch_object($result)) {	
 		if ($event==EVENT_ALARM_ON) {
 			plaatprotect_set_hue_state($row->aid, "true");
-			plaatprotect_log("Hue Light ".$row->aid.' on');		
 		} else {
 			plaatprotect_set_hue_state($row->aid, "false");
-			plaatprotect_log("Hue Light ".$row->aid.' off');		
 		}		
 	}
 }

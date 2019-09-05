@@ -128,7 +128,7 @@ function plaatprotect_home_login_event() {
 		$event = '{"login":"failed", "user":"'.$username.'", "ip":"'.$ip.'" }';
 	}
 	
-	plaatprotect_db_event_insert(CATEGORY_GENERAL, $event);
+	plaatprotect_db_event_offramp_insert(CATEGORY_GENERAL, $event);
 }
 
 /*
@@ -355,7 +355,7 @@ function plaatprotect_home() {
 			$config->value = PANIC_ON;
 			plaatprotect_db_config_update($config);
 			$event = '{"zid":"0", "action":"panic", "value":"on"}';
-			plaatprotect_db_event_insert(CATEGORY_ZWAVE, $event);
+			plaatprotect_db_event_offramp_insert(CATEGORY_ZWAVE, $event);
 			break;
 			
 		case EVENT_OFF:
@@ -363,7 +363,7 @@ function plaatprotect_home() {
 			$config->value = PANIC_OFF;
 			plaatprotect_db_config_update($config);
 			$event = '{"zid":"0", "action":"panic", "value":"off"}';
-			plaatprotect_db_event_insert(CATEGORY_ZWAVE, $event);
+			plaatprotect_db_event_offramp_insert(CATEGORY_ZWAVE, $event);
 			break;
 			
 		case EVENT_SWITCH_SCENARIO:

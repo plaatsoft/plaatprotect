@@ -49,8 +49,8 @@ $note[4] = '<div class="subparagraph">Version 0.4 (31-08-2019)</div>
 <li>Added system name setting</li>
 <li>Login username can now also be defined</li>
 <li>Sensors views can now be enabled/disable in settings</li>
-<li>Improve all views. Now all sensors data is showed in one chart</li>
-<li>Improve main menu</li>
+<li>Improve all sensor data views. Now data of all sensors is showed in one chart</li>
+<li>Improve Look and Feel of menus</li>
 <li>Improve cron job</li>
 <li>Added zigbee lightbulb inventory detection</li>
 <li>Improve database table structure</li>

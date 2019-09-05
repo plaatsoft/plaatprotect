@@ -331,9 +331,8 @@ function plaatprotect_db_config($key, $category=0) {
 
    $sql = 'select id, category, token, value from config where token="'.$key.'" and category='.$category;
    $result = plaatprotect_db_query($sql);
-   $data = plaatprotect_db_fetch_object($result);
-
-   return $data;
+  
+   return plaatprotect_db_fetch_object($result);
 }
 
 function plaatprotect_db_config_update($config) {
@@ -346,41 +345,86 @@ function plaatprotect_db_config_update($config) {
 
 /*
 ** ---------------------
-** EVENT
+** EVENT_ONRAMP
 ** ---------------------
 */
 
-function plaatprotect_db_event($category1=0, $category2=0) {
+function plaatprotect_db_event_onramp_oldest() {
 	
-    $query  = 'select eid, timestamp, category, action, processed from event where processed=0 ';
-    if ($category1!=0) {
-		$query .= 'and category='.$category1.' ';
-	}
-	if ($category2!=0) {
-		$query .= 'or category='.$category2.' ';
-	}
-	$query .= 'order by timestamp limit 0,1';
+    $query  = 'select eid, timestamp, category, action from event_onramp order by timestamp limit 0,1';
     $result = plaatprotect_db_query($query);
-    $row = plaatprotect_db_fetch_object($result);
-	$result->close();
-
-	return $row;
+	
+    return  plaatprotect_db_fetch_object($result);
 }
 
-function plaatprotect_db_event_insert($category, $action) {
- 
-   $timestamp = date('Y-m-d H:i:s');
+function plaatprotect_db_event_onramp($eid) {
 	
-   $query  = 'insert into event (timestamp, category, action) ';
+    $query  = 'select eid, timestamp, category, action from event_onramp where eid='.$eid;
+    $result = plaatprotect_db_query($query);
+	
+    return plaatprotect_db_fetch_object($result);
+}
+
+function plaatprotect_db_event_onramp_insert($category, $action) {
+ 
+    $timestamp = date('Y-m-d H:i:s');
+	
+    $query  = 'insert into event_onramp (timestamp, category, action) ';
 	$query .= 'values ("'.$timestamp.'",'.$category.',"'.plaatprotect_db_escape($action).'")';
 	
 	return plaatprotect_db_query($query);
 }
 
-function plaatprotect_db_event_update($event) {
+function plaatprotect_db_event_onramp_update($event) {
 		
-	$query  = 'update event set '; 
-	$query .= 'processed='.$event->processed.' ';
+	$query  = 'update event_onramp set '; 
+	$query .= 'timestamp="'.$event->timestamp.'", ';
+	$query .= 'category='.$event->category.', ';
+	$query .= 'action="'.$event->action.'" ';
+	$query .= 'where eid='.$event->eid; 
+	
+	return plaatprotect_db_query($query);
+}
+
+function plaatprotect_db_event_onramp_delete($eid) {
+ 
+	$query = 'delete from event_onramp where eid='.$eid;
+	 
+	return plaatprotect_db_query($query);
+}
+
+/*
+** ---------------------
+** EVENT_OFFRAMP
+** ---------------------
+*/
+
+function plaatprotect_db_event_offramp($eid) {
+	
+    $query  = 'select eid, timestamp, category, action from event_offramp where eid='.$eid;
+    $result = plaatprotect_db_query($query);
+	
+    return plaatprotect_db_fetch_object($result);
+}
+
+function plaatprotect_db_event_offramp_insert($category, $action, $timestamp=0) {
+
+	if ($timestamp==0) {
+		$timestamp=date('Y-m-d H:i:s');
+	}
+
+    $query  = 'insert into event_offramp (timestamp, category, action) ';
+	$query .= 'values ("'.$timestamp.'",'.$category.',"'.plaatprotect_db_escape($action).'")';
+	
+	return plaatprotect_db_query($query);
+}
+
+function plaatprotect_db_event_offramp_update($event) {
+		
+	$query  = 'update event_offramp set '; 
+	$query .= 'timestamp="'.$event->timestamp.'", ';
+	$query .= 'category='.$event->category.', ';
+	$query .= 'action="'.$event->action.'" ';
 	$query .= 'where eid='.$event->eid; 
 	
 	return plaatprotect_db_query($query);
@@ -394,18 +438,15 @@ function plaatprotect_db_event_update($event) {
 
 function plaatprotect_db_zwave($zid) {
  	
-   $query  = 'select zid, type, vendor, location, home, sleep, away, panic from zwave where zid='.$zid;
-   $result = plaatprotect_db_query($query); 
-	$row = plaatprotect_db_fetch_object($result);
- 
-	return $row;
+    $query  = 'select zid, type, vendor, location, home, sleep, away, panic from zwave where zid='.$zid;
+    $result = plaatprotect_db_query($query); 
+	
+	return plaatprotect_db_fetch_object($result);
 }
 
 function plaatprotect_db_zwave_insert($zid, $vendor, $type, $version, $location, $state) {
- 
-	global $db;
-	
-   $query  = 'insert into zwave (zid, vendor, type, version, location) ';
+ 	
+    $query  = 'insert into zwave (zid, vendor, type, version, location) ';
 	$query .= 'values ('.$zid.',';
 	$query .= '"'.plaatprotect_db_escape($vendor).'",';
 	$query .= '"'.plaatprotect_db_escape($type).'",';
@@ -417,7 +458,7 @@ function plaatprotect_db_zwave_insert($zid, $vendor, $type, $version, $location,
 
 function plaatprotect_db_zwave_update($zwave) {
  
-   $query  = 'update zwave set '; 
+    $query  = 'update zwave set '; 
 	$query .= 'vendor="'.plaatprotect_db_escape($zwave->vendor).'", ';
 	$query .= 'type="'.plaatprotect_db_escape($zwave->type).'", ';
 	$query .= 'location="'.plaatprotect_db_escape($zwave->location).'", ';
@@ -443,7 +484,7 @@ function plaatprotect_db_zwave_alive($zid) {
 
 	$query = 'update zwave set last_update="'.$timestamp.'" where zid='.$zid;	
 	
-   plaatprotect_db_query($query);
+    return plaatprotect_db_query($query);
 }
 
 /*
@@ -456,7 +497,7 @@ function plaatprotect_db_sensor_insert($zid, $timestamp, $value) {
  	
 	$query  = 'insert into sensor (zid, timestamp, value) values ('.$zid.',"'.$timestamp.'",'.$value.')';
 	
-	plaatprotect_db_query($query);
+	return plaatprotect_db_query($query);
 }
 
 function plaatprotect_db_sensor_update($sensor) {
@@ -466,7 +507,7 @@ function plaatprotect_db_sensor_update($sensor) {
 	$query .= 'value='.$sensor->value.' ';
 	$query .= 'where sid='.$sensor->sid;	
 	
-	plaatprotect_db_query($query);
+	return plaatprotect_db_query($query);
 }
 
 /*
@@ -474,10 +515,6 @@ function plaatprotect_db_sensor_update($sensor) {
 ** ZIGBEE
 ** ---------------------
 */
-
-define('ZIGBEE_STATE_OFF',        0);
-define('ZIGBEE_STATE_ON',         1);
-define('ZIGBEE_STATE_OFFLINE',    2);
 
 define('ZIGBEE_TYPE_UNKNOWN',    -1);
 define('ZIGBEE_TYPE_LIGHT',       0);
@@ -492,14 +529,12 @@ function plaatprotect_db_zigbee($zid) {
  	
    $query  = 'select zid, vendor, type, version, location, state from zigbee where zid='.$zid;
    $result = plaatprotect_db_query($query); 
-	$row = plaatprotect_db_fetch_object($result);
- 
-	return $row;
+   return plaatprotect_db_fetch_object($result);
 }
 
 function plaatprotect_db_zigbee_update($data) {
  
-   $query  = 'update zigbee set '; 
+    $query  = 'update zigbee set '; 
 	$query .= 'vendor="'.plaatprotect_db_escape($data->vendor).'", ';
 	$query .= 'type='.plaatprotect_db_escape($data->type).', ';
 	$query .= 'version="'.plaatprotect_db_escape($data->version).'", ';
@@ -511,7 +546,7 @@ function plaatprotect_db_zigbee_update($data) {
 
 function plaatprotect_db_zigbee_insert($zid, $vendor, $type, $version, $location) {
  	
-   $query  = 'insert into zigbee (zid, vendor, type, version, location) ';
+    $query  = 'insert into zigbee (zid, vendor, type, version, location) ';
 	$query .= 'values ('.$zid.',';
 	$query .= '"'.plaatprotect_db_escape($vendor).'",';
 	$query .= ''.plaatprotect_db_escape($type).',';
@@ -528,7 +563,6 @@ function plaatprotect_db_zigbee_delete($zid) {
 	return plaatprotect_db_query($query);
 }
 
-
 /*
 ** ---------------------
 ** ACTOR
@@ -544,9 +578,7 @@ function plaatprotect_db_actor($aid) {
  	
    $query  = 'select aid, vendor, version, type, location, home, sleep, away, panic from actor where aid='.$aid;
    $result = plaatprotect_db_query($query); 
-   $row = plaatprotect_db_fetch_object($result);
- 
-   return $row;
+   return plaatprotect_db_fetch_object($result);
 }
 
 function plaatprotect_db_actor_update($data) {
