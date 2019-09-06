@@ -51,14 +51,14 @@ function plaatprotect_motion_page() {
 		if ($timestamp1>date("Y-m-d H:i:s")) {
 			break;
 		}
-
+		
 		$sql1 = 'select zid from zigbee where type='.$type.' order by zid';
 		$result1 = plaatprotect_db_query($sql1);
 		
 		$first=true;
 		while ($node = plaatprotect_db_fetch_object($result1)) {
 			
-			$sql2  = 'select value from sensor where timestamp>="'.$timestamp1.'" and timestamp<"'.$timestamp2.'" and zid='.$node->zid.' limit 0,1';
+			$sql2  = 'select sum(value) as value from sensor where timestamp>="'.$timestamp1.'" and timestamp<"'.$timestamp2.'" and zid='.$node->zid.' limit 0,1';
 			$result2 = plaatprotect_db_query($sql2);
 			$row2 = plaatprotect_db_fetch_object($result2);
 					
