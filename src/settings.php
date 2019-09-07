@@ -230,28 +230,25 @@ function plaatprotect_setting_category_page() {
 	
 	$page  = '<h1>'.t('SETTING_TITLE').'</h1>';
 	
-	$page .= '<div class="setting">';
-	$page .= '<table>';
+	$page .= '<div class="menu">';
 	
 	$count = 0;
 	while ($row = plaatprotect_db_fetch_object($result)) {
 	
 		if (($count%3)==0) {
-			$page .= '<tr>';
+			$page .= '<p>';
 		}
 		$page .= '<td width="200">'.plaatprotect_link('pid='.PAGE_SETTING_LIST.'&cat='.$row->category, i('cog').t('CATEGORY'.$row->category)).'</td>';
 		if (($count%3)==3) {
-			$page .= '</tr>';
+			$page .= '</p>';
 		}
 		
 		$count++;
 		
 	}
-	$page .= '</table>';
 	$page .= '</div>';
 
 	$page .= '<div class="nav">';
-
 	$page .= plaatprotect_link('pid='.PAGE_HOME, t('LINK_HOME'));
 	$page .= '</div>';
 	

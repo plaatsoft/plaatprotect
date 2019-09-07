@@ -42,6 +42,7 @@ $enable_temperature_view = plaatprotect_db_config_value('enable_temperature_view
 $enable_luminance_view = plaatprotect_db_config_value('enable_luminance_view', CATEGORY_GENERAL);
 $enable_humidity_view = plaatprotect_db_config_value('enable_humidity_view', CATEGORY_GENERAL);
 $enable_motion_view = plaatprotect_db_config_value('enable_motion_view', CATEGORY_GENERAL);
+$enable_pressure_view = plaatprotect_db_config_value('enable_pressure_view', CATEGORY_GENERAL);
 
 /*
 ** ---------------------
@@ -199,6 +200,7 @@ function plaatprotect_home_page() {
 	global $enable_luminance_view;
 	global $enable_humidity_view;
 	global $enable_motion_view;
+	global $enable_pressure_view;
 	
 	$page = '<h1>';
 	$page .= t('TITLE').' ';
@@ -248,6 +250,10 @@ function plaatprotect_home_page() {
 
 	if ($enable_humidity_view=="true") {
 		$page .= plaatprotect_link('pid='.PAGE_HUMIDITY, t('LINK_HUMIDITY'));
+	}	
+	
+	if ($enable_pressure_view=="true") {
+		$page .= plaatprotect_link('pid='.PAGE_PRESSURE, t('LINK_PRESSURE'));
 	}	
 
 	$page .= '</div>';

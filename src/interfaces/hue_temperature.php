@@ -61,7 +61,7 @@ function plaatprotect_zigbee_get_data($zid) {
 		
 plaatprotect_db_connect($dbhost, $dbuser, $dbpass, $dbname);
 
-$sql = 'select zid from zigbee where type='.ZIGBEE_TYPE_TEMPERATURE;
+$sql = 'select zid from zigbee where type='.ZIGBEE_TYPE_TEMPERATURE.' and zid<100';
 $result = plaatprotect_db_query($sql);
 		
 while ($row=plaatprotect_db_fetch_object($result)) {

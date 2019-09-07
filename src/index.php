@@ -267,7 +267,11 @@ switch ($pid) {
 		$page = plaatprotect_luminance();
 		break;
 		
-
+	case PAGE_PRESSURE: 
+		include "pressure.php";
+		$page = plaatprotect_pressure();
+		break;
+				
 	case PAGE_DONATE: 
 		include "donate.php";
 		$page = plaatprotect_donate();

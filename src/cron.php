@@ -87,6 +87,9 @@ while ( $row=plaatprotect_db_fetch_object($result) ) {
 					
 			case 6: exec('cd '.BASE_DIR.'/interfaces; php hue_battery.php > /dev/null 2>&1 &');
 					break;
+					
+			case 7: exec('cd '.BASE_DIR.'/interfaces; php current_weather.php > /dev/null 2>&1 &');
+					break;
 		}
 		plaatprotect_db_cron_update($row->cid);
 	}

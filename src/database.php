@@ -253,6 +253,12 @@ function plaatprotect_db_check_version() {
     if ($value=="0.4")  { 
 		plaatprotect_db_execute_sql_file("0.5");
     }
+	
+	// Execute SQL path script v0.3 if needed
+	$value = plaatprotect_db_config_value('database_version', CATEGORY_GENERAL);
+    if ($value=="0.5")  { 
+		plaatprotect_db_execute_sql_file("0.6");
+    }
 }
 
 /*
@@ -524,6 +530,7 @@ define('ZIGBEE_TYPE_MOTION',      3);
 define('ZIGBEE_TYPE_BATTERY',     4);
 define('ZIGBEE_TYPE_HUMIDITY',    5);
 define('ZIGBEE_TYPE_SWITCH',      6);
+define('ZIGBEE_TYPE_PRESSURE',    7);
 
 function plaatprotect_db_zigbee($zid) {
  	

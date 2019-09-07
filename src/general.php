@@ -57,7 +57,8 @@ define('PAGE_SETTING_EDIT',         27);
 define('PAGE_BATTERY',              28);
 define('PAGE_TEMPERATURE',          29);
 define('PAGE_HUMIDITY',             30);
-define('PAGE_LUMINANCE',				31);
+define('PAGE_LUMINANCE',			31);
+define('PAGE_PRESSURE',				32);
 
 /*
 ** -----------
@@ -117,11 +118,11 @@ define('CATEGORY_ZWAVE_CONTROL',    12);
 define('CATEGORY_EMAIL',            21);
 define('CATEGORY_DRONE',            31);
 define('CATEGORY_SECURITY',         51);
-define('CATEGORY_LOOK_AND_FEEL',    52);
 define('CATEGORY_WEBCAM_1',         61);
 define('CATEGORY_WEBCAM_2',         62);
 define('CATEGORY_ZIGBEE',           71);
 define('CATEGORY_MOBILE',           81);
+define('CATEGORY_WEATHER',          91);
 
 /**
  ********************************

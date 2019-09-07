@@ -97,6 +97,7 @@ $lang['LINK_BATTERY']       = i('area-chart') . 'Battery';
 $lang['LINK_HUMIDITY']      = i('area-chart') . 'Humidity';
 $lang['LINK_TEMPERATURE']   = i('area-chart') . 'Temperature';
 $lang['LINK_LUMINANCE']     = i('area-chart') . 'Luminance';
+$lang['LINK_PRESSURE']     = i('area-chart') . 'Pressure';
 
 $lang['LINK_ON']             = 'ON'; 
 $lang['LINK_OFF']            = 'OFF'; 
@@ -206,16 +207,22 @@ $lang['enable_temperature_view'] = 'Enable Temperature View';
 $lang['enable_humidity_view'] = 'Enable Humidity View';
 $lang['enable_luminance_view'] = 'Enable Luminance View';
 $lang['enable_motion_view'] = 'Enable Motion View';
+$lang['enable_pressure_view'] = 'Enable Pressure View';
+
+$lang['weather_present'] = 'Enable outdoor weather measurement';
+$lang['weather_city']    = 'City name (for example: gouda)';
+$lang['weather_country'] = 'Country iso name (for example: nl)';
+$lang['weather_api_key'] = 'OpenWeatherMap.org api key';
 
 $lang['CATEGORY0']  = 'General'; 
 $lang['CATEGORY11'] = 'Z-Wave'; 
 $lang['CATEGORY21'] = 'Email'; 
 $lang['CATEGORY51'] = 'Security'; 
-$lang['CATEGORY52'] = 'Look and Feel'; 
 $lang['CATEGORY61'] = 'Webcam 1'; 
 $lang['CATEGORY62'] = 'Webcam 2'; 
 $lang['CATEGORY71'] = 'Zigbee'; 
 $lang['CATEGORY81'] = 'Mobile'; 
+$lang['CATEGORY91'] = 'Weather'; 
 
 /*
 ** ------------------
@@ -240,6 +247,7 @@ $lang['SENSOR_TYPE_3'] = 'Motion';
 $lang['SENSOR_TYPE_4'] = 'Battery';
 $lang['SENSOR_TYPE_5'] = 'Humidity';
 $lang['SENSOR_TYPE_6'] = 'Switch';
+$lang['SENSOR_TYPE_7'] = 'Pressure';
 	
 $lang['ZIGBEE_ID'] = 'Id';
 $lang['ZIGBEE_VENDOR'] = 'Vendor';

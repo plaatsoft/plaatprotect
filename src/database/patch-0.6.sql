@@ -1,0 +1,32 @@
+--
+--  ============
+--  PlaatProtect
+--  ============
+--
+--  Created by wplaat
+--
+--  For more information visit the following website.
+--  Website : www.plaatsoft.nl 
+--
+--  Or send an email to the following address.
+--  Email   : info@plaatsoft.nl
+--
+--  All copyrights reserved (c) 1996-2019 PlaatSoft
+--
+
+-- config table
+UPDATE config SET value="0.6" WHERE token='database_version';
+
+INSERT INTO config (category, token, value, options, date, readonly, rebuild, encrypt) VALUES (91, 'weather_present', 'false', 'true,false', '0000-00-00', 0, 0, 0);
+INSERT INTO config (category, token, value, options, date, readonly, rebuild, encrypt) VALUES (91, 'weather_city', '', '', '0000-00-00', 0, 0, 0);
+INSERT INTO config (category, token, value, options, date, readonly, rebuild, encrypt) VALUES (91, 'weather_country', '', '', '0000-00-00', 0, 0, 0);
+INSERT INTO config (category, token, value, options, date, readonly, rebuild, encrypt) VALUES (91, 'weather_api_key', '', '', '0000-00-00', 0, 0, 0);
+
+-- cron table
+INSERT INTO cron (`cid`, `note`, `last_run`, `every_x_mins`) VALUES ('7', 'current_weather', '2019-09-07 00:00:00', 5);
+
+INSERT INTO `zigbee` (`zid`, `vendor`, `type`, `version`, `location`, `state`) VALUES ('100', 'OpenWeatherMap.org', 1, '?', 'buiten', 0);
+INSERT INTO `zigbee` (`zid`, `vendor`, `type`, `version`, `location`, `state`) VALUES ('101', 'OpenWeatherMap.org', 7, '?', 'buiten', 0);
+INSERT INTO `zigbee` (`zid`, `vendor`, `type`, `version`, `location`, `state`) VALUES ('102', 'OpenWeatherMap.org', 5, '?', 'buiten', 0);
+
+INSERT INTO config (category, token, value, options, date, readonly, rebuild, encrypt) VALUES (0, 'enable_pressure_view', 'false', 'true,false', '0000-00-00', 0, 0, 0);

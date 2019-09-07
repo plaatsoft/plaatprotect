@@ -18,7 +18,7 @@
 
 /**
  * @file
- * @brief contain temperature report
+ * @brief contain humidity report
  */
  
 /*
@@ -27,13 +27,11 @@
 ** ---------------------
 */
 
-function plaatprotect_temperature_page() {
+function plaatprotect_pressure_page() {
 
-// input
+	// input
 	global $pid;
 	global $date;
-	
-	$weather_present = plaatprotect_db_config_value('weather_present', CATEGORY_WEATHER);
 	
 	list($year, $month, $day) = explode("-", $date);	
 	$day = ltrim($day ,'0');
@@ -42,7 +40,7 @@ function plaatprotect_temperature_page() {
 	
 	$step = 300;
 	$data = "";
-	$type = ZIGBEE_TYPE_TEMPERATURE;
+	$type = ZIGBEE_TYPE_PRESSURE;
 	
 	for ($i=0; $i<((60*60*24/$step)); $i++) {
 	
@@ -54,12 +52,7 @@ function plaatprotect_temperature_page() {
 			break;
 		}
 
-		$sql1 = 'select zid from zigbee where type='.$type.' ';
-		if ($weather_present=="false") {
-			$sql1 .= 'and zid<100 ';
-		}
-		$sql1 .= 'order by zid';
-		
+		$sql1 = 'select zid from zigbee where type='.$type.' order by zid';
 		$result1 = plaatprotect_db_query($sql1);
 		
 		$first=true;
@@ -112,11 +105,7 @@ function plaatprotect_temperature_page() {
 				var data = new google.visualization.DataTable();
 				data.addColumn("string", "Time");';
 				
-				$sql3 = 'select zid from zigbee where type='.$type.' ';
-				if ($weather_present=="false") {
-					$sql3 .= 'and zid<100 ';
-				}
-				$sql3 .= 'order by zid';
+				$sql3 = 'select zid from zigbee where type='.$type.' order by zid';
 				$result3 = plaatprotect_db_query($sql3);	
 				while ($node = plaatprotect_db_fetch_object($result3)) {
 					$page .= 'data.addColumn("number", "'.plaatprotect_db_zigbee($node->zid)->location.'");'."\r\n";
@@ -139,7 +128,7 @@ function plaatprotect_temperature_page() {
 		}
 		</script>';
 	
-	$page .= '<h1>Temperature '.plaatprotect_dayofweek($date).' '.$day.'-'.$month.'-'.$year.'</h1>';
+	$page .= '<h1>Pressure '.plaatprotect_dayofweek($date).' '.$day.'-'.$month.'-'.$year.'</h1>';
 
 	$page .= '<div id="chart_div" style="width:950px; height:350px"></div>';
 	
@@ -158,7 +147,7 @@ function plaatprotect_temperature_page() {
 ** ---------------------
 */
 
-function plaatprotect_temperature() {
+function plaatprotect_pressure() {
 
   /* input */
   global $pid;  
@@ -166,8 +155,8 @@ function plaatprotect_temperature() {
 	/* Page handler */
 	switch ($pid) {
 
-		case PAGE_TEMPERATURE:
-			return plaatprotect_temperature_page();
+		case PAGE_PRESSURE:
+			return plaatprotect_pressure_page();
 			break;
 	}
 }
