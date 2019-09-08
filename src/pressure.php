@@ -58,7 +58,7 @@ function plaatprotect_pressure_page() {
 		$first=true;
 		while ($node = plaatprotect_db_fetch_object($result1)) {
 			
-			$sql2  = 'select value from sensor where timestamp>="'.$timestamp1.'" and timestamp<"'.$timestamp2.'" and zid='.$node->zid.' limit 0,1';
+			$sql2  = 'select avg(value) as value from sensor where timestamp>="'.$timestamp1.'" and timestamp<"'.$timestamp2.'" and zid='.$node->zid;
 			$result2 = plaatprotect_db_query($sql2);
 			$row2 = plaatprotect_db_fetch_object($result2);
 					
