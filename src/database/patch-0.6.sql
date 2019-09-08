@@ -25,7 +25,7 @@ UPDATE `config` SET `category` = '10' WHERE token="alarm_duration";
 INSERT INTO config (category, token, value, options, date, readonly, rebuild, encrypt) VALUES (10, 'enable_motion_alarm', 'true', 'true,false', '0000-00-00', 0, 0, 0);
 INSERT INTO config (category, token, value, options, date, readonly, rebuild, encrypt) VALUES (10, 'enable_temperature_alarm', 'false', 'true,false', '0000-00-00', 0, 0, 0);
 INSERT INTO config (category, token, value, options, date, readonly, rebuild, encrypt) VALUES (10, 'alarm_high_temperature', '30.0', '', '0000-00-00', 0, 0, 0);
-INSERT INTO config (category, token, value, options, date, readonly, rebuild, encrypt) VALUES (10, 'alarm_low_temperature', '5.0', '', '0000-00-00', 0, 0, 0);
+INSERT INTO config (category, token, value, options, date, readonly, rebuild, encrypt) VALUES (10, 'alarm_low_temperature', '1.0', '', '0000-00-00', 0, 0, 0);
 INSERT INTO config (category, token, value, options, date, readonly, rebuild, encrypt) VALUES (0, 'temperature_alarm_on', '0', '0,1', '0000-00-00', '1', '0', '0');
 
 INSERT INTO config (category, token, value, options, date, readonly, rebuild, encrypt) VALUES (91, 'weather_present', 'false', 'true,false', '0000-00-00', 0, 0, 0);
