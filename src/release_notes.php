@@ -27,12 +27,13 @@
 ** ---------------------
 */
 
-$note[6] = '<div class="subparagraph">Version 0.6 (07-09-2019)</div>
+$note[6] = '<div class="subparagraph">Version 0.6 (08-09-2019)</div>
 <div class="large_text">
 <ul>
 <li>Integrate OpenWeatherMap.org webservice</li>
 <li>Now outdoor temperature, humidity and pressure can be measured</li>
 <li>Added pressure sensor chart</li>
+<li>Improve chart look-and-feel if no measurements are found</li>
 </ul>
 </div>';
 

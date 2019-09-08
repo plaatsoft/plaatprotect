@@ -70,11 +70,11 @@ function plaatprotect_luminance_page() {
 				$first=false;
 			} 
 			
-			$value = 0;
+			$value = "null";
 			if (isset($row2->value)) {
-				$value = $row2->value;
+				$value = round($row2->value,2);
 			} 
-			$data .= ",".round($value,2);
+			$data .= ",".$value;
 		}	
 		if ($first==false) {
 			$data .= ']';	
@@ -87,7 +87,7 @@ function plaatprotect_luminance_page() {
 		$sql1 = 'select zid from zigbee where type='.$type.' order by zid';
 		$result1 = plaatprotect_db_query($sql1);
 		while ($node = plaatprotect_db_fetch_object($result1)) {
-			$data .= ',0';
+			$data .= ',null';
 		}
 		$data .= ']';
 	}	

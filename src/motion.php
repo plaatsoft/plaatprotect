@@ -72,9 +72,9 @@ function plaatprotect_motion_page() {
 			
 			$value = 0;
 			if (isset($row2->value)) {
-				$value = $row2->value;
+				$value = round($row2->value,2);
 			} 
-			$data .= ",".round($value,2);
+			$data .= ",".$value;
 		}	
 		if ($first==false) {
 			$data .= ']';	
