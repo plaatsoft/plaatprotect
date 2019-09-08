@@ -67,7 +67,7 @@ function plaatprotect_alarm_off($data) {
 function plaatprotect_alarm_on($data) {
 
 	if (isset($data->type) && ($data->type=="set")) {
-		if (($data->alarm=="motion" || $data->alarm=="vibration")) {
+		if (($data->alarm=="motion" || $data->alarm=="vibration" || $data->alarm=="temperature")) {
 			return true;
 		}
 	}
@@ -97,7 +97,6 @@ function plaatprotect_manual_panic($data) {
 ** State machine
 ** ---------------------
 */
-
 
 function plaatprotect_event_alarm() {
 
@@ -188,18 +187,6 @@ function plaatprotect_event_init() {
 	global $state;
 	
 	plaatprotect_log("StateMachine = Init");
-	
-	//$sql = 'select zid from zigbee ';
-	//$result = plaatprotect_db_query($sql);
-	//while ($row = plaatprotect_db_fetch_object($result)) {	
-	//	$command = '{"zid":'.$row->zid.', "action":"set", "value":"false"}';
-	//	plaatprotect_log("Outbound zigbee event: ".$command);
-	//	plaatprotect_db_event_onramp_insert(CATEGORY_ZIGBEE, $command);		
-	//}
-		
-	//plaatprotect_zwave_alarm_group(EVENT_ALARM_OFF);
-	
-	plaatprotect_log("Event process (re)start!");
 	
 	$state = STATE_IDLE;
 }

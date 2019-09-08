@@ -48,35 +48,40 @@ function plaatprotect_zigbee_get_data($zid) {
 	$data = json_decode($json);
 	
 	if (LOG == 1) {	
-		#print_r($data);
+		print_r($data);
 	}
 	
 	$value = ($data->state->status);
-	$timestamp = date('Y-m-d H:i:s');
 	
-	$sql = 'select value from sensor where zid='.$zid.' order by timestamp desc limit 0,1';	
-	$result = plaatprotect_db_query($sql);
-	$row = plaatprotect_db_fetch_object($result);
+	$enable_motion_alarm = plaatprotect_db_config_value('enable_motion_alarm',CATEGORY_ALARM);
 	
-	if (!isset($row->value) || ($row->value!=$value)) {
-		plaatprotect_db_sensor_insert($zid, $timestamp, $value);
-		
-		if ($value>0) {
-			if (LOG == 1) {	
-				echo $zid." alarm ON\r\n";
+	if ($enable_motion_alarm=="true") {
+		$timestamp = date('Y-m-d H:i:s');
+	
+		$sql = 'select value from sensor where zid='.$zid.' order by timestamp desc limit 0,1';	
+		$result = plaatprotect_db_query($sql);
+		$row = plaatprotect_db_fetch_object($result);
+	
+		if (!isset($row->value) || ($row->value!=$value)) {
+			plaatprotect_db_sensor_insert($zid, $timestamp, $value);
+			
+			if ($value>0) {
+				if (LOG == 1) {	
+					echo $zid." alarm ON\r\n";
+				}
+				plaatprotect_db_event_onramp_insert(CATEGORY_ZIGBEE, '{"zid":'.$zid.', "type":"set", "alarm":"motion"}');
+			} else {
+				if (LOG == 1) {	
+					echo $zid." alarm OFF\r\n";
+				}
+				plaatprotect_db_event_onramp_insert(CATEGORY_ZIGBEE, '{"zid":'.$zid.', "type":"set", "alarm":"off"}');
 			}
-			plaatprotect_db_event_onramp_insert(CATEGORY_ZIGBEE, '{"zid":'.$zid.', "type":"set", "alarm":"motion"}');
+			
 		} else {
-			if (LOG == 1) {	
-				echo $zid." alarm OFF\r\n";
-			}
-			plaatprotect_db_event_onramp_insert(CATEGORY_ZIGBEE, '{"zid":'.$zid.', "type":"set", "alarm":"off"}');
-		}
 		
-	} else {
-	
-		if (LOG == 1) {	
-			echo $zid." alarm idle\r\n";
+			if (LOG == 1) {	
+				echo $zid." alarm idle\r\n";
+			}
 		}
 	}
 }

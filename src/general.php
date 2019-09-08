@@ -113,6 +113,7 @@ define('PANIC_OFF',       				0);
 */
 
 define('CATEGORY_GENERAL',           0);
+define('CATEGORY_ALARM',            10);
 define('CATEGORY_ZWAVE',            11);
 define('CATEGORY_ZWAVE_CONTROL',    12);
 define('CATEGORY_EMAIL',            21);

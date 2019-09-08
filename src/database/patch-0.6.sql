@@ -17,6 +17,17 @@
 -- config table
 UPDATE config SET value="0.6" WHERE token='database_version';
 
+INSERT INTO config (category, token, value, options, date, readonly, rebuild, encrypt) VALUES (0, 'enable_pressure_view', 'false', 'true,false', '0000-00-00', 0, 0, 0);
+
+UPDATE `config` SET `category` = '11' WHERE token="device_offline_timeout";
+UPDATE `config` SET `category` = '10' WHERE token="alarm_duration";
+
+INSERT INTO config (category, token, value, options, date, readonly, rebuild, encrypt) VALUES (10, 'enable_motion_alarm', 'true', 'true,false', '0000-00-00', 0, 0, 0);
+INSERT INTO config (category, token, value, options, date, readonly, rebuild, encrypt) VALUES (10, 'enable_temperature_alarm', 'false', 'true,false', '0000-00-00', 0, 0, 0);
+INSERT INTO config (category, token, value, options, date, readonly, rebuild, encrypt) VALUES (10, 'alarm_high_temperature', '30.0', '', '0000-00-00', 0, 0, 0);
+INSERT INTO config (category, token, value, options, date, readonly, rebuild, encrypt) VALUES (10, 'alarm_low_temperature', '5.0', '', '0000-00-00', 0, 0, 0);
+INSERT INTO config (category, token, value, options, date, readonly, rebuild, encrypt) VALUES (0, 'temperature_alarm_on', '0', '0,1', '0000-00-00', '1', '0', '0');
+
 INSERT INTO config (category, token, value, options, date, readonly, rebuild, encrypt) VALUES (91, 'weather_present', 'false', 'true,false', '0000-00-00', 0, 0, 0);
 INSERT INTO config (category, token, value, options, date, readonly, rebuild, encrypt) VALUES (91, 'weather_city', '', '', '0000-00-00', 0, 0, 0);
 INSERT INTO config (category, token, value, options, date, readonly, rebuild, encrypt) VALUES (91, 'weather_country', '', '', '0000-00-00', 0, 0, 0);
@@ -29,4 +40,4 @@ INSERT INTO `zigbee` (`zid`, `vendor`, `type`, `version`, `location`, `state`) V
 INSERT INTO `zigbee` (`zid`, `vendor`, `type`, `version`, `location`, `state`) VALUES ('101', 'OpenWeatherMap.org', 7, '?', 'buiten', 0);
 INSERT INTO `zigbee` (`zid`, `vendor`, `type`, `version`, `location`, `state`) VALUES ('102', 'OpenWeatherMap.org', 5, '?', 'buiten', 0);
 
-INSERT INTO config (category, token, value, options, date, readonly, rebuild, encrypt) VALUES (0, 'enable_pressure_view', 'false', 'true,false', '0000-00-00', 0, 0, 0);
+

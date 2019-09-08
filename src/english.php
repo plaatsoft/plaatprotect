@@ -163,6 +163,17 @@ you would like to contribute.<br/>Your credit card will be processed by PayPal, 
 ** ------------------
 */
 
+$lang['CATEGORY0']  = 'Look and Feel'; 
+$lang['CATEGORY10'] = 'Alarm'; 
+$lang['CATEGORY11'] = 'Z-Wave'; 
+$lang['CATEGORY21'] = 'Email'; 
+$lang['CATEGORY51'] = 'Security'; 
+$lang['CATEGORY61'] = 'Webcam 1'; 
+$lang['CATEGORY62'] = 'Webcam 2'; 
+$lang['CATEGORY71'] = 'Zigbee'; 
+$lang['CATEGORY81'] = 'Mobile'; 
+$lang['CATEGORY91'] = 'Weather'; 
+
 $lang['SETTING_TITLE'] = 'Settings';
 
 $lang['LABEL_TOKEN'] = 'Key'; 
@@ -172,14 +183,38 @@ $lang['LABEL_DESCRIPTION'] = 'Description';
 $lang['database_version'] = 'Current database version';
 $lang['request_counter'] = 'Page request counter';
 
-$lang['zwave_present'] = 'Zwave present';
+// ALARM Settings
+$lang['alarm_duration'] = 'Alarm duration in seconds';
+$lang['enable_motion_alarm'] = 'Enable motion alarm';
+$lang['enable_temperature_alarm'] = 'Enable temperature alarm';
+$lang['alarm_high_temperature'] = 'Trigger alarm when temperature is higher then (Celcius)';
+$lang['alarm_low_temperature'] = 'Trigger alarm when temperature is lower then (Celcius)';
 
+// LOOK AND FEEL Settings
 $lang['system_name'] = 'System name';
+$lang['enable_battery_view'] = 'Enable Battery View';
+$lang['enable_temperature_view'] = 'Enable Temperature View';
+$lang['enable_humidity_view'] = 'Enable Humidity View';
+$lang['enable_luminance_view'] = 'Enable Luminance View';
+$lang['enable_motion_view'] = 'Enable Motion View';
+$lang['enable_pressure_view'] = 'Enable Pressure View';
 
+// ZWAVE Settings
+$lang['zwave_present'] = 'Zwave present';
+$lang['device_offline_timeout'] = 'Device Offline timeout in seconds';
+
+// ZIGBEE Settings
+$lang['zigbee_description'] = 'Zigbee description';
+$lang['zigbee_ip_address'] = 'Zigbee controller IP address';
+$lang['zigbee_key'] = 'Zigbee controller access key';
+$lang['zigbee_present'] = 'Zigbee controller present';
+
+// SECURITY Settings
 $lang['home_password'] = 'Protect application with a password.';
 $lang['home_username'] = 'Protect application with a username.';
 $lang['settings_password'] = 'Protect settings with a password.';
 
+// WEBCAM Settings
 $lang['webcam_name'] = 'Webcam name';
 $lang['webcam_description'] = 'Webcam description';
 $lang['webcam_resolution'] = 'Webcam Resolution';
@@ -188,41 +223,21 @@ $lang['webcam_device'] = 'Webcam device mapping';
 $lang['webcam_fps'] = 'Webcam Frames Per Second';
 $lang['webcam_no_motion_area'] = 'Webcam no motion detect area';
 
-$lang['zigbee_description'] = 'Zigbee description';
-$lang['zigbee_ip_address'] = 'Zigbee controller IP address';
-$lang['zigbee_key'] = 'Zigbee controller access key';
-$lang['zigbee_present'] = 'Zigbee controller present';
-
-$lang['email_present'] = 'Email notification present';
+// EMAIL Settings
+$lang['email_present'] = 'Enable Email alarm notification';
 $lang['email_address'] = 'Email notification address';
 
+// MOBILE Settings
 $lang['mobile_present'] = 'Android mobile present';
 $lang['mobile_nma_key'] = 'Notify My Android (NMA) App Key';
 
-$lang['device_offline_timeout'] = 'Device Offline timeout in seconds';
-$lang['alarm_duration'] = 'Alarm duration in seconds';
-
-$lang['enable_battery_view'] = 'Enable Battery View';
-$lang['enable_temperature_view'] = 'Enable Temperature View';
-$lang['enable_humidity_view'] = 'Enable Humidity View';
-$lang['enable_luminance_view'] = 'Enable Luminance View';
-$lang['enable_motion_view'] = 'Enable Motion View';
-$lang['enable_pressure_view'] = 'Enable Pressure View';
-
+// WEATHER Settings
 $lang['weather_present'] = 'Enable outdoor weather measurement';
 $lang['weather_city']    = 'City name (for example: gouda)';
 $lang['weather_country'] = 'Country iso name (for example: nl)';
 $lang['weather_api_key'] = 'OpenWeatherMap.org api key';
 
-$lang['CATEGORY0']  = 'General'; 
-$lang['CATEGORY11'] = 'Z-Wave'; 
-$lang['CATEGORY21'] = 'Email'; 
-$lang['CATEGORY51'] = 'Security'; 
-$lang['CATEGORY61'] = 'Webcam 1'; 
-$lang['CATEGORY62'] = 'Webcam 2'; 
-$lang['CATEGORY71'] = 'Zigbee'; 
-$lang['CATEGORY81'] = 'Mobile'; 
-$lang['CATEGORY91'] = 'Weather'; 
+
 
 /*
 ** ------------------

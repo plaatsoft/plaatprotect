@@ -34,6 +34,7 @@ $note[6] = '<div class="subparagraph">Version 0.6 (08-09-2019)</div>
 <li>Now outdoor temperature, humidity and pressure can be measured</li>
 <li>Added pressure sensor chart</li>
 <li>Improve chart look-and-feel if no measurements are found</li>
+<li>Added feature for temperature alarm</li>
 </ul>
 </div>';
 
