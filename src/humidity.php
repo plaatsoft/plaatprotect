@@ -108,7 +108,7 @@ function plaatprotect_humidity_page() {
 				$sql3 = 'select zid from zigbee where type='.$type.' order by zid';
 				$result3 = plaatprotect_db_query($sql3);	
 				while ($node = plaatprotect_db_fetch_object($result3)) {
-					$page .= 'data.addColumn("number", "'.plaatprotect_db_zigbee($node->zid)->location.'[%]");'."\r\n";
+					$page .= 'data.addColumn("number", "'.plaatprotect_db_zigbee($node->zid)->location.' [%]");'."\r\n";
 				};
 	
 				$page .= 'data.addRows('.$json2.');

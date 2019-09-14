@@ -303,29 +303,29 @@ function plaatprotect_home_page() {
 		
 	switch (plaatprotect_db_config_value('alarm_scenario',CATEGORY_GENERAL)) {
 
+		case SCENARIO_HOME:
+			$page .= plaatprotect_link_confirm('pid='.$pid.'&sid='.SCENARIO_SLEEP.'&eid='.EVENT_SWITCH_SCENARIO, t('SCENARIO_HOME'), t('ARE_YOU_SURE'));
+			break;
+
 		case SCENARIO_SLEEP: 
-			$page .= plaatprotect_link_confirm('pid='.$pid.'&sid='.SCENARIO_SLEEP.'&eid='.EVENT_SWITCH_SCENARIO, t('SCENARIO_SLEEP'), t('ARE_YOU_SURE'));
+			$page .= plaatprotect_link_confirm('pid='.$pid.'&sid='.SCENARIO_AWAY.'&eid='.EVENT_SWITCH_SCENARIO, t('SCENARIO_SLEEP'), t('ARE_YOU_SURE'));
 			break;
 					
 		case SCENARIO_AWAY: 
-			$page .= plaatprotect_link_confirm('pid='.$pid.'&sid='.SCENARIO_AWAY.'&eid='.EVENT_SWITCH_SCENARIO, t('SCENARIO_AWAY'), t('ARE_YOU_SURE'));
+			$page .= plaatprotect_link_confirm('pid='.$pid.'&sid='.SCENARIO_HOME.'&eid='.EVENT_SWITCH_SCENARIO, t('SCENARIO_AWAY'), t('ARE_YOU_SURE'));
 		   break;
-			
+	
+		case SCENARIO_PANIC: 
+			$page .= plaatprotect_link('pid='.$pid.'&sid='.SCENARIO_HOME.'&eid='.EVENT_SWITCH_SCENARIO, t('SCENARIO_PANIC'));
+			break;
+
 		default: 
-			$page .= plaatprotect_link_confirm('pid='.$pid.'&sid='.SCENARIO_HOME.'&eid='.EVENT_SWITCH_SCENARIO, t('SCENARIO_HOME'), t('ARE_YOU_SURE'));
+			
 			break;
 	}
 		
-	switch (plaatprotect_db_config_value('panic_on',CATEGORY_GENERAL)) {
-	
-		case PANIC_OFF: 
-			$page .= plaatprotect_link_confirm('pid='.$pid.'&eid='.EVENT_PANIC_ON, t('LINK_PANIC_ON'), t('ARE_YOU_SURE'));
-			break;
-					
-		case PANIC_ON: 
-			$page .= plaatprotect_link_confirm('pid='.$pid.'&eid='.EVENT_PANIC_OFF, t('LINK_PANIC_OFF'), t('ARE_YOU_SURE'));
-		   break;
-	}
+	$page .= plaatprotect_link_confirm('pid='.$pid.'&eid='.EVENT_PANIC_ON, t('LINK_PANIC_ON'), t('ARE_YOU_SURE'));
+
 	$page .= '</div>';
 	
 	$page .= '</div>';
@@ -369,36 +369,19 @@ function plaatprotect_home() {
 			break;		
 			
 		case EVENT_PANIC_ON:
-			$config = plaatprotect_db_config('panic_on');
-			$config->value = PANIC_ON;
+			$config = plaatprotect_db_config('alarm_scenario');
+			$config->value = SCENARIO_PANIC;
 			plaatprotect_db_config_update($config);
-			
-			plaatprotect_db_event_onramp_insert(CATEGORY_ZIGBEE, '{"zid":0, "type":"set", "alarm":"panic"}');
-			break;
-			
-		case EVENT_PANIC_OFF:
-			$config = plaatprotect_db_config('panic_on');
-			$config->value = PANIC_OFF;
-			plaatprotect_db_config_update($config);
-			
-			plaatprotect_db_event_onramp_insert(CATEGORY_ZIGBEE, '{"zid":0, "type":"set", "alarm":"off"}');
+					
+			plaatprotect_db_event_onramp_insert(CATEGORY_ZIGBEE, '{"zid":"0", "type":"set", "alarm":"panic"}');
 			break;
 			
 		case EVENT_SWITCH_SCENARIO:
 			$config = plaatprotect_db_config('alarm_scenario');
-			switch ($sid) {	
-				case SCENARIO_HOME: 
-					$config->value = SCENARIO_SLEEP;
-					break;
-					
-				case SCENARIO_SLEEP: 
-					$config->value = SCENARIO_AWAY;
-					break;
-					
-				case SCENARIO_AWAY: 
-					$config->value = SCENARIO_HOME;
-					break;
+			if ($config->value==SCENARIO_PANIC) {
+				plaatprotect_db_event_onramp_insert(CATEGORY_ZIGBEE, '{"zid":"0", "type":"set", "alarm":"off"}');
 			}
+			$config->value = $sid;
 			plaatprotect_db_config_update($config);
 			break;		
    }

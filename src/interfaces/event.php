@@ -101,6 +101,14 @@ function plaatprotect_event_alarm() {
 	
 			$expire = time() + plaatprotect_db_config_value("alarm_duration", CATEGORY_ALARM);		
 			$state = STATE_ALARM;
+			
+			$panic_on = plaatprotect_db_config_value('panic_on', CATEGORY_GENERAL);
+			if ($panic_on==1) {
+			
+				$zid = $data->zid;
+				plaatprotect_email_alarm_group(EVENT_ALARM_ON, $zid);			
+				plaatprotect_hue_alarm_group(EVENT_ALARM_ON);	
+			}
 		}
 		
 		if (plaatprotect_alarm_off($data)) {

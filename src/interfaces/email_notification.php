@@ -42,27 +42,26 @@ function plaatprotect_email_notification($subject, $body, $alarm) {
 function plaatprotect_email_alarm_group($event, $zid=0) {
 
 	$scenario = plaatprotect_db_config_value('alarm_scenario', CATEGORY_GENERAL);
-	$panic_on = plaatprotect_db_config_value('panic_on', CATEGORY_GENERAL);
 
 	$sql = 'select aid from actor ';
 
 	switch ($scenario) {
 	
 		case SCENARIO_HOME: 
-			$sql .= 'where (home=1 and type='.ACTOR_TYPE_EMAIL.') ';
+			$sql .= 'where (home=1 and type='.ACTOR_TYPE_EMAIL.')';
 			break;
 			
 		case SCENARIO_SLEEP: 
-			$sql .= 'where (sleep=1 and type='.ACTOR_TYPE_EMAIL.') ';
+			$sql .= 'where (sleep=1 and type='.ACTOR_TYPE_EMAIL.')';
 			break;		
 			
 		case SCENARIO_AWAY: 
-			$sql .= 'where (away=1 and type='.ACTOR_TYPE_EMAIL.') ';
+			$sql .= 'where (away=1 and type='.ACTOR_TYPE_EMAIL.')';
 			break;
-	}
-	
-	if  ($panic_on==1) {
-		$sql .= 'or (panic=1 and type='.ACTOR_TYPE_EMAIL.')';
+			
+		case SCENARIO_PANIC: 
+			$sql .= 'where (panic=1 and type='.ACTOR_TYPE_EMAIL.')';
+			break;
 	}
 		
 	$result = plaatprotect_db_query($sql);
@@ -76,7 +75,11 @@ function plaatprotect_email_alarm_group($event, $zid=0) {
 		$subject =  "PlaatProtect Alarm ";
 
 		if ($event==EVENT_ALARM_ON) {
-			$subject .= "On ";
+			if  ($scenario==SCENARIO_PANIC) {
+				$subject .= "Panic ";
+			} else {
+				$subject .= "On ";
+			}
 		} else {
 			$subject .= "Off ";
 		}

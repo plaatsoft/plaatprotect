@@ -106,8 +106,7 @@ $lang['LINK_OFF']            = 'OFF';
 $lang['LINK_FILTER_OFF']     = 'Filter Off'; 
 $lang['LINK_FILTER_ON']      = 'Filter On'; 
 
-$lang['LINK_PANIC_ON']       = 'PANIC ON'; 
-$lang['LINK_PANIC_OFF']      = 'PANIC OFF'; 
+$lang['LINK_PANIC_ON']       = 'Activate PANIC'; 
 
 /*
 ** ------------------
@@ -127,6 +126,7 @@ $lang['DATABASE_CONNECTION_FAILED' ] = 'The connection to the database failed. P
 $lang['SCENARIO_HOME']       = 'HOME';  
 $lang['SCENARIO_SLEEP']      = 'SLEEP';  
 $lang['SCENARIO_AWAY']       = 'AWAY';  
+$lang['SCENARIO_PANIC']      = 'PANIC';  
 
 /*
 ** ------------------
@@ -258,7 +258,7 @@ $lang['TITLE_ARCHIVE' ] = 'Archive';
 
 $lang['TITLE_ZIGBEE'] ='Sensors';
 
-$lang['SENSOR_TYPE_1'] = 'Temparature';
+$lang['SENSOR_TYPE_1'] = 'Temperature';
 $lang['SENSOR_TYPE_2'] = 'Luminance';
 $lang['SENSOR_TYPE_3'] = 'Motion';
 $lang['SENSOR_TYPE_4'] = 'Battery';
