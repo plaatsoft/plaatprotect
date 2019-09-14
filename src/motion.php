@@ -128,7 +128,7 @@ function plaatprotect_motion_page() {
 		}
 		</script>';
 	
-	$page .= '<h1>Motion '.plaatprotect_dayofweek($date).' '.$day.'-'.$month.'-'.$year.'</h1>';
+	$page .= '<h1>'.t('SENSOR_TYPE_3').' '.plaatprotect_dayofweek($date).' '.$day.'-'.$month.'-'.$year.'</h1>';
 
 	$page .= '<div id="chart_div" style="width:950px; height:350px"></div>';
 

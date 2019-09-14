@@ -108,7 +108,7 @@ function plaatprotect_luminance_page() {
 				$sql3 = 'select zid from zigbee where type='.$type.' order by zid';
 				$result3 = plaatprotect_db_query($sql3);	
 				while ($node = plaatprotect_db_fetch_object($result3)) {
-					$page .= 'data.addColumn("number", "'.plaatprotect_db_zigbee($node->zid)->location.'");'."\r\n";
+					$page .= 'data.addColumn("number", "'.plaatprotect_db_zigbee($node->zid)->location.' [lux]");'."\r\n";
 				};
 	
 				$page .= 'data.addRows('.$json2.');
@@ -128,7 +128,7 @@ function plaatprotect_luminance_page() {
 		}
 		</script>';
 	
-	$page .= '<h1>Luminance '.plaatprotect_dayofweek($date).' '.$day.'-'.$month.'-'.$year.'</h1>';
+	$page .= '<h1>'.t('SENSOR_TYPE_2').' '.plaatprotect_dayofweek($date).' '.$day.'-'.$month.'-'.$year.'</h1>';
 
 	$page .= '<div id="chart_div" style="width:950px; height:350px"></div>';
 	

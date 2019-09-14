@@ -319,11 +319,11 @@ function plaatprotect_home_page() {
 	switch (plaatprotect_db_config_value('panic_on',CATEGORY_GENERAL)) {
 	
 		case PANIC_OFF: 
-			$page .= plaatprotect_link_confirm('pid='.$pid.'&eid='.EVENT_ON, t('LINK_PANIC_ON'), t('ARE_YOU_SURE'));
+			$page .= plaatprotect_link_confirm('pid='.$pid.'&eid='.EVENT_PANIC_ON, t('LINK_PANIC_ON'), t('ARE_YOU_SURE'));
 			break;
 					
 		case PANIC_ON: 
-			$page .= plaatprotect_link_confirm('pid='.$pid.'&eid='.EVENT_OFF, t('LINK_PANIC_OFF'), t('ARE_YOU_SURE'));
+			$page .= plaatprotect_link_confirm('pid='.$pid.'&eid='.EVENT_PANIC_OFF, t('LINK_PANIC_OFF'), t('ARE_YOU_SURE'));
 		   break;
 	}
 	$page .= '</div>';
@@ -368,20 +368,20 @@ function plaatprotect_home() {
 			plaatprotect_home_login_event();
 			break;		
 			
-		case EVENT_ON:
+		case EVENT_PANIC_ON:
 			$config = plaatprotect_db_config('panic_on');
 			$config->value = PANIC_ON;
 			plaatprotect_db_config_update($config);
-			$event = '{"zid":"0", "action":"panic", "value":"on"}';
-			plaatprotect_db_event_offramp_insert(CATEGORY_ZWAVE, $event);
+			
+			plaatprotect_db_event_onramp_insert(CATEGORY_ZIGBEE, '{"zid":0, "type":"set", "alarm":"panic"}');
 			break;
 			
-		case EVENT_OFF:
+		case EVENT_PANIC_OFF:
 			$config = plaatprotect_db_config('panic_on');
 			$config->value = PANIC_OFF;
 			plaatprotect_db_config_update($config);
-			$event = '{"zid":"0", "action":"panic", "value":"off"}';
-			plaatprotect_db_event_offramp_insert(CATEGORY_ZWAVE, $event);
+			
+			plaatprotect_db_event_onramp_insert(CATEGORY_ZIGBEE, '{"zid":0, "type":"set", "alarm":"off"}');
 			break;
 			
 		case EVENT_SWITCH_SCENARIO:

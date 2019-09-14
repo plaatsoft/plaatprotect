@@ -119,7 +119,7 @@ function plaatprotect_temperature_page() {
 				$sql3 .= 'order by zid';
 				$result3 = plaatprotect_db_query($sql3);	
 				while ($node = plaatprotect_db_fetch_object($result3)) {
-					$page .= 'data.addColumn("number", "'.plaatprotect_db_zigbee($node->zid)->location.'");'."\r\n";
+					$page .= 'data.addColumn("number", "'.plaatprotect_db_zigbee($node->zid)->location.' [celcius]");'."\r\n";
 				};
 	
 				$page .= 'data.addRows('.$json2.');
@@ -139,7 +139,7 @@ function plaatprotect_temperature_page() {
 		}
 		</script>';
 	
-	$page .= '<h1>Temperature '.plaatprotect_dayofweek($date).' '.$day.'-'.$month.'-'.$year.'</h1>';
+	$page .= '<h1>'.t('SENSOR_TYPE_1').' '.plaatprotect_dayofweek($date).' '.$day.'-'.$month.'-'.$year.'</h1>';
 
 	$page .= '<div id="chart_div" style="width:950px; height:350px"></div>';
 	

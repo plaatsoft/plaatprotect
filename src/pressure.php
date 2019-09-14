@@ -15,11 +15,6 @@
 **
 **  All copyrights reserved (c) 1996-2019 PlaatSoft
 */
-
-/**
- * @file
- * @brief contain humidity report
- */
  
 /*
 ** ---------------------
@@ -108,7 +103,7 @@ function plaatprotect_pressure_page() {
 				$sql3 = 'select zid from zigbee where type='.$type.' order by zid';
 				$result3 = plaatprotect_db_query($sql3);	
 				while ($node = plaatprotect_db_fetch_object($result3)) {
-					$page .= 'data.addColumn("number", "'.plaatprotect_db_zigbee($node->zid)->location.'");'."\r\n";
+					$page .= 'data.addColumn("number", "'.plaatprotect_db_zigbee($node->zid)->location.' [hpa]");'."\r\n";
 				};
 	
 				$page .= 'data.addRows('.$json2.');
@@ -128,7 +123,7 @@ function plaatprotect_pressure_page() {
 		}
 		</script>';
 	
-	$page .= '<h1>Pressure '.plaatprotect_dayofweek($date).' '.$day.'-'.$month.'-'.$year.'</h1>';
+	$page .= '<h1>'.t('SENSOR_TYPE_7').' '.plaatprotect_dayofweek($date).' '.$day.'-'.$month.'-'.$year.'</h1>';
 
 	$page .= '<div id="chart_div" style="width:950px; height:350px"></div>';
 	

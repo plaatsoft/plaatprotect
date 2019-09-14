@@ -27,15 +27,16 @@
 ** ---------------------
 */
 
-$note[6] = '<div class="subparagraph">Version 0.6 (08-09-2019)</div>
+$note[6] = '<div class="subparagraph">Version 0.6 (14-09-2019)</div>
 <div class="large_text">
 <ul>
 <li>Integrate OpenWeatherMap.org webservice</li>
 <li>Now outdoor temperature, humidity and pressure can be measured</li>
-<li>Added pressure sensor chart</li>
-<li>Improve chart look-and-feel if no measurements are found</li>
-<li>Added feature for temperature alarm</li>
-<li>Added windspeed sensor chart</li>
+<li>Added pressure sensor view</li>
+<li>Added windspeed sensor view</li>
+<li>Improve all sensors views when no measurement is found</li>
+<li>Added temperature alarm feature</li>
+<li>Bugfix: Panic mode is now working again</li>
 </ul>
 </div>';
 
@@ -44,7 +45,7 @@ $note[5] = '<div class="subparagraph">Version 0.5 (04-09-2019)</div>
 <ul>
 <li>Added zigbee sensor inventory detection</li>
 <li>Added zigbee motion sensor support</li>
-<li>Added zigbee battery view</li>
+<li>Added zigbee battery sensor view</li>
 <li>Added daily database backup</li>
 <li>Improve table look-and-feel</li>
 <li>Improve email alarm notification</li>
@@ -58,7 +59,7 @@ $note[4] = '<div class="subparagraph">Version 0.4 (31-08-2019)</div>
 <li>Added system name setting</li>
 <li>Login username can now also be defined</li>
 <li>Sensors views can now be enabled/disable in settings</li>
-<li>Improve all sensor data views. Now data of all sensors is showed in one chart</li>
+<li>Improve all sensor data views. Now data of all sensors is showed in one view</li>
 <li>Improve Look and Feel of menus</li>
 <li>Improve cron job</li>
 <li>Added zigbee lightbulb inventory detection</li>
@@ -71,10 +72,10 @@ $note[3] = '<div class="subparagraph">Version 0.3 (05-12-2016)</div>
 <ul>
 <li>Improve new version detection script</li>
 <li>Improve php cron job. Now no output is created anymore</li>
-<li>Added battery chart for all zwave devices</li>
-<li>Added temperature chart for all zwave devices</li>
-<li>Added humidity chart for all zwave devices</li>
-<li>Added lumaniance chart for all zwave devices</li>
+<li>Added battery view for all zwave devices</li>
+<li>Added temperature view for all zwave devices</li>
+<li>Added humidity view for all zwave devices</li>
+<li>Added lumaniance view for all zwave devices</li>
 <li>Added location of zwave sensors on home page</li>
 <li>Protect scenario and panic buttons against accidental click</li>
 <li>Bugfix: Fix critical bug in event.php in sleep and away mode</li>
@@ -99,7 +100,7 @@ $note[1] = '<div class="subparagraph">Version 0.1 (03-07-2016)</div>
 <ul>
 <li>General: Added notification page</li>
 <li>General: Added logging page</li>
-<li>General: Added movement chart page</li>
+<li>General: Added movement view page</li>
 <li>General: Added Z-Wave vibration alarm detection</li>
 <li>General: Added Z-Wave node status on home page</li>
 <li>General: Added Notify My Android (NMA) webservice integration for push messages to andriod phone</li>

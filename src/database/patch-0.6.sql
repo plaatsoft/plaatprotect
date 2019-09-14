@@ -40,3 +40,4 @@ INSERT INTO `zigbee` (`zid`, `vendor`, `type`, `version`, `location`, `state`) V
 -- 14-09-2019
 INSERT INTO config (category, token, value, options, date, readonly, rebuild, encrypt) VALUES (0, 'enable_windspeed_view', 'false', 'true,false', '0000-00-00', 0, 0, 0);
 INSERT INTO `zigbee` (`zid`, `vendor`, `type`, `version`, `location`, `state`) VALUES ('103', 'OpenWeatherMap.org', 8, '?', 'buiten', 0);
+INSERT INTO config (category, token, value, options, date, readonly, rebuild, encrypt) VALUES (0, 'panic_on', '0', '', '0000-00-00', 1, 0, 0);

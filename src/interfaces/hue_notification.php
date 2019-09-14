@@ -25,7 +25,7 @@ function plaatprotect_set_hue_state($hid, $value) {
 
     $json = @file_get_contents($hue_url, false, stream_context_create(["http" => [
       "method" => "PUT", "header" => "Content-type: application/json",
-      "content" => "{\"on\":". $value."}"
+      "content" => "{\"on\":". $value.",\"bri\":255}"
     ]]));
 		
 	if ($value=="true") {	
@@ -43,23 +43,28 @@ function plaatprotect_hue_alarm_group($event) {
 
 	$sql = 'select aid from actor where (type='.ACTOR_TYPE_BULB.' ';
 
-	switch ($scenario) {
+	if ($event==EVENT_ALARM_ON) {
+
+		switch ($scenario) {
 	
-		case SCENARIO_HOME: 
-			$sql .= 'and home=1) ';
-			break;
+			case SCENARIO_HOME: 
+				$sql .= 'and home=1) ';
+				break;
 			
-		case SCENARIO_SLEEP: 
-			$sql .= 'and sleep=1) ';
-			break;		
+			case SCENARIO_SLEEP: 
+				$sql .= 'and sleep=1) ';
+				break;		
 			
-		case SCENARIO_AWAY: 
-			$sql .= 'and away=1) ';
-			break;
-	}
+			case SCENARIO_AWAY: 
+				$sql .= 'and away=1) ';
+				break;
+		}
 	
-	if  ($panic_on==1) {
-		$sql .= 'or (panic=1 and type='.ACTOR_TYPE_BULB.') ';
+		if  ($panic_on==1) {
+			$sql .= 'or (panic=1 and type='.ACTOR_TYPE_BULB.') ';
+		}
+	} else {
+		$sql .= ') ';
 	}
 	
 	$result = plaatprotect_db_query($sql);

@@ -55,7 +55,7 @@ function plaatprotect_alarm_off($data) {
 
 	$expire=0;
 	
-	if (isset($data->type) && ($data->type=="set")) {
+	if (isset($data->type) && ($data->type=="set") && $data->zid==0) {
 		if ($data->alarm=="off")  {
 			return true;
 		}
@@ -67,31 +67,13 @@ function plaatprotect_alarm_off($data) {
 function plaatprotect_alarm_on($data) {
 
 	if (isset($data->type) && ($data->type=="set")) {
-		if (($data->alarm=="motion" || $data->alarm=="vibration" || $data->alarm=="temperature")) {
+		if (($data->alarm=="motion" || $data->alarm=="vibration" || $data->alarm=="temperature" || $data->alarm=="panic")) {
 			return true;
 		}
 	}
 	return false;
 }
 
-function plaatprotect_manual_panic($data) {
-
-	global $expire;
-	
-	if ( (isset($data->action)) && ($data->action=="panic")) {
-	
-		if ($data->value=="on") {
-				
-			$duration = plaatprotect_db_config_value("alarm_duration", CATEGORY_GENERAL);
-			$expire = time() + $duration;
-			
-		} else {
-		
-			$expire = time();
-		}
-	}
-}
-		
 /*
 ** ---------------------
 ** State machine
@@ -117,7 +99,7 @@ function plaatprotect_event_alarm() {
 		
 		if (plaatprotect_alarm_on($data)) {
 	
-			$expire = time() + plaatprotect_db_config_value("alarm_duration", CATEGORY_GENERAL);		
+			$expire = time() + plaatprotect_db_config_value("alarm_duration", CATEGORY_ALARM);		
 			$state = STATE_ALARM;
 		}
 		
@@ -168,7 +150,7 @@ function plaatprotect_event_idle() {
 		
 		if (plaatprotect_alarm_on($data)) {
 	
-			$expire = time() + plaatprotect_db_config_value("alarm_duration", CATEGORY_GENERAL);		
+			$expire = time() + plaatprotect_db_config_value("alarm_duration", CATEGORY_ALARM);		
 			$state = STATE_ALARM;
 			$zid = $data->zid;
 			
