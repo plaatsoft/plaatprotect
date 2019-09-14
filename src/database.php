@@ -531,6 +531,7 @@ define('ZIGBEE_TYPE_BATTERY',     4);
 define('ZIGBEE_TYPE_HUMIDITY',    5);
 define('ZIGBEE_TYPE_SWITCH',      6);
 define('ZIGBEE_TYPE_PRESSURE',    7);
+define('ZIGBEE_TYPE_WINDSPEED',   8);
 
 function plaatprotect_db_zigbee($zid) {
  	

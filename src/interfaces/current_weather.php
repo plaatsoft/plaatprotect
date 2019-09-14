@@ -58,6 +58,7 @@ if( $weather_present=="true" ) {
 			plaatprotect_db_sensor_insert(100, $timestamp, $data->main->temp);
 			plaatprotect_db_sensor_insert(101, $timestamp, $data->main->pressure);
 			plaatprotect_db_sensor_insert(102, $timestamp, $data->main->humidity);
+			plaatprotect_db_sensor_insert(103, $timestamp, $data->wind->speed);
 			$stop = true;			
 			
 		} else {

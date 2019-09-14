@@ -272,6 +272,11 @@ switch ($pid) {
 		$page = plaatprotect_pressure();
 		break;
 				
+	case PAGE_WINDSPEED: 
+		include "windspeed.php";
+		$page = plaatprotect_windspeed();
+		break;
+		
 	case PAGE_DONATE: 
 		include "donate.php";
 		$page = plaatprotect_donate();

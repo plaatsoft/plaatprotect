@@ -59,6 +59,7 @@ define('PAGE_TEMPERATURE',          29);
 define('PAGE_HUMIDITY',             30);
 define('PAGE_LUMINANCE',			31);
 define('PAGE_PRESSURE',				32);
+define('PAGE_WINDSPEED',			33);
 
 /*
 ** -----------
@@ -223,9 +224,6 @@ function add_icons() {
 	// Web app cable (runs the website as app)
 	$page .= '<meta name="apple-mobile-web-app-capable" content="yes">';
 	$page .= '<meta name="mobile-web-app-capable" content="yes">';
-
-	// Workarround to get transparant Google Charts
-	//$page .= '<style>rect{fill:none;}</style>'; 
 	
 	// Title
 	$page .= '<title>'.t('TITLE').'</title>';
@@ -235,13 +233,11 @@ function add_icons() {
 
 function loadCSS($url) {
 	return '<link href="'.$url.'" rel="stylesheet" type="text/css" />';
-	//return '<style>' . file_get_contents($url) . '</style>';
 }
 
 
 function loadJS($url) {
 	return '<script language="JavaScript" src="'.$url.'" type="text/javascript"></script>';	
-	//return '<script>' . file_get_contents($url) . '</script>';
 }
 
 /**
@@ -549,8 +545,8 @@ function plaatprotect_create_path($path) {
  *   Welcome to the plaatprotect documentation.
  *
  * @section Introduction
- *   plaatprotect is a burglar alarm center for raspberry Pi. Its collect Zwave sensor data
- *   and and active a configured counter measure. With a web GUI the system can be controlled.
+ *   plaatprotect is a burglar alarm center for raspberry Pi. Its collect Zwave and/or Zigbee sensor data
+ *   and active a configured counter measure. With a web GUI the system can be controlled.
  *
  * @section Links
  *   Website: http://www.plaatsoft.nl

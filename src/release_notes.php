@@ -35,6 +35,7 @@ $note[6] = '<div class="subparagraph">Version 0.6 (08-09-2019)</div>
 <li>Added pressure sensor chart</li>
 <li>Improve chart look-and-feel if no measurements are found</li>
 <li>Added feature for temperature alarm</li>
+<li>Added windspeed sensor chart</li>
 </ul>
 </div>';
 

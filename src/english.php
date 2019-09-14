@@ -97,7 +97,8 @@ $lang['LINK_BATTERY']       = i('area-chart') . 'Battery';
 $lang['LINK_HUMIDITY']      = i('area-chart') . 'Humidity';
 $lang['LINK_TEMPERATURE']   = i('area-chart') . 'Temperature';
 $lang['LINK_LUMINANCE']     = i('area-chart') . 'Luminance';
-$lang['LINK_PRESSURE']     = i('area-chart') . 'Pressure';
+$lang['LINK_PRESSURE']      = i('area-chart') . 'Pressure';
+$lang['LINK_WINDSPEED']     = i('area-chart') . 'Windspeed';
 
 $lang['LINK_ON']             = 'ON'; 
 $lang['LINK_OFF']            = 'OFF'; 
@@ -198,6 +199,7 @@ $lang['enable_humidity_view'] = 'Enable Humidity View';
 $lang['enable_luminance_view'] = 'Enable Luminance View';
 $lang['enable_motion_view'] = 'Enable Motion View';
 $lang['enable_pressure_view'] = 'Enable Pressure View';
+$lang['enable_windspeed_view'] = 'Enable Windspeed View';
 
 // ZWAVE Settings
 $lang['zwave_present'] = 'Zwave present';
@@ -263,6 +265,7 @@ $lang['SENSOR_TYPE_4'] = 'Battery';
 $lang['SENSOR_TYPE_5'] = 'Humidity';
 $lang['SENSOR_TYPE_6'] = 'Switch';
 $lang['SENSOR_TYPE_7'] = 'Pressure';
+$lang['SENSOR_TYPE_8'] = 'Windspeed';
 	
 $lang['ZIGBEE_ID'] = 'Id';
 $lang['ZIGBEE_VENDOR'] = 'Vendor';
