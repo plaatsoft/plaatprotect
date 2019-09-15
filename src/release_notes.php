@@ -31,7 +31,7 @@ $note[6] = '<div class="subparagraph">Version 0.6 (14-09-2019)</div>
 <div class="large_text">
 <ul>
 <li>Integrate OpenWeatherMap.org webservice</li>
-<li>Now outdoor temperature, humidity and pressure can be measured</li>
+<li>Now outdoor temperature, humidity, pressure and windspeed can be measured</li>
 <li>Added pressure sensor view</li>
 <li>Added windspeed sensor view</li>
 <li>Improve all sensors views when no measurement is found</li>
