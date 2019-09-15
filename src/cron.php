@@ -70,25 +70,32 @@ while ( $row=plaatprotect_db_fetch_object($result) ) {
 			case 1: // Delete old webcam recording
 					$dir = BASE_DIR.'/webcam/'.date('Y-m-d', strtotime('-30 days'));
 					exec('rm -rf '.$dir);				
-					plaatprotect_db_cron_update($data->cid);
+				    plaatprotect_db_event_offramp_insert(CATEGORY_GENERAL, '{"message":"cleanup old webcam files executed"}');
 					break;
 			
-			case 2: exec('cd '.BASE_DIR.'/interfaces; php hue_luminance.php > /dev/null 2>&1 &');
+			case 2: // Fetch hue luminance sensor data
+					exec('cd '.BASE_DIR.'/interfaces; php hue_luminance.php > /dev/null 2>&1 &');
 					break;
 					
-			case 3: exec('cd '.BASE_DIR.'/interfaces; php hue_motion.php > /dev/null 2>&1 &');
+			case 3: // Fetch hue motion sensor data
+					exec('cd '.BASE_DIR.'/interfaces; php hue_motion.php > /dev/null 2>&1 &');
 					break;
 					
-			case 4: exec('cd '.BASE_DIR.'/interfaces; php hue_temperature.php > /dev/null 2>&1 &');
+			case 4: // Fetch hue temperature sensor data
+					exec('cd '.BASE_DIR.'/interfaces; php hue_temperature.php > /dev/null 2>&1 &');
 					break;
 					
-			case 5: exec('cd '.BASE_DIR.'; php backup.php > /dev/null 2>&1 &');
+			case 5: // Make datatbase backup
+					exec('cd '.BASE_DIR.'; php backup.php > /dev/null 2>&1 &');
+				    plaatprotect_db_event_offramp_insert(CATEGORY_GENERAL, '{"message":"database backup executed"}');
 					break;
 					
-			case 6: exec('cd '.BASE_DIR.'/interfaces; php hue_battery.php > /dev/null 2>&1 &');
+			case 6: // Fetch hue battery sensor data
+					exec('cd '.BASE_DIR.'/interfaces; php hue_battery.php > /dev/null 2>&1 &');
 					break;
 					
-			case 7: exec('cd '.BASE_DIR.'/interfaces; php current_weather.php > /dev/null 2>&1 &');
+			case 7: // fetch outdoor weather information
+					exec('cd '.BASE_DIR.'/interfaces; php current_weather.php > /dev/null 2>&1 &');
 					break;
 					
 		}

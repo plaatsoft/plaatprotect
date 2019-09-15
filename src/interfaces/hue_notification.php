@@ -40,26 +40,27 @@ function plaatprotect_hue_alarm_group($event) {
 
 	$scenario = plaatprotect_db_config_value('alarm_scenario', CATEGORY_GENERAL);
 
-	$sql = 'select aid from actor where (type='.ACTOR_TYPE_BULB.' ';
+	$sql = 'select aid from actor where type='.ACTOR_TYPE_BULB.' and ';
 
 	switch ($scenario) {
+	
 		case SCENARIO_HOME: 
-			$sql .= 'and home=1)';
+			$sql .= 'home=1';
 			break;
-		
+			
 		case SCENARIO_SLEEP: 
-			$sql .= 'and sleep=1)';
+			$sql .= 'sleep=1';
 			break;		
-		
+			
 		case SCENARIO_AWAY: 
-			$sql .= 'and away=1)';
+			$sql .= 'away=1';
 			break;
 			
 		case SCENARIO_PANIC: 
-			$sql .= 'and panic=1)';
+			$sql .= 'panic=1';
 			break;
 	}
-	
+		
 	$result = plaatprotect_db_query($sql);
 	while ($row = plaatprotect_db_fetch_object($result)) {	
 		if ($event==EVENT_ALARM_ON) {

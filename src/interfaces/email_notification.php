@@ -16,7 +16,7 @@
 **  All copyrights reserved (c) 1996-2019 PlaatSoft
 */
  
-function plaatprotect_email_notification($subject, $body, $alarm) {
+function plaatprotect_email_notification($subject, $body) {
 
 	$email_present = plaatprotect_db_config_value('email_present', CATEGORY_EMAIL);
 
@@ -28,9 +28,9 @@ function plaatprotect_email_notification($subject, $body, $alarm) {
 		$header .= "Content-Type: text/html; charset=ISO-8859-1\r\n";
 	
 		if (mail($email, $subject, $body, $header)) {			
-			$event = '{"email":"delivered", "alarm":"'.$alarm.'"}';
+			$event = '{"email":"delivered"}';
 		} else {		
-			$event = '{"email":"failed", "alarm":"'.$alarm.'"}';
+			$event = '{"email":"failed"}';
 		}
 		plaatprotect_db_event_offramp_insert(CATEGORY_EMAIL, $event);
 		
@@ -39,28 +39,28 @@ function plaatprotect_email_notification($subject, $body, $alarm) {
 	}
 }
 
-function plaatprotect_email_alarm_group($event, $zid=0) {
+function plaatprotect_email_alarm_group($event, $message) {
 
 	$scenario = plaatprotect_db_config_value('alarm_scenario', CATEGORY_GENERAL);
 
-	$sql = 'select aid from actor ';
+	$sql = 'select aid from actor where type='.ACTOR_TYPE_EMAIL.' and ';
 
 	switch ($scenario) {
 	
 		case SCENARIO_HOME: 
-			$sql .= 'where (home=1 and type='.ACTOR_TYPE_EMAIL.')';
+			$sql .= 'home=1';
 			break;
 			
 		case SCENARIO_SLEEP: 
-			$sql .= 'where (sleep=1 and type='.ACTOR_TYPE_EMAIL.')';
+			$sql .= 'sleep=1';
 			break;		
 			
 		case SCENARIO_AWAY: 
-			$sql .= 'where (away=1 and type='.ACTOR_TYPE_EMAIL.')';
+			$sql .= 'away=1';
 			break;
 			
 		case SCENARIO_PANIC: 
-			$sql .= 'where (panic=1 and type='.ACTOR_TYPE_EMAIL.')';
+			$sql .= 'panic=1';
 			break;
 	}
 		
@@ -72,27 +72,19 @@ function plaatprotect_email_alarm_group($event, $zid=0) {
 		$systemName = plaatprotect_db_config_value('system_name', CATEGORY_GENERAL);
 
 		// Notication to mobile
-		$subject =  "PlaatProtect Alarm ";
-
-		if ($event==EVENT_ALARM_ON) {
-			if  ($scenario==SCENARIO_PANIC) {
-				$subject .= "Panic ";
-			} else {
-				$subject .= "On ";
-			}
-		} else {
-			$subject .= "Off ";
-		}
-		
-		$subject .= $systemName;
+		$subject =  "PlaatProtect Alarm ".$message->alarm.' '.$systemName;
 		
 		$body  = "<html>";
 		$body .= "<body>";
 		$body .= "<h1>".$subject.'</h1>';
 				
 		$body .= "<p>";
+		$body .= "Device Id=".$message->zid;
+		$body .= "</p>";
+		
+		$body .= "<p>";
 		$body .= "Location=";	
-		$data = plaatprotect_db_zigbee($zid);
+		$data = plaatprotect_db_zigbee($message->zid);
 		if ( isset($data->location) ) {
 			$body .= $data->location;
 		} else {
@@ -101,17 +93,11 @@ function plaatprotect_email_alarm_group($event, $zid=0) {
 		$body .= "</p>";
 		
 		$body .= "<p>";
-		if ($event==EVENT_ALARM_ON) {
-			$body .= "Alarm=on\r\n";
-			$alarm = "on";
-		} else {
-			$body .= "Alarm=off\r\n";
-			$alarm = "off";
-		}
+		$body .= "Alarm=".$message->alarm."\r\n";
 		$body .= "</p>";
 		$body .= "</html>";
 	
-		plaatprotect_email_notification($subject, $body, $alarm);
+		plaatprotect_email_notification($subject, $body);
 	}
 }
 

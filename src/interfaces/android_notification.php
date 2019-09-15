@@ -57,27 +57,26 @@ function plaatprotect_mobile_notification($topic, $content, $severity=0) {
 function plaatprotect_mobile_alarm_group($event, $zid=0) {
 
 	$scenario = plaatprotect_db_config_value('alarm_scenario', CATEGORY_GENERAL);
-	$panic_on = plaatprotect_db_config_value('panic_on', CATEGORY_GENERAL);
 
-	$sql = 'select aid from actor ';
+	$sql = 'select aid from actor where type='.ACTOR_TYPE_MOBILE.' and ';
 
 	switch ($scenario) {
 	
 		case SCENARIO_HOME: 
-			$sql .= 'where (home=1 and type=101) ';
+			$sql .= 'home=1';
 			break;
 			
 		case SCENARIO_SLEEP: 
-			$sql .= 'where (sleep=1 and type=101) ';
+			$sql .= 'sleep=1';
 			break;		
 			
 		case SCENARIO_AWAY: 
-			$sql .= 'where (away=1 and type=101) ';
+			$sql .= 'away=1';
 			break;
-	}
-	
-	if  ($panic_on==1) {
-		$sql .= 'or (panic=1 and type=1)';
+			
+		case SCENARIO_PANIC: 
+			$sql .= 'panic=1';
+			break;
 	}
 	
 	$result = plaatprotect_db_query($sql);

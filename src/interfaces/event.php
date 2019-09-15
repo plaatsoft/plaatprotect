@@ -41,6 +41,7 @@ $state = STATE_INIT;
 $sleep = 1000000;
 $data = "";
 $expire = 0;
+$alarm_device_id = 0;
 
 define( 'LOCK_FILE', "/tmp/".basename( $argv[0], ".php" ).".lock" ); 
 if( plaatprotect_islocked() ) die( "Already running.\n" ); 
@@ -55,6 +56,7 @@ function plaatprotect_alarm_off($data) {
 
 	$expire=0;
 	
+	// Only human can switch off alarm
 	if (isset($data->type) && ($data->type=="set") && $data->zid==0) {
 		if ($data->alarm=="off")  {
 			return true;
@@ -85,6 +87,7 @@ function plaatprotect_event_alarm() {
 	global $sleep;
 	global $state;
 	global $expire;
+	global $alarm_device_id;
 	
 	plaatprotect_log("StateMachine = Alarm [".($expire-time())." sec]");
 	
@@ -95,40 +98,37 @@ function plaatprotect_event_alarm() {
 		plaatprotect_db_event_onramp_delete($row->eid);		
 		
 		plaatprotect_log($row->action);	
-		$data = json_decode($row->action);
+		$message = json_decode($row->action);
 		
-		if (plaatprotect_alarm_on($data)) {
+		// New alarm, reset count down timer
+		if (plaatprotect_alarm_on($message)) {
 	
 			$expire = time() + plaatprotect_db_config_value("alarm_duration", CATEGORY_ALARM);		
-			$state = STATE_ALARM;
-			
-			$panic_on = plaatprotect_db_config_value('panic_on', CATEGORY_GENERAL);
-			if ($panic_on==1) {
-			
-				$zid = $data->zid;
-				plaatprotect_email_alarm_group(EVENT_ALARM_ON, $zid);			
-				plaatprotect_hue_alarm_group(EVENT_ALARM_ON);	
-			}
+			$alarm_device_id = $message->zid;
 		}
 		
-		if (plaatprotect_alarm_off($data)) {
+		// Human disable alarm, switch alarm off
+		if (plaatprotect_alarm_off($message)) {
 	
 			$state = STATE_IDLE;
-			$zid = $data->zid;
-			
-			plaatprotect_email_alarm_group(EVENT_ALARM_OFF, $zid);			
+
+			plaatprotect_email_alarm_group(EVENT_ALARM_OFF, $message);			
 			plaatprotect_hue_alarm_group(EVENT_ALARM_OFF);			
 			//plaatprotect_zwave_alarm_group(EVENT_ALARM_OFF, $zid);
 			//plaatprotect_mobile_alarm_group(EVENT_ALARM_OFF, $zid);
 		}
 		return;
 	}
-		
+	
+	// Alarm period expired, switch alarm off	
 	if (($expire-time())<=0) {
 	
 		$state = STATE_IDLE;
 		
-		plaatprotect_email_alarm_group(EVENT_ALARM_OFF);
+		$json = '{"zid":"'.$alarm_device_id.'", "type":"set", "alarm":"off"}';
+		$message = json_decode($json);
+		
+		plaatprotect_email_alarm_group(EVENT_ALARM_OFF, $message);
 		plaatprotect_hue_alarm_group(EVENT_ALARM_OFF);			
 		//plaatprotect_zwave_alarm_group(EVENT_ALARM_OFF, $zid);
 		//plaatprotect_mobile_alarm_group(EVENT_ALARM_OFF, $zid);
@@ -144,6 +144,7 @@ function plaatprotect_event_idle() {
 	global $sleep;
 	global $state;
 	global $expire;
+	global $alarm_device_id;
 	
 	plaatprotect_log("StateMachine = Idle");
 		
@@ -154,15 +155,16 @@ function plaatprotect_event_idle() {
 		plaatprotect_db_event_onramp_delete($row->eid);		
 		
 		plaatprotect_log($row->action);	
-		$data = json_decode($row->action);
+		$message = json_decode($row->action);
 		
-		if (plaatprotect_alarm_on($data)) {
+		// Alarm detected, enable alarm
+		if (plaatprotect_alarm_on($message)) {
 	
 			$expire = time() + plaatprotect_db_config_value("alarm_duration", CATEGORY_ALARM);		
 			$state = STATE_ALARM;
-			$zid = $data->zid;
-			
-			plaatprotect_email_alarm_group(EVENT_ALARM_ON, $zid);			
+			$alarm_device_id = $message->zid;
+						
+			plaatprotect_email_alarm_group(EVENT_ALARM_ON, $message);			
 			plaatprotect_hue_alarm_group(EVENT_ALARM_ON);	
 			//plaatprotect_zwave_alarm_group(EVENT_ALARM_ON, $zid);
 			//plaatprotect_mobile_alarm_group(EVENT_ALARM_ON, $zid);
@@ -178,6 +180,9 @@ function plaatprotect_event_init() {
 	
 	plaatprotect_log("StateMachine = Init");
 	
+	$event = '{"message":"event process (re)start"}';		
+	plaatprotect_db_event_offramp_insert(CATEGORY_GENERAL, $event);
+		
 	$state = STATE_IDLE;
 }
 
