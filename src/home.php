@@ -299,8 +299,8 @@ function plaatprotect_home_page() {
 	
 	// ---------------------------
 	
-	$page .= '<div class="menu">';
-		
+	
+	$page .= '<div class="checker good" style=" display: inline-block;">';	
 	switch (plaatprotect_db_config_value('alarm_scenario',CATEGORY_GENERAL)) {
 
 		case SCENARIO_HOME:
@@ -323,10 +323,12 @@ function plaatprotect_home_page() {
 			
 			break;
 	}
-		
-	$page .= plaatprotect_link_confirm('pid='.$pid.'&eid='.EVENT_PANIC_ON, t('LINK_PANIC_ON'), t('ARE_YOU_SURE'));
-
 	$page .= '</div>';
+	
+	$page .= '<div class="checker bad" style=" display: inline-block;">';	
+	$page .= plaatprotect_link_confirm('pid='.$pid.'&eid='.EVENT_PANIC_ON, t('LINK_PANIC_ON'), t('ARE_YOU_SURE'));
+	$page .= '</div>';
+
 	
 	$page .= '</div>';
 	

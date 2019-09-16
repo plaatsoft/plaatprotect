@@ -115,7 +115,7 @@ td > a:last-child {
 }
 
 a, input[type=submit] {
-display: inline-block;
+  display: inline-block;
   outline: none;
   background-color: #1E88E5;
   color: #fff;
@@ -208,26 +208,30 @@ h1::after {
 }
 
 /* ================ Checkers (HomePage information labels) ================ */
-.checker {
-	display: inline;
+.checker .link {
+	display: inline-block;
+	outline: none;
 	padding: 12px 15px;
-	margin: 10px;
 	border-radius: 8px;
+	margin: 5px;
 	font-size: 15px;
 	color: #fff;
+	width: 120px;
 }
 
-.checker.good {
+.checker.good .link {
    background-color: #4CAF50;
 }
-.checker.bad {
+
+.checker.bad .link {
    background-color: #F44336;
 }
+
 .checker.disabled {
    background-color: #FF5722;
 }
 
-.checker .fa,
+.checker .fa, 
 a .fa {
 	margin-right: 10px;
 }

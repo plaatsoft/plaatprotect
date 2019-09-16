@@ -38,13 +38,3 @@ a:hover, input[type=submit]:hover {
 a:active, input[type=submit]:active {
   background-color: #666;
 }
-
-.checker.good {
-  background-color: #43A047;
-}
-.checker.bad {
-  background-color: #E53935;
-}
-.checker.disabled {
-  background-color: #F4511E;
-}
