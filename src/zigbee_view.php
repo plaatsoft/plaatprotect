@@ -22,6 +22,44 @@
 ** ---------------------
 */
 
+function plaatprotect_get_key($key) {
+	return substr($key, 0, strlen($key)-5); 
+}
+
+function plaatprotect_location_name($json, $key) {
+
+	$orginal = plaatprotect_get_key($key);
+
+	foreach($json as $zid => $sensor ) {
+		if (($sensor->type=="ZLLPresence") && ($orginal == plaatprotect_get_key($sensor->uniqueid))) {
+			return $sensor->name;
+		}
+	}
+	return "";
+}
+
+function plaatresort_zigbee_db_update($zid, $type, $vendor, $version, $location) {
+
+	if ($type != ZIGBEE_TYPE_UNKNOWN) {
+		$row = plaatprotect_db_zigbee($zid);
+		
+		if (isset($row->zid)) {
+		
+			$row->type = $type;
+			$row->vendor = $vendor;
+			$row->version = $version;
+			$row->location = $location;
+		
+			plaatprotect_db_zigbee_update($row);
+		
+		} else {
+			plaatprotect_db_zigbee_insert($zid, $vendor, $type, $version, $location);
+		}	
+	} else {
+		plaatprotect_db_zigbee_delete($zid);
+	}
+}
+		
 function plaatprotect_refresh_actor_configuration() {
 		
  	$zigbee_ip = plaatprotect_db_config_value('zigbee_ip_address',CATEGORY_ZIGBEE);
@@ -31,59 +69,65 @@ function plaatprotect_refresh_actor_configuration() {
 	@$json = file_get_contents($zigbee_url);
 	
 	$data = json_decode($json);
-		
-	$location = "";
-		
+
 	foreach($data as $zid => $sensor ) {
 
 		$type = ZIGBEE_TYPE_UNKNOWN;
-		
+		$vendor = "";
+		$version = "";
+		$location = "";
+	
 		if ($sensor->type=="ZLLPresence") {
 			$type = ZIGBEE_TYPE_BATTERY;
-			$location =  $sensor->name;
+			$vendor = $sensor->manufacturername;
+			$version = $sensor->swversion;
+			$location = $sensor->name;
+			
+			plaatresort_zigbee_db_update($zid, $type, $vendor, $version, $location);
 		}
 		
 		if ($sensor->type=="ZLLTemperature") {
 			$type = ZIGBEE_TYPE_TEMPERATURE;
+			$vendor = $sensor->manufacturername;
+			$version = $sensor->swversion;
+			$location = plaatprotect_location_name($data, $sensor->uniqueid);
+			
+			plaatresort_zigbee_db_update($zid, $type, $vendor, $version, $location);
 		}
 		
 		if ($sensor->type=="ZLLLightLevel") {
-			$type = ZIGBEE_TYPE_LUMINANCE;			
+			$type = ZIGBEE_TYPE_LUMINANCE;	
+			$vendor = $sensor->manufacturername;
+			$version = $sensor->swversion;
+			$location = plaatprotect_location_name($data, $sensor->uniqueid);		
+			
+			plaatresort_zigbee_db_update($zid, $type, $vendor, $version, $location);
 		}
 		
 		if ($sensor->type=="ZLLSwitch") {
 			$type = ZIGBEE_TYPE_BATTERY;
+			$vendor = $sensor->manufacturername;
+			$version = $sensor->swversion;
 			$location =  $sensor->name;
+			
+			plaatresort_zigbee_db_update($zid, $type, $vendor, $version, $location);
 		}	
 			
-		if (($sensor->type=="CLIPGenericStatus") && (strpos($sensor->name,"MotionSensor")!==false)) {
+		if (isset($sensor->productname) && (($sensor->productname=="Hue outdoor motion sensor") || ($sensor->productname=="Hue motion sensor"))) {
+			
+			$type = ZIGBEE_TYPE_BATTERY;
+			$vendor = $sensor->manufacturername;
+			$version = $sensor->swversion;
+			$location = plaatprotect_location_name($data, $sensor->uniqueid);	
+			
+			plaatresort_zigbee_db_update($zid, $type, $vendor, $version, $location);
+			
 			$type = ZIGBEE_TYPE_MOTION;
+			$vendor = $sensor->manufacturername;
+			$version = $sensor->swversion;
+			$location = plaatprotect_location_name($data, $sensor->uniqueid);	
 			
-			$key = $sensor->uniqueid;
-			$key = str_replace("MotionSensor ", "", $key);
-			$key = str_replace(".Companion", "", $key);
-			
-			$row = plaatprotect_db_zigbee($key);
-			$location =  $row->location;			
-		}
-		
-		if ($type != ZIGBEE_TYPE_UNKNOWN) {
-	
-			$row = plaatprotect_db_zigbee($zid);
-		
-			if (isset($row->zid)) {
-			
-				$row->type = $type;
-				$row->vendor = $sensor->manufacturername;
-				$row->version = $sensor->swversion;
-				$row->location = $location;
-			
-				plaatprotect_db_zigbee_update($row);
-			
-			} else {
-		
-				plaatprotect_db_zigbee_insert($zid, $sensor->manufacturername, $type, $sensor->swversion, $location);
-			}
+			plaatresort_zigbee_db_update($zid+200, $type, $vendor, $version, $location);
 		}
 	}
 }

@@ -41,17 +41,20 @@ function plaatprotect_zigbee_get_data($zid) {
 	
 	$zigbee_ip = plaatprotect_db_config_value('zigbee_ip_address',CATEGORY_ZIGBEE);
  	$zigbee_key = plaatprotect_db_config_value('zigbee_key',CATEGORY_ZIGBEE);
-    $zigbee_url = "http://".$zigbee_ip."/api/".$zigbee_key."/sensors/".$zid;
+    $zigbee_url = "http://".$zigbee_ip."/api/".$zigbee_key."/sensors/".($zid-200);
 	
 	$json = file_get_contents($zigbee_url);
 	
 	$data = json_decode($json);
 	
-	if (LOG == 1) {	
-		print_r($data);
-	}
+	//if (LOG == 1) {	
+	//	print_r($data);
+	//}
 	
-	$value = ($data->state->status);
+	$value = 0;
+	if ($data->state->presence==true) {
+		$value=1;
+	}
 	
 	$enable_motion_alarm = plaatprotect_db_config_value('enable_motion_alarm',CATEGORY_ALARM);
 	

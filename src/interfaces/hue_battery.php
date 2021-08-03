@@ -39,6 +39,7 @@ function plaatprotect_zigbee_get_data($zid) {
 		
 	$zigbee_ip = plaatprotect_db_config_value('zigbee_ip_address',CATEGORY_ZIGBEE);
  	$zigbee_key = plaatprotect_db_config_value('zigbee_key',CATEGORY_ZIGBEE);
+		
     $zigbee_url = "http://".$zigbee_ip."/api/".$zigbee_key."/sensors/".$zid;
 	
 	$json = file_get_contents($zigbee_url);
@@ -65,6 +66,7 @@ $sql = 'select zid from zigbee where type='.ZIGBEE_TYPE_BATTERY;
 $result = plaatprotect_db_query($sql);
 		
 while ($row=plaatprotect_db_fetch_object($result)) {
+
 	plaatprotect_zigbee_get_data($row->zid);
 }
 
