@@ -242,12 +242,6 @@ function plaatprotect_home_page() {
 		$page .= plaatprotect_link('pid='.PAGE_BATTERY, t('LINK_BATTERY'));
 	}
 	
-	$page .= '</div>';
-	
-	// ---------------------------
-	
-	$page .= '<div class="menu">';
-
 	if ($enable_temperature_view=="true") {
 		$page .= plaatprotect_link('pid='.PAGE_TEMPERATURE, t('LINK_TEMPERATURE'));
 	}
@@ -255,6 +249,12 @@ function plaatprotect_home_page() {
 	if ($enable_luminance_view=="true") {
 		$page .= plaatprotect_link('pid='.PAGE_LUMINANCE, t('LINK_LUMINANCE'));
 	}
+	
+	$page .= '</div>';
+	
+	// ---------------------------
+	
+	$page .= '<div class="menu">';
 
 	if ($enable_humidity_view=="true") {
 		$page .= plaatprotect_link('pid='.PAGE_HUMIDITY, t('LINK_HUMIDITY'));
