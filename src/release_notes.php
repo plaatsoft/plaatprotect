@@ -27,6 +27,13 @@
 ** ---------------------
 */
 
+$note[7] = '<div class="subparagraph">Version 0.7 (03-08-2021)</div>
+<div class="large_text">
+<ul>
+<li>Added support for Hue outdoor sensor</li>
+</ul>
+</div>';
+
 $note[6] = '<div class="subparagraph">Version 0.6 (14-09-2019)</div>
 <div class="large_text">
 <ul>

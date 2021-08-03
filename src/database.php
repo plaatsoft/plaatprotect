@@ -242,22 +242,28 @@ function plaatprotect_db_check_version() {
 		plaatprotect_db_execute_sql_file("0.3");
     }
    
-    // Execute SQL path script v0.3 if needed
+    // Execute SQL path script v0.4 if needed
 	$value = plaatprotect_db_config_value('database_version', CATEGORY_GENERAL);
     if ($value=="0.3")  { 
 		plaatprotect_db_execute_sql_file("0.4");
     }
 	
-	// Execute SQL path script v0.3 if needed
+	// Execute SQL path script v0.5 if needed
 	$value = plaatprotect_db_config_value('database_version', CATEGORY_GENERAL);
     if ($value=="0.4")  { 
 		plaatprotect_db_execute_sql_file("0.5");
     }
 	
-	// Execute SQL path script v0.3 if needed
+	// Execute SQL path script v0.6 if needed
 	$value = plaatprotect_db_config_value('database_version', CATEGORY_GENERAL);
     if ($value=="0.5")  { 
 		plaatprotect_db_execute_sql_file("0.6");
+    }
+	
+	// Execute SQL path script v0.7 if needed
+	$value = plaatprotect_db_config_value('database_version', CATEGORY_GENERAL);
+    if ($value=="0.6")  { 
+		plaatprotect_db_execute_sql_file("0.7");
     }
 }
 
