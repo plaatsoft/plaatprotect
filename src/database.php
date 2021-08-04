@@ -560,12 +560,12 @@ function plaatprotect_db_zigbee_update($data) {
 
 function plaatprotect_db_zigbee_insert($zid, $vendor, $type, $version, $location) {
  	
-    $query  = 'insert into zigbee (zid, vendor, type, version, location) ';
+    $query  = 'insert into zigbee (zid, vendor, type, version, location, state) ';
 	$query .= 'values ('.$zid.',';
 	$query .= '"'.plaatprotect_db_escape($vendor).'",';
 	$query .= ''.plaatprotect_db_escape($type).',';
 	$query .= '"'.plaatprotect_db_escape($version).'",';
-	$query .= '"'.plaatprotect_db_escape($location).'")';
+	$query .= '"'.plaatprotect_db_escape($location).'", 0)';
 	
 	return plaatprotect_db_query($query);
 }
